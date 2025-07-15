@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing } from '../tokens';
 
 interface NavItem {
@@ -45,7 +46,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
       {/* Center FAB for camera */}
       <View style={styles.fabContainer}>
         <TouchableOpacity style={styles.fab}>
-          <Text style={styles.fabIcon}>📷</Text>
+          <Ionicons name="camera" size={24} color="white" />
         </TouchableOpacity>
       </View>
     </View>
@@ -109,8 +110,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 8,
-  },
-  fabIcon: {
-    fontSize: 20,
   },
 }); 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, StyleSheet, TouchableOpacity, Modal, Text } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { MetricsCarousel } from '../molecules';
 import { colors, spacing } from '../tokens';
 
@@ -12,15 +12,14 @@ interface MetricItem {
 interface LatestResultsCardProps {
   imageUrl: string;
   metrics: MetricItem[];
+  onPress?: () => void;
 }
 
-export const LatestResultsCard: React.FC<LatestResultsCardProps> = ({ imageUrl, metrics }) => {
-  const [modalVisible, setModalVisible] = React.useState(false);
-
+export const LatestResultsCard: React.FC<LatestResultsCardProps> = ({ imageUrl, metrics, onPress }) => {
   return (
     <View style={styles.container}>
       {/* Hero image */}
-      <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.8}>
+      <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
         <Image
           source={{ uri: imageUrl }}
           style={styles.image}
@@ -34,21 +33,6 @@ export const LatestResultsCard: React.FC<LatestResultsCardProps> = ({ imageUrl, 
           <MetricsCarousel metrics={metrics} ringSize={80} />
         </View>
       )}
-
-      {/* Fullscreen modal */}
-      <Modal visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalBackdrop}>
-          <TouchableOpacity style={styles.modalCloseArea} onPress={() => setModalVisible(false)}>
-            <Text style={styles.closeText}>Close ×</Text>
-          </TouchableOpacity>
-          <Image source={{ uri: imageUrl }} style={styles.modalImage} resizeMode="contain" />
-          {metrics.length > 0 && (
-            <View style={styles.modalMetrics}>
-              <MetricsCarousel metrics={metrics} ringSize={70} />
-            </View>
-          )}
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -68,24 +52,5 @@ const styles = StyleSheet.create({
   metricsContainer: {
     paddingVertical: spacing.m,
     paddingHorizontal: spacing.l,
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: colors.backgroundPrimary,
-  },
-  modalCloseArea: {
-    paddingTop: spacing.xl,
-    paddingHorizontal: spacing.l,
-  },
-  closeText: {
-    fontSize: 18,
-    color: colors.textPrimary,
-  },
-  modalImage: {
-    width: '100%',
-    flex: 1,
-  },
-  modalMetrics: {
-    paddingVertical: spacing.l,
   },
 }); 

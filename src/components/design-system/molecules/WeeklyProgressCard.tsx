@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing } from '../tokens';
+import { Icon } from '../atoms/Icon';
 
 interface ProgressSubRow {
   icon: string;
@@ -34,10 +35,10 @@ export const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({
   style
 }) => {
   const defaultSubRows = [
-    { icon: '⏰', text: 'Keep going strong!' }, 
-    ...(averageScore ? [{ icon: '📊', text: `Average skin score: ${averageScore}` }] : []),
-    ...(improvingMetrics && totalMetrics ? [{ icon: '📈', text: `${improvingMetrics}/${totalMetrics} metrics improving` }] : []),
-    ...(currentStreak ? [{ icon: '🔥', text: `${currentStreak} day streak` }] : [])
+    { icon: 'star', text: 'Keep going strong!' }, 
+    ...(averageScore ? [{ icon: 'analytics-outline', text: `Average skin score: ${averageScore}` }] : []),
+    ...(improvingMetrics && totalMetrics ? [{ icon: 'trending-up', text: `${improvingMetrics}/${totalMetrics} metrics improving` }] : []),
+    ...(currentStreak ? [{ icon: 'flame', text: `${currentStreak} day streak` }] : [])
   ];
 
   const displaySubRows = subRows || defaultSubRows;
@@ -53,7 +54,7 @@ export const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({
         <View style={styles.subRowsContainer}>
           {displaySubRows.map((row, index) => (
             <View key={index} style={styles.subRow}>
-              <Text style={styles.subRowIcon}>{row.icon}</Text>
+              <Icon name={row.icon} size={16} color={colors.textSecondary} style={styles.subRowIcon} />
               <Text style={styles.subRowText}>{row.text}</Text>
             </View>
           ))}
@@ -63,7 +64,7 @@ export const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({
       <View style={styles.iconContainer}>
         <View style={styles.progressIconBackground}>
           <Ionicons 
-            name="analytics-outline" 
+            name="stats-chart" 
             size={32}
             color={colors.accentPalette[2]}
           />

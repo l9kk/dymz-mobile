@@ -21,11 +21,9 @@ export const StarRatingBadge: React.FC<StarRatingBadgeProps> = ({
 
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.laurel}>🌿</Text>
       <View style={styles.starsContainer}>
         {stars}
       </View>
-      <Text style={styles.laurel}>🌿</Text>
     </View>
   );
 };
@@ -44,9 +42,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#F8DB87',
     marginHorizontal: 1,
-  },
-  laurel: {
-    fontSize: 16,
-    opacity: 0.6,
   },
 }); 
