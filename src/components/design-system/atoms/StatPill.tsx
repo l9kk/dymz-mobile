@@ -28,7 +28,7 @@ export const StatPill: React.FC<StatPillProps> = ({
     
     switch (variant) {
       case 'secondary':
-        return { bg: '#6C63FF', text: '#FFFFFF' }; // Modern purple
+        return { bg: '#14B8A6', text: '#FFFFFF' }; // Teal to complement app color scheme
       case 'accent':
         return { bg: '#FF6B6B', text: '#FFFFFF' }; // Modern coral/red
       case 'primary':

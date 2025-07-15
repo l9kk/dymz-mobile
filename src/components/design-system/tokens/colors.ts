@@ -39,13 +39,13 @@ export const colors = {
         '#F5CA31',
         '#F8DB87',
         '#F4A556',
-        '#E08AA9',
+        '#14B8A6', // Teal to complement warm color scheme
         '#6AC47E'
     ],
 
     // Highlight colors for routine building
     highlightYellow: '#FFE7A0',
-    highlightLavender: '#E9E0FF',
+    highlightLavender: '#B2F5EA', // Light teal to complement warm color scheme
     routineTag: '#C7E7C6',
 
     // Insights dashboard colors

@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Modal, Animated } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { 
   SectionHeading,
@@ -76,26 +75,20 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
   } = useLatestAnalysis();
   const analytics = useAnalyticsDashboard();
 
-  // Refresh data when screen comes into focus
-  useFocusEffect(
-    React.useCallback(() => {
-      if (!hasRefreshedOnFocus) {
-        console.log('🔄 AnalysisScreen focused, refreshing data...');
-        refetchLatest();
-        refetchAnalyses();
-        analytics.refetch();
-        setHasRefreshedOnFocus(true);
-      }
-    }, [refetchLatest, refetchAnalyses, analytics, hasRefreshedOnFocus])
-  );
-
-  // Reset refresh flag when screen becomes unfocused
+  // Refresh data when component mounts or when analysis changes
   React.useEffect(() => {
-    const handleScreenBlur = () => {
-      setHasRefreshedOnFocus(false);
-    };
+    if (!hasRefreshedOnFocus) {
+      console.log('🔄 AnalysisScreen mounted, refreshing data...');
+      refetchLatest();
+      refetchAnalyses();
+      analytics.refetch();
+      setHasRefreshedOnFocus(true);
+    }
+  }, [refetchLatest, refetchAnalyses, analytics, hasRefreshedOnFocus]);
 
-    // Reset flag when component unmounts or data changes
+  // Reset refresh flag when component unmounts or analysis changes
+  React.useEffect(() => {
+    // Reset flag when analysis changes
     return () => {
       setHasRefreshedOnFocus(false);
     };
