@@ -42,12 +42,6 @@ export const TrendingProductsIntro: React.FC<TrendingProductsIntroProps> = ({
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <View style={styles.headerSection}>
-        <Icon
-          name={IconNames.trending}
-          size={48}
-          color={colors.brandPrimary}
-          style={styles.headerIcon}
-        />
         <SectionHeading style={styles.heading}>
           Do You Buy{'\n'}Trending Products?
         </SectionHeading>
@@ -57,15 +51,38 @@ export const TrendingProductsIntro: React.FC<TrendingProductsIntroProps> = ({
       </View>
 
       <View style={styles.videoGrid}>
-        {socialVideos.map((video) => (
+        <View style={styles.gridRow}>
           <SocialVideoTile
-            key={video.id}
-            title={video.title}
-            count={video.count}
-            iconName={video.iconName}
+            key={socialVideos[0].id}
+            title={socialVideos[0].title}
+            count={socialVideos[0].count}
+            iconName={socialVideos[0].iconName}
             selected={false}
           />
-        ))}
+          <SocialVideoTile
+            key={socialVideos[1].id}
+            title={socialVideos[1].title}
+            count={socialVideos[1].count}
+            iconName={socialVideos[1].iconName}
+            selected={false}
+          />
+        </View>
+        <View style={styles.gridRow}>
+          <SocialVideoTile
+            key={socialVideos[2].id}
+            title={socialVideos[2].title}
+            count={socialVideos[2].count}
+            iconName={socialVideos[2].iconName}
+            selected={false}
+          />
+          <SocialVideoTile
+            key={socialVideos[3].id}
+            title={socialVideos[3].title}
+            count={socialVideos[3].count}
+            iconName={socialVideos[3].iconName}
+            selected={false}
+          />
+        </View>
       </View>
 
       <View style={styles.infoSection}>
@@ -91,49 +108,22 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    paddingHorizontal: spacing.l,
-    paddingTop: spacing.xl,
+    paddingHorizontal: spacing.m,
+    paddingTop: 80, // Extra padding for dynamic island compatibility
     paddingBottom: spacing.xl,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerSection: {
     alignItems: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: spacing['2xl'],
     width: '100%',
   },
   headerIcon: {
-    marginBottom: spacing.m,
-  },
-  heading: {
-    textAlign: 'center',
-    marginBottom: spacing.s,
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: 'center',
     marginBottom: spacing.l,
-  },
-  videoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: spacing.m,
-    marginBottom: spacing.xl,
-    width: '100%',
-    paddingHorizontal: spacing.s,
-  },
-  infoSection: {
     backgroundColor: colors.backgroundSecondary,
-    padding: spacing.l,
-    borderRadius: 16,
-    marginBottom: spacing.xl,
-    width: '100%',
+    borderRadius: 50,
+    padding: spacing.m,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -143,15 +133,58 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
+  heading: {
+    textAlign: 'center',
+    marginBottom: spacing.m,
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+    lineHeight: 34,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: spacing.l,
+    lineHeight: 22,
+  },
+  videoGrid: {
+    alignItems: 'center',
+    marginBottom: spacing.xl,
+    width: '100%',
+    paddingHorizontal: spacing.s,
+  },
+  gridRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: spacing.m,
+    gap: spacing.m,
+  },
+  infoSection: {
+    backgroundColor: colors.backgroundSecondary,
+    padding: spacing.xl,
+    borderRadius: 20,
+    marginBottom: spacing.xl,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
+  },
   infoText: {
     fontSize: 16,
     color: colors.textPrimary,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 24,
     fontWeight: '500',
   },
   buttonContainer: {
     width: '100%',
-    marginTop: spacing.l,
+    marginTop: spacing.m,
   },
 }); 

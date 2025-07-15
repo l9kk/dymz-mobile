@@ -28,6 +28,16 @@ export const SocialProofResults: React.FC<SocialProofResultsProps> = ({
       iconName: IconNames.skincare,
       title: 'Smart Routines',
       description: 'Personalized daily skincare'
+    },
+    {
+      iconName: IconNames.sparkles,
+      title: 'AI Analysis',
+      description: 'Advanced skin analysis technology'
+    },
+    {
+      iconName: IconNames.shield,
+      title: 'Expert Guidance',
+      description: 'Dermatologist-backed recommendations'
     }
   ];
 
@@ -53,39 +63,36 @@ export const SocialProofResults: React.FC<SocialProofResultsProps> = ({
         style={styles.statsSection}
       />
 
-      <View style={styles.testimonialsSection}>
-        <AvatarQuoteRow
-          avatarUri=""
-          author="Sarah M."
-          quote="My acne has reduced by 70% in just one month!"
-          style={styles.testimonial}
-        />
-        
-        <AvatarQuoteRow
-          avatarUri=""
-          author="Jessica L."
-          quote="Finally found products that actually work for my sensitive skin"
-          style={styles.testimonial}
-        />
-        
-        <AvatarQuoteRow
-          avatarUri=""
-          author="Maria K."
-          quote="The progress tracking keeps me motivated every day"
-          style={styles.testimonial}
-        />
+      <View style={styles.descriptionSection}>
+        <Text style={styles.description}>
+          Join thousands who've transformed their skin with our AI-powered skincare platform. 
+          Get personalized routines, track your progress, and achieve the clear, healthy skin you deserve.
+        </Text>
       </View>
 
-      <View style={styles.featuresRow}>
-        {features.map((feature, index) => (
-          <IconFeatureCard
-            key={index}
-            iconName={feature.iconName}
-            title={feature.title}
-            description={feature.description}
-            style={styles.featureCard}
-          />
-        ))}
+      <View style={styles.featuresGrid}>
+        <View style={styles.featuresRow}>
+          {features.slice(0, 2).map((feature, index) => (
+            <IconFeatureCard
+              key={index}
+              iconName={feature.iconName}
+              title={feature.title}
+              description={feature.description}
+              style={styles.featureCard}
+            />
+          ))}
+        </View>
+        <View style={styles.featuresRow}>
+          {features.slice(2, 4).map((feature, index) => (
+            <IconFeatureCard
+              key={index + 2}
+              iconName={feature.iconName}
+              title={feature.title}
+              description={feature.description}
+              style={styles.featureCard}
+            />
+          ))}
+        </View>
       </View>
 
       <View style={styles.ctaSection}>
@@ -114,6 +121,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.xl,
     paddingHorizontal: spacing.l,
+    paddingVertical: spacing.l,
+    backgroundColor: colors.backgroundSecondary,
+    borderRadius: 20,
+    marginHorizontal: spacing.l,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   successIcon: {
     marginBottom: spacing.m,
@@ -125,17 +144,26 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.l,
     marginBottom: spacing.xl,
   },
-  testimonialsSection: {
+  descriptionSection: {
     paddingHorizontal: spacing.l,
     marginBottom: spacing.xl,
+    alignItems: 'center',
   },
-  testimonial: {
-    marginBottom: spacing.m,
+  description: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: spacing.l,
+  },
+  featuresGrid: {
+    paddingHorizontal: spacing.l,
+    marginBottom: spacing.xl,
   },
   featuresRow: {
     flexDirection: 'row',
-    paddingHorizontal: spacing.l,
-    marginBottom: spacing.xl,
+    justifyContent: 'space-between',
+    marginBottom: spacing.m,
     gap: spacing.m,
   },
   featureCard: {
