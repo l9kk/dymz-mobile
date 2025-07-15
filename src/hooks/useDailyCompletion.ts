@@ -14,6 +14,7 @@ const STORAGE_KEY_PREFIX = '@daily_completion_status';
 
 export const useDailyCompletion = () => {
     const { user, isAuthenticated } = useAuthStore();
+    const [isLoading, setIsLoading] = useState(true);
     const [dailyStatus, setDailyStatus] = useState<DailyCompletionState>({
         morningCompletedToday: false,
         eveningCompletedToday: false,
@@ -40,12 +41,19 @@ export const useDailyCompletion = () => {
         if (!dateString) return false;
         const today = getTodayDateString();
 
-        // Extract date part from ISO string or date string
-        const dateOnly = dateString.includes('T')
-            ? dateString.split('T')[0]
-            : dateString.split(' ')[0] || dateString;
+        // Handle both ISO strings and regular date strings
+        let dateOnly: string;
+        if (dateString.includes('T')) {
+            // For ISO strings, convert to local date to match getTodayDateString behavior
+            const date = new Date(dateString);
+            dateOnly = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        } else {
+            // For regular date strings, extract date part
+            dateOnly = dateString.split(' ')[0] || dateString;
+        }
 
-        return dateOnly === today;
+        const result = dateOnly === today;
+        return result;
     }, []);
 
     // Load daily status with automatic reset check
@@ -60,8 +68,11 @@ export const useDailyCompletion = () => {
                 lastEveningCompletion: null,
                 lastResetDate: getTodayDateString(),
             });
+            setIsLoading(false);
             return;
         }
+
+        setIsLoading(true);
 
         try {
             const stored = await AsyncStorage.getItem(storageKey);
@@ -91,12 +102,14 @@ export const useDailyCompletion = () => {
                     const morningIsToday = isToday(parsedStatus.lastMorningCompletion);
                     const eveningIsToday = isToday(parsedStatus.lastEveningCompletion);
 
-                    setDailyStatus({
+                    const finalStatus = {
                         ...parsedStatus,
                         morningCompletedToday: morningIsToday,
                         eveningCompletedToday: eveningIsToday,
                         lastResetDate: today, // Ensure reset date is updated
-                    });
+                    };
+
+                    setDailyStatus(finalStatus);
                 }
             } else {
                 // No stored data, start fresh
@@ -121,6 +134,8 @@ export const useDailyCompletion = () => {
                 lastEveningCompletion: null,
                 lastResetDate: getTodayDateString(),
             });
+        } finally {
+            setIsLoading(false);
         }
     }, [getStorageKey, isAuthenticated, isToday]);
 
@@ -132,7 +147,9 @@ export const useDailyCompletion = () => {
             return false;
         }
 
-        const now = new Date().toISOString();
+        // Use local timezone for consistency with getTodayDateString
+        const now = new Date();
+        const localISOString = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString();
         const today = getTodayDateString();
 
         try {
@@ -142,11 +159,11 @@ export const useDailyCompletion = () => {
                 ...(routineType === 'morning'
                     ? {
                         morningCompletedToday: true,
-                        lastMorningCompletion: now,
+                        lastMorningCompletion: localISOString,
                     }
                     : {
                         eveningCompletedToday: true,
-                        lastEveningCompletion: now,
+                        lastEveningCompletion: localISOString,
                     }
                 ),
             };
@@ -225,9 +242,11 @@ export const useDailyCompletion = () => {
 
     // Check if routine is completed today
     const isRoutineCompletedToday = useCallback((routineType: 'morning' | 'evening') => {
-        return routineType === 'morning'
+        const result = routineType === 'morning'
             ? dailyStatus.morningCompletedToday
             : dailyStatus.eveningCompletedToday;
+
+        return result;
     }, [dailyStatus]);
 
     // Check if both routines are completed today
@@ -258,6 +277,7 @@ export const useDailyCompletion = () => {
 
     return {
         dailyStatus,
+        isLoading,
         isRoutineCompletedToday,
         markRoutineCompleted,
         bothRoutinesCompletedToday,

@@ -70,7 +70,8 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
   const { 
     isRoutineCompletedToday, 
     markRoutineCompleted, 
-    bothRoutinesCompletedToday 
+    bothRoutinesCompletedToday,
+    isLoading: isDailyStatusLoading
   } = useDailyCompletion();
 
   const handleRefresh = async () => {
@@ -155,7 +156,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
     }
   };
 
-  const isLoading = !routines && !stats;
+  const isLoading = !routines && !stats || isDailyStatusLoading;
 
   if (isLoading) {
     return (
@@ -254,6 +255,17 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
             {routineSteps.map((step: any, index: number) => {
               const stepIdentifier = `${currentRoutine?.id}-${index}`;
               const isRoutineCompleted = isRoutineCompletedToday(selectedTab);
+              const isStepInCompletedArray = completedSteps.includes(stepIdentifier);
+              const finalIsCompleted = isRoutineCompleted || isStepInCompletedArray;
+              
+              console.log('🔥 DEBUG: Rendering step', {
+                stepIdentifier,
+                selectedTab,
+                isRoutineCompleted,
+                isStepInCompletedArray,
+                finalIsCompleted,
+                completedStepsArray: completedSteps
+              });
               
               return (
                 <TouchableOpacity
@@ -266,7 +278,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
                     stepNumber={step.order || index + 1}
                     title={step.step || `Step ${index + 1}`}
                     description={step.instructions || 'Follow the product instructions carefully'}
-                    isCompleted={isRoutineCompleted || completedSteps.includes(stepIdentifier)}
+                    isCompleted={finalIsCompleted}
                     productInfo={step.product_id ? {
                       name: `Product ${index + 1}`,
                       brand: 'Recommended'

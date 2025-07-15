@@ -48,33 +48,41 @@ const createApiClient = (): AxiosInstance => {
                 // Get current session from Supabase
                 const { data: { session } } = await supabase.auth.getSession();
 
-                // 🆕 Proactively refresh the session if it's close to expiring (within 30 seconds)
+                // Check if we have a valid session
                 if (session?.access_token && session.expires_at) {
                     const now = Math.floor(Date.now() / 1000);
                     const secondsUntilExpiry = session.expires_at - now;
 
-                    if (secondsUntilExpiry < 30) {
+                    // If token is expired or expiring soon (within 60 seconds), refresh it
+                    if (secondsUntilExpiry < 60) {
                         if (Config.APP.DEBUG) {
                             console.log('🔄 Supabase token expiring soon, refreshing...');
                         }
-                        const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
-                        if (!refreshError && refreshed.session?.access_token) {
-                            if (Config.APP.DEBUG) {
-                                console.log('✅ Token refreshed successfully');
+                        
+                        try {
+                            const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
+                            
+                            if (!refreshError && refreshed.session?.access_token) {
+                                if (Config.APP.DEBUG) {
+                                    console.log('✅ Token refreshed successfully');
+                                }
+                                config.headers.Authorization = `Bearer ${refreshed.session.access_token}`;
+                            } else {
+                                if (Config.APP.DEBUG) {
+                                    console.warn('⚠️ Token refresh failed (pre-request):', refreshError?.message);
+                                }
+                                // Use the existing token even if refresh failed
+                                config.headers.Authorization = `Bearer ${session.access_token}`;
                             }
-                            config.headers.Authorization = `Bearer ${refreshed.session.access_token}`;
-                        } else {
-                            if (Config.APP.DEBUG) {
-                                console.warn('⚠️ Token refresh failed (pre-request):', refreshError?.message);
-                            }
+                        } catch (refreshError) {
+                            console.error('Token refresh exception:', refreshError);
+                            // Use the existing token as fallback
+                            config.headers.Authorization = `Bearer ${session.access_token}`;
                         }
+                    } else {
+                        // Token is still valid, use it
+                        config.headers.Authorization = `Bearer ${session.access_token}`;
                     }
-                }
-
-                // Attach (possibly refreshed) token if available
-                const { data: { session: latestSession } } = await supabase.auth.getSession();
-                if (latestSession?.access_token) {
-                    config.headers.Authorization = `Bearer ${latestSession.access_token}`;
                 }
 
                 // Log request in debug mode
@@ -156,25 +164,40 @@ const createApiClient = (): AxiosInstance => {
             }
 
             // Handle 401 Unauthorized - refresh token or logout
-            if (error.response?.status === 401) {
+            if (error.response?.status === 401 && !error.config?._retry) {
+                console.log('🔄 401 error - attempting token refresh...');
+                
                 try {
-                    // Try to refresh the session
-                    const { data: { session }, error: refreshError } = await supabase.auth.refreshSession();
-
-                    if (refreshError || !session) {
-                        // If refresh fails, sign out user
+                    // Mark this request as retried to prevent infinite loops
+                    error.config._retry = true;
+                    
+                    // Attempt to refresh the session
+                    const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
+                    
+                    if (!refreshError && refreshed.session?.access_token) {
+                        console.log('✅ Token refresh successful, retrying request...');
+                        
+                        // Update the Authorization header with the new token
+                        error.config.headers.Authorization = `Bearer ${refreshed.session.access_token}`;
+                        
+                        // Retry the original request
+                        return client(error.config);
+                    } else {
+                        console.log('❌ Token refresh failed, redirecting to login...');
+                        
+                        // Clear the session if refresh failed
                         await supabase.auth.signOut();
-                        console.log('Session expired, user signed out');
-                        return Promise.reject(apiError);
+                        
+                        // Reject with a clear error message
+                        return Promise.reject(new Error('Authentication failed - please log in again'));
                     }
-
-                    // Retry the original request with new token
-                    const originalRequest = error.config;
-                    originalRequest.headers.Authorization = `Bearer ${session.access_token}`;
-                    return client(originalRequest);
                 } catch (refreshError) {
-                    console.error('Token refresh failed:', refreshError);
+                    console.error('Token refresh exception:', refreshError);
+                    
+                    // Clear the session on refresh failure
                     await supabase.auth.signOut();
+                    
+                    return Promise.reject(new Error('Authentication failed - please log in again'));
                 }
             }
 
