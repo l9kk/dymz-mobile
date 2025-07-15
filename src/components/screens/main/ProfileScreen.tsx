@@ -122,7 +122,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           value={streakData?.current_streak || 0}
           label="Day Streak"
           variant="secondary"
-          icon="🔥"
+          icon="flame"
         />
       </View>
 

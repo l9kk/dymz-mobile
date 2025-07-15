@@ -11,7 +11,8 @@ import {
   SuccessBadge,
   CircleAvatarCluster,
   IconFeatureCard,
-  LatestResultsCard
+  LatestResultsCard,
+  Icon
 } from '../../design-system';
 import { colors, spacing } from '../../design-system/tokens';
 import { useGamificationDashboard, useStreakProgress } from '../../../hooks/api/useGamification';
@@ -74,6 +75,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 }) => {
   const [refreshing, setRefreshing] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [checkInModalVisible, setCheckInModalVisible] = React.useState(false);
   const [timeUntilNext, setTimeUntilNext] = React.useState<string>('');
   const throwAsyncError = useThrowAsyncError();
   const insets = useSafeAreaInsets();
@@ -120,6 +122,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   const metrics = getMetricsFromAnalysis();
+
+  // Helper function to check if user has completed daily tasks locally
+  const hasCompletedDailyTasks = (): boolean => {
+    if (!latestAnalysis) return false;
+    
+    // Check if user has taken an analysis today
+    const availabilityStatus = getAnalysisAvailabilityStatus(latestAnalysis.created_at);
+    return !availabilityStatus.isAvailable; // If not available, it means they already took one today
+  };
 
   // Calculate time until next analysis using daily reset logic
   React.useEffect(() => {
@@ -172,10 +183,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       return;
     }
     
-    checkIn.mutate({
-      completed_routine_steps: ['morning_cleanse', 'moisturizer', 'sunscreen'],
-      notes: 'Feeling great today!'
-    });
+    // Show modal instead of direct check-in
+    setCheckInModalVisible(true);
   };
 
   const handleSignIn = async () => {
@@ -252,15 +261,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Latest Analysis Result Card */}
           {latestAnalysis && latestAnalysis.status === 'completed' && latestAnalysis.image_url && (
             <View style={styles.section}>
-              <TouchableOpacity 
+              <LatestResultsCard 
+                imageUrl={latestAnalysis.image_url} 
+                metrics={metrics} 
                 onPress={() => setModalVisible(true)}
-                activeOpacity={0.8}
-              >
-                <LatestResultsCard 
-                  imageUrl={latestAnalysis.image_url} 
-                  metrics={metrics} 
-                />
-              </TouchableOpacity>
+              />
             </View>
           )}
 
@@ -274,7 +279,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   value={streakData.current_streak || 0}
                   label="Day Streak"
                   variant="primary"
-                  icon="🔥"
+                  icon="flame"
                 />
                   </View>
                   <View style={[styles.statPillWrapper, styles.lastStatPill]}>
@@ -282,7 +287,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   value={`${Math.round((stats.improvement_score || 0) * 100)}%`}
                   label="Improvement"
                   variant="accent"
-                  icon="📈"
+                  icon="trending-up"
                 />
                   </View>
               </>
@@ -293,7 +298,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </View>
 
           {/* Daily Check-in */}
-          {!checkIn.isSuccess && (
+          {!(checkIn.isSuccess || hasCompletedDailyTasks()) && (
             <TouchableOpacity 
               style={styles.checkInCard}
               onPress={handleDailyCheckIn}
@@ -339,8 +344,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <View style={styles.streakHeader}>
                   <Text style={styles.streakTitle}>
                     {streakData.current_streak > 0 
-                      ? `${streakData.current_streak} Day Streak! 🔥`
-                      : "Ready to Start Your Journey? ✨"
+                      ? `${streakData.current_streak} Day Streak!`
+                      : "Ready to Start Your Journey?"
                     }
                   </Text>
                 </View>
@@ -352,7 +357,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </Text>
                 {streakData.longest_streak > 0 && (
                   <Text style={styles.streakRecord}>
-                    Personal Best: {streakData.longest_streak} days 🏆
+                    Personal Best: {streakData.longest_streak} days
                   </Text>
                 )}
               </View>
@@ -375,7 +380,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <View style={styles.actionsRow}>
                 <View style={[styles.actionCardWrapper, styles.firstActionCard]}>
               <IconFeatureCard
-                iconName="📸"
+                iconName="camera"
                 title="Take Analysis"
                 description="Track your skin progress"
                 onPress={onNavigateToAnalysis}
@@ -384,7 +389,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </View>
                 <View style={[styles.actionCardWrapper, styles.lastActionCard]}>
               <IconFeatureCard
-                iconName="🧴"
+                iconName="routine"
                 title="Check Routine"
                 description="View today's steps"
                 onPress={onNavigateToRoutine}
@@ -395,7 +400,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <View style={[styles.actionsRow, styles.lastActionsRow]}>
                 <View style={[styles.actionCardWrapper, styles.firstActionCard]}>
               <IconFeatureCard
-                iconName="🔥"
+                iconName="flame"
                 title="Streak Progress"
                 description={streakData ? `${streakData.current_streak} day streak` : 'Backend offline'}
                 onPress={onNavigateToProfile}
@@ -404,7 +409,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </View>
                 <View style={[styles.actionCardWrapper, styles.lastActionCard]}>
               <IconFeatureCard
-                iconName="📊"
+                iconName="analytics-outline"
                 title="Analytics"
                 description="View insights"
                 onPress={onNavigateToAnalysis}
@@ -415,6 +420,73 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </View>
           </View>
         </ScrollView>
+
+        {/* Daily Check-in Modal */}
+        <Modal
+          visible={checkInModalVisible}
+          animationType="fade"
+          transparent={true}
+          onRequestClose={() => setCheckInModalVisible(false)}
+        >
+          <TouchableOpacity 
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setCheckInModalVisible(false)}
+          >
+            <View style={styles.checkInModalContainer}>
+              <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
+                <View style={styles.checkInModalContent}>
+                  <View style={styles.checkInModalHeader}>
+                    <View style={styles.checkInModalIconContainer}>
+                      <Icon name="camera" size={32} color="#4ECDC4" />
+                    </View>
+                    <Text style={styles.checkInModalTitle}>Complete Your Daily Check-in</Text>
+                  </View>
+                  
+                  <View style={styles.checkInModalBody}>
+                    <Text style={styles.checkInModalDescription}>
+                      To complete your daily check-in, you need to:
+                    </Text>
+                    
+                    <View style={styles.checkInModalSteps}>
+                      <View style={styles.checkInModalStep}>
+                        <Icon name="camera" size={20} color="#5C5243" />
+                        <Text style={styles.checkInModalStepText}>Take a photo for skin analysis</Text>
+                      </View>
+                      
+                      <View style={styles.checkInModalStep}>
+                        <Icon name="routine" size={20} color="#5C5243" />
+                        <Text style={styles.checkInModalStepText}>Complete your skincare routine</Text>
+                      </View>
+                    </View>
+                    
+                    <View style={styles.checkInModalButtons}>
+                      <TouchableOpacity 
+                        style={styles.checkInModalPrimaryButton}
+                        onPress={() => {
+                          setCheckInModalVisible(false);
+                          onNavigateToAnalysis?.();
+                        }}
+                      >
+                        <Text style={styles.checkInModalPrimaryButtonText}>Take Photo</Text>
+                      </TouchableOpacity>
+                      
+                      <TouchableOpacity 
+                        style={styles.checkInModalSecondaryButton}
+                        onPress={() => {
+                          setCheckInModalVisible(false);
+                          onNavigateToRoutine?.();
+                        }}
+                      >
+                        <Text style={styles.checkInModalSecondaryButtonText}>View Routine</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
 
         {/* Full Analysis Modal */}
         <Modal
@@ -726,6 +798,100 @@ const styles = StyleSheet.create({
   },
   modalInfoText: {
     fontSize: 16,
+    color: colors.textPrimary,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkInModalContainer: {
+    margin: spacing.l,
+    backgroundColor: colors.backgroundPrimary,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 25,
+    elevation: 15,
+  },
+  checkInModalContent: {
+    padding: spacing.l,
+  },
+  checkInModalHeader: {
+    alignItems: 'center',
+    marginBottom: spacing.m,
+  },
+  checkInModalIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(78, 205, 196, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.m,
+  },
+  checkInModalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+  checkInModalBody: {
+    alignItems: 'center',
+  },
+  checkInModalDescription: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: spacing.m,
+  },
+  checkInModalSteps: {
+    alignSelf: 'stretch',
+    marginBottom: spacing.l,
+  },
+  checkInModalStep: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.backgroundSecondary,
+    padding: spacing.m,
+    borderRadius: 12,
+    marginBottom: spacing.s,
+  },
+  checkInModalStepText: {
+    fontSize: 16,
+    color: colors.textPrimary,
+    marginLeft: spacing.m,
+    flex: 1,
+  },
+  checkInModalButtons: {
+    alignSelf: 'stretch',
+    gap: spacing.m,
+  },
+  checkInModalPrimaryButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.m,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  checkInModalPrimaryButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.surface,
+  },
+  checkInModalSecondaryButton: {
+    backgroundColor: colors.backgroundSecondary,
+    paddingVertical: spacing.m,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  checkInModalSecondaryButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.textPrimary,
   },
 }); 
