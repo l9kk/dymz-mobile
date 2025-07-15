@@ -26,8 +26,6 @@ import {
   SurveyStatementYN,
   NotificationsPermissionExplain,
   TrendingProductsIntro,
-  SurveyStatementYN_Collage,
-  SurveyStatementYN_Single_02,
   SocialProofResults,
   SuccessMotivations,
   SkinIssuesIntro,
@@ -82,9 +80,6 @@ type AppState =
   | 'survey-statement-2'
   | 'notifications-permission'
   | 'trending-products-intro'
-  | 'survey-collage-statement'
-  | 'survey-single-statement'
-  | 'survey-statement-single-02'
   | 'social-proof-results'
   | 'success-motivations'
   | 'skin-issues-intro'
@@ -297,8 +292,7 @@ const AppContent: React.FC = () => {
           'capture-guidelines', 'camera-preview', 'processing-analysis', 'know-you-better-intro',
           'onboarding-gender', 'onboarding-age', 'value-prop-expert', 'onboarding-skincare-experience',
           'value-prop-database', 'success-understanding', 'motivation-intro', 'survey-statement-1',
-          'survey-statement-2', 'notifications-permission', 'trending-products-intro', 'survey-collage-statement',
-          'survey-single-statement', 'survey-statement-single-02', 'social-proof-results', 'success-motivations',
+          'survey-statement-2', 'notifications-permission', 'trending-products-intro', 'social-proof-results', 'success-motivations',
           'skin-issues-intro', 'select-top-concern', 'concern-duration', 'motivation-why-concern',
           'success-skin-issues', 'rating-prompt', 'plan-roadmap', 'analysis-loading', 'results-legend',
           'first-analysis-view', 'build-routine-intro', 'sun-exposure-level', 'product-usage-yes-no',
@@ -613,55 +607,6 @@ const AppContent: React.FC = () => {
 
   // Block 7 navigation handlers
   const handleTrendingProductsIntro = () => {
-    transitionToScreen('survey-collage-statement');
-  };
-
-  const handleCollageStatementYes = () => {
-    setUserData(prev => ({
-      ...prev,
-      trendingProducts: { ...prev.trendingProducts, buysTrendingProducts: true }
-    }));
-    transitionToScreen('survey-single-statement');
-  };
-
-  const handleCollageStatementNo = () => {
-    setUserData(prev => ({
-      ...prev,
-      trendingProducts: { ...prev.trendingProducts, buysTrendingProducts: false }
-    }));
-    transitionToScreen('survey-single-statement');
-  };
-
-  const handleSingleStatementYes = () => {
-    setUserData(prev => ({
-      ...prev,
-      trendingProducts: { ...prev.trendingProducts, influencedBySocial: true }
-    }));
-    transitionToScreen('survey-statement-single-02');
-  };
-
-  const handleSingleStatementNo = () => {
-    setUserData(prev => ({
-      ...prev,
-      trendingProducts: { ...prev.trendingProducts, influencedBySocial: false }
-    }));
-    transitionToScreen('survey-statement-single-02');
-  };
-
-  // Block 8 navigation handlers
-  const handleSurveyStatementSingle02Yes = () => {
-    setUserData(prev => ({
-      ...prev,
-      deepMotivation: { ...prev.deepMotivation, neverAchieveDreamSkin: true }
-    }));
-    transitionToScreen('social-proof-results');
-  };
-
-  const handleSurveyStatementSingle02No = () => {
-    setUserData(prev => ({
-      ...prev,
-      deepMotivation: { ...prev.deepMotivation, neverAchieveDreamSkin: false }
-    }));
     transitionToScreen('social-proof-results');
   };
 
@@ -1030,17 +975,8 @@ const AppContent: React.FC = () => {
       case 'trending-products-intro':
         transitionToScreen('notifications-permission', 'back');
         break;
-      case 'survey-collage-statement':
-        transitionToScreen('trending-products-intro', 'back');
-        break;
-      case 'survey-single-statement':
-        transitionToScreen('survey-collage-statement', 'back');
-        break;
-      case 'survey-statement-single-02':
-        transitionToScreen('survey-single-statement', 'back');
-        break;
       case 'social-proof-results':
-        transitionToScreen('survey-statement-single-02', 'back');
+        transitionToScreen('trending-products-intro', 'back');
         break;
       case 'success-motivations':
         transitionToScreen('social-proof-results', 'back');
@@ -1183,34 +1119,6 @@ const AppContent: React.FC = () => {
         return <NotificationsPermissionExplain onContinue={handleNotificationsComplete} onBack={handleBack} currentStep={3} totalSteps={3} />;
       case 'trending-products-intro':
         return <TrendingProductsIntro onContinue={handleTrendingProductsIntro} />;
-      case 'survey-collage-statement':
-        return <SurveyStatementYN 
-          onYes={handleCollageStatementYes} 
-          onNo={handleCollageStatementNo} 
-          onBack={handleBack}
-          currentStep={1}
-          totalSteps={2}
-          questionTitle="How about this statement?"
-          statementQuote="I love experimenting with trendy skincare products and routines I see on social media."
-          statementImageKey="trendingProductsBuying"
-        />;
-      case 'survey-single-statement':
-        return <SurveyStatementYN 
-          onYes={handleSingleStatementYes} 
-          onNo={handleSingleStatementNo} 
-          onBack={handleBack}
-          currentStep={1}
-          totalSteps={2}
-          questionTitle="How about this statement?"
-          statementQuote="Social media influencers are my main source for skincare advice and product recommendations."
-          statementImageKey="timeConstraints"
-        />;
-      case 'survey-statement-single-02':
-        return <SurveyStatementYN_Single_02 
-          onYes={handleSurveyStatementSingle02Yes} 
-          onNo={handleSurveyStatementSingle02No} 
-          onBack={handleBack}
-        />;
       case 'social-proof-results':
         return <SocialProofResults onContinue={handleSocialProofResultsContinue} />;
       case 'success-motivations':
