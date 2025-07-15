@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing } from '../design-system/tokens';
 
 export type TabRoute = 'home' | 'analysis' | 'routine' | 'profile';
@@ -13,14 +14,15 @@ interface TabNavigatorProps {
 interface TabItem {
   route: TabRoute;
   label: string;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  activeIcon?: keyof typeof Ionicons.glyphMap;
 }
 
 const tabs: TabItem[] = [
-  { route: 'home', label: 'Home', icon: '🏠' },
-  { route: 'analysis', label: 'Analysis', icon: '📸' },
-  { route: 'routine', label: 'Routine', icon: '🧴' },
-  { route: 'profile', label: 'Profile', icon: '👤' }
+  { route: 'home', label: 'Home', icon: 'home-outline', activeIcon: 'home' },
+  { route: 'analysis', label: 'Analysis', icon: 'analytics-outline', activeIcon: 'analytics' },
+  { route: 'routine', label: 'Routine', icon: 'medical-outline', activeIcon: 'medical' },
+  { route: 'profile', label: 'Profile', icon: 'person-outline', activeIcon: 'person' }
 ];
 
 export const TabNavigator: React.FC<TabNavigatorProps> = ({
@@ -34,6 +36,7 @@ export const TabNavigator: React.FC<TabNavigatorProps> = ({
       <View style={styles.tabBar}>
         {tabs.map((tab) => {
           const isActive = currentTab === tab.route;
+          const iconName = isActive ? (tab.activeIcon || tab.icon) : tab.icon;
           
           return (
             <TouchableOpacity
@@ -42,12 +45,15 @@ export const TabNavigator: React.FC<TabNavigatorProps> = ({
               onPress={() => onTabChange(tab.route)}
               activeOpacity={0.7}
             >
-              <Text style={[
-                styles.tabIcon,
-                isActive && styles.activeTabIcon
-              ]}>
-                {tab.icon}
-              </Text>
+              <Ionicons
+                name={iconName}
+                size={24}
+                color={isActive ? colors.ctaBackground : colors.textSecondary}
+                style={[
+                  styles.tabIcon,
+                  isActive && styles.activeTabIcon
+                ]}
+              />
               <Text style={[
                 styles.tabLabel,
                 isActive && styles.activeTabLabel
@@ -87,7 +93,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
   },
   tabIcon: {
-    fontSize: 24,
     marginBottom: spacing.xs,
   },
   activeTabIcon: {

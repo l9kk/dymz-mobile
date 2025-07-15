@@ -34,8 +34,6 @@ export { SuccessMotivations } from './SuccessMotivations';
 export { SuccessSkinIssues } from './SuccessSkinIssues';
 export { SuccessUnderstanding } from './SuccessUnderstanding';
 export { SurveyStatementYN } from './SurveyStatementYN';
-export { SurveyStatementYN_Collage } from './SurveyStatementYN_Collage';
-export { SurveyStatementYN_Single_02 } from './SurveyStatementYN_Single_02';
 export { TrendingProductsIntro } from './TrendingProductsIntro';
 export { UserProfile } from './UserProfile';
 export { ValuePropDatabase } from './ValuePropDatabase';

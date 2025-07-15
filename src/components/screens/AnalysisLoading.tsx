@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
-import { LoadingProgressRing, StatParagraph, Icon } from '../design-system';
+import { LoadingProgressRing, Icon } from '../design-system';
 import { colors, spacing, typography } from '../design-system/tokens';
 import { useAnalysisWithPolling } from '../../hooks/api/useAnalysis';
 
@@ -108,35 +108,8 @@ export const AnalysisLoading: React.FC<AnalysisLoadingProps> = ({
     }
   };
 
-  // Enhanced status handling for better user experience
-  const getDetailedStatusMessage = (progress: number) => {
-    if (!analysisId) {
-      // Mock mode - show different messages based on progress
-      if (progress < 10) return "📷 Optimizing image quality...";
-      if (progress < 30) return "📤 Uploading to secure servers...";
-      if (progress < 80) return "🤖 AI analyzing your skin...";
-      if (progress < 100) return "✨ Finalizing results...";
-      return "✅ Analysis complete!";
-    }
-    
-    // Real mode - show actual status
-    if (!analysis) return "🔧 Preparing your analysis...";
-    
-    switch (analysis.status) {
-      case 'processing':
-        return "🤖 Advanced AI examining your skin metrics...";
-      case 'completed':
-        return "✅ Your personalized skin analysis is ready!";
-      case 'failed':
-        return "❌ Analysis encountered an issue";
-      default:
-        return "🚀 Initializing skin analysis...";
-    }
-  };
-
   const progress = getProgressPercentage();
   const statusMessage = getStatusMessage();
-  const detailedStatusMessage = getDetailedStatusMessage(progress);
 
   return (
     <View style={styles.container}>
@@ -156,10 +129,6 @@ export const AnalysisLoading: React.FC<AnalysisLoadingProps> = ({
             style={{ opacity: 0.8 }}
           />
         </LoadingProgressRing>
-        
-        <StatParagraph style={styles.message}>
-          {detailedStatusMessage}
-        </StatParagraph>
         
         {/* Progress indicator */}
         <View style={styles.progressContainer}>
@@ -219,13 +188,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     maxWidth: 320,
-  },
-  message: {
-    textAlign: 'center',
-    marginTop: spacing.l,
-    marginBottom: spacing.l,
-    fontSize: typography.fontSizes.body,
-        color: colors.textPrimary,
   },
   progressContainer: {
     width: '100%',
