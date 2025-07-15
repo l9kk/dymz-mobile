@@ -130,21 +130,6 @@ export const AnalysisLoading: React.FC<AnalysisLoadingProps> = ({
           />
         </LoadingProgressRing>
         
-        {/* Progress indicator */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View 
-              style={[
-                styles.progressFill, 
-                { width: `${progress}%` }
-              ]} 
-            />
-          </View>
-          <Text style={styles.progressText}>
-            {Math.round(progress)}%
-          </Text>
-        </View>
-        
         {/* Analysis info */}
         <Text style={styles.infoText}>
           {progress < 30 
@@ -188,30 +173,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     maxWidth: 320,
-  },
-  progressContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: spacing.l,
-  },
-  progressBar: {
-    width: '100%',
-    height: 4,
-    backgroundColor: colors.borderPrimary,
-    borderRadius: 2,
-    overflow: 'hidden',
-    marginBottom: spacing.s,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: colors.ctaBackground,
-    borderRadius: 2,
-  },
-  progressText: {
-    fontSize: typography.fontSizes.caption,
-    fontFamily: typography.fontFamilies.body,
-    color: colors.textSecondary,
-    fontWeight: typography.fontWeights.medium,
   },
   infoText: {
     fontSize: typography.fontSizes.caption,

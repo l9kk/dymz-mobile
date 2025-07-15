@@ -367,10 +367,10 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
 
       </ScrollView>
       
-      {/* Confetti Celebration */}
+      {/* Streak Celebration */}
       <ConfettiCelebration
         visible={showCelebration}
-        message={`🎉 ${selectedTab === 'morning' ? 'Morning' : 'Evening'} Routine Complete!`}
+        currentStreak={currentStreak || 1}
         onComplete={() => setShowCelebration(false)}
       />
     </View>

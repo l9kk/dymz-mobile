@@ -143,6 +143,60 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </Text>
             </View>
             
+            {/* Milestone Badges */}
+            <View style={styles.milestonesContainer}>
+              <Text style={styles.milestonesTitle}>Milestone Progress</Text>
+              <View style={styles.milestonesGrid}>
+                {[
+                  { days: 1, emoji: '🎉', label: 'First Day' },
+                  { days: 3, emoji: '✨', label: 'Building' },
+                  { days: 7, emoji: '🔥', label: 'On Fire' },
+                  { days: 14, emoji: '⭐', label: 'Amazing' },
+                  { days: 21, emoji: '💎', label: 'Incredible' },
+                  { days: 30, emoji: '🏆', label: 'Legendary' },
+                ].map((milestone, index) => {
+                  const isEarned = streakData.current_streak >= milestone.days;
+                  const prevMilestone = index > 0 ? [1, 3, 7, 14, 21, 30][index - 1] : 0;
+                  const isNext = !isEarned && streakData.current_streak >= prevMilestone;
+                  
+                  return (
+                    <View key={milestone.days} style={styles.milestoneItem}>
+                      <View style={[
+                        styles.milestoneBadge,
+                        isEarned && styles.milestoneBadgeEarned,
+                        isNext && styles.milestoneBadgeNext
+                      ]}>
+                        <Text style={[
+                          styles.milestoneEmoji,
+                          !isEarned && styles.milestoneEmojiGrayed
+                        ]}>
+                          {milestone.emoji}
+                        </Text>
+                        {isEarned && (
+                          <View style={styles.earnedCheckmark}>
+                            <Text style={styles.checkmarkText}>✓</Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text style={[
+                        styles.milestoneLabel,
+                        isEarned && styles.milestoneLabelEarned
+                      ]}>
+                        {milestone.label}
+                      </Text>
+                      <Text style={[
+                        styles.milestoneDays,
+                        isEarned && styles.milestoneDaysEarned
+                      ]}>
+                        {milestone.days} day{milestone.days > 1 ? 's' : ''}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Current Stats */}
             <View style={styles.streakStats}>
               <View style={styles.streakStat}>
                 <Text style={styles.streakStatValue}>{streakData.current_streak}</Text>
@@ -158,6 +212,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </View>
             </View>
 
+            {/* Progress Bar */}
             {streakData.current_streak > 0 && (
               <View style={styles.progressContainer}>
                 <View style={styles.progressBar}>
@@ -428,5 +483,100 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textSecondary,
     marginBottom: spacing.s,
+  },
+  
+  // Milestone styles
+  milestonesContainer: {
+    marginBottom: spacing.l,
+  },
+  milestonesTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    marginBottom: spacing.m,
+    textAlign: 'center',
+  },
+  milestonesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    paddingHorizontal: spacing.xs,
+    gap: spacing.s,
+  },
+  milestoneItem: {
+    alignItems: 'center',
+    width: '28%',
+    marginBottom: spacing.m,
+  },
+  milestoneBadge: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.xs,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    position: 'relative',
+  },
+  milestoneBadgeEarned: {
+    backgroundColor: colors.successBackground,
+    borderColor: colors.success,
+    shadowColor: colors.success,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  milestoneBadgeNext: {
+    backgroundColor: 'rgba(20, 184, 166, 0.1)',
+    borderColor: colors.accentPalette[3],
+    borderStyle: 'dashed',
+    borderWidth: 2,
+  },
+  milestoneEmoji: {
+    fontSize: 28,
+  },
+  milestoneEmojiGrayed: {
+    opacity: 0.3,
+  },
+  earnedCheckmark: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: colors.successBackground,
+    borderWidth: 2,
+    borderColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmarkText: {
+    fontSize: 10,
+    color: '#FFF',
+    fontWeight: '700',
+  },
+  milestoneLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: spacing.xs,
+  },
+  milestoneLabelEarned: {
+    color: colors.textPrimary,
+  },
+  milestoneDays: {
+    fontSize: 10,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    opacity: 0.7,
+  },
+  milestoneDaysEarned: {
+    color: colors.success,
+    opacity: 1,
   },
 }); 
