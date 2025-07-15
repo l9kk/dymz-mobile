@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Modal } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Modal, Animated } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { 
   SectionHeading,
@@ -48,6 +49,23 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
   const [refreshing, setRefreshing] = React.useState(false);
   const [timeUntilNext, setTimeUntilNext] = React.useState<string>('');
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [hasRefreshedOnFocus, setHasRefreshedOnFocus] = React.useState(false);
+  const [loadingMessageIndex, setLoadingMessageIndex] = React.useState(0);
+  
+  // Animation values
+  const fadeAnim = React.useRef(new Animated.Value(1)).current;
+  const scaleAnim = React.useRef(new Animated.Value(1)).current;
+  const rotateAnim = React.useRef(new Animated.Value(0)).current;
+  const stateTransitionAnim = React.useRef(new Animated.Value(1)).current;
+  
+  // Loading messages that cycle through
+  const loadingMessages = [
+    "Analyzing your skin...",
+    "Detecting skin texture...",
+    "Measuring skin clarity...",
+    "Calculating health scores...",
+    "Almost ready!"
+  ];
   
   // Fetch data with polling for processing analyses
   const { data: analyses, isLoading: analysesLoading, refetch: refetchAnalyses } = useAnalysesList();
@@ -58,6 +76,31 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
   } = useLatestAnalysis();
   const analytics = useAnalyticsDashboard();
 
+  // Refresh data when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!hasRefreshedOnFocus) {
+        console.log('🔄 AnalysisScreen focused, refreshing data...');
+        refetchLatest();
+        refetchAnalyses();
+        analytics.refetch();
+        setHasRefreshedOnFocus(true);
+      }
+    }, [refetchLatest, refetchAnalyses, analytics, hasRefreshedOnFocus])
+  );
+
+  // Reset refresh flag when screen becomes unfocused
+  React.useEffect(() => {
+    const handleScreenBlur = () => {
+      setHasRefreshedOnFocus(false);
+    };
+
+    // Reset flag when component unmounts or data changes
+    return () => {
+      setHasRefreshedOnFocus(false);
+    };
+  }, [latestAnalysis?.id]); // Reset when analysis changes
+
   // Save analysis timestamp to local storage when a new analysis is completed
   React.useEffect(() => {
     if (latestAnalysis?.status === 'completed' && latestAnalysis.created_at) {
@@ -67,12 +110,23 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
 
   // Determine current analysis state with daily reset logic
   const getAnalysisState = async (): Promise<AnalysisState> => {
-    if (!latestAnalysis) return AnalysisState.NO_ANALYSIS;
+    if (!latestAnalysis) {
+      console.log('📊 No latest analysis found, state: NO_ANALYSIS');
+      return AnalysisState.NO_ANALYSIS;
+    }
+    
+    console.log('📊 Checking analysis state for:', {
+      id: latestAnalysis.id,
+      status: latestAnalysis.status,
+      created_at: latestAnalysis.created_at
+    });
     
     switch (latestAnalysis.status) {
       case 'processing':
+        console.log('📊 Analysis is processing');
         return AnalysisState.PROCESSING;
       case 'failed':
+        console.log('📊 Analysis failed');
         return AnalysisState.FAILED;
       case 'completed':
         // Check if analysis is available (daily reset logic)
@@ -80,13 +134,21 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
           const lastAnalysisTime = await AsyncStorage.getItem(ANALYSIS_COOLDOWN_KEY);
           const analysisTimestamp = lastAnalysisTime || latestAnalysis.created_at;
           
-          return isAnalysisAvailable(analysisTimestamp) 
+          const isAvailable = isAnalysisAvailable(analysisTimestamp);
+          console.log('📊 Analysis completed, checking availability:', {
+            analysisTimestamp,
+            isAvailable
+          });
+          
+          return isAvailable 
             ? AnalysisState.READY_FOR_NEW 
             : AnalysisState.HAS_COMPLETED;
-        } catch {
+        } catch (error) {
+          console.error('📊 Error checking analysis availability:', error);
           return AnalysisState.READY_FOR_NEW;
         }
       default:
+        console.log('📊 Unknown analysis status, defaulting to NO_ANALYSIS');
         return AnalysisState.NO_ANALYSIS;
     }
   };
@@ -95,19 +157,111 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
 
   // Update analysis state
   React.useEffect(() => {
-    getAnalysisState().then(setAnalysisState);
-  }, [latestAnalysis?.status, latestAnalysis?.created_at]);
+    getAnalysisState().then((newState) => {
+      if (newState !== analysisState) {
+        console.log('📊 Analysis state changed:', { from: analysisState, to: newState });
+        
+        // Animate state transition
+        Animated.sequence([
+          Animated.timing(stateTransitionAnim, {
+            toValue: 0.8,
+            duration: 150,
+            useNativeDriver: true,
+          }),
+          Animated.timing(stateTransitionAnim, {
+            toValue: 1,
+            duration: 150,
+            useNativeDriver: true,
+          }),
+        ]).start();
+        
+        setAnalysisState(newState);
+      }
+    });
+  }, [latestAnalysis?.status, latestAnalysis?.created_at, latestAnalysis?.id, analysisState, stateTransitionAnim]);
 
   // Auto-refetch when analysis is processing
   React.useEffect(() => {
     if (analysisState === AnalysisState.PROCESSING) {
+      console.log('🔄 Starting polling for processing analysis...');
       const interval = setInterval(() => {
+        console.log('🔄 Polling for analysis update...');
         refetchLatest();
-      }, 5000); // Poll every 5 seconds
+        refetchAnalyses(); // Also refetch analyses list
+      }, 3000); // Poll every 3 seconds for faster updates
       
-      return () => clearInterval(interval);
+      return () => {
+        console.log('⏹️ Stopping analysis polling');
+        clearInterval(interval);
+      };
     }
-  }, [analysisState, refetchLatest]);
+  }, [analysisState, refetchLatest, refetchAnalyses]);
+
+  // Loading animation effects
+  React.useEffect(() => {
+    if (analysisState === AnalysisState.PROCESSING) {
+      // Start continuous rotation animation
+      const rotateAnimation = Animated.loop(
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        })
+      );
+      rotateAnimation.start();
+
+      // Start pulsing animation
+      const pulseAnimation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(scaleAnim, {
+            toValue: 1.1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scaleAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+      pulseAnimation.start();
+
+      // Cycle through loading messages
+      const messageInterval = setInterval(() => {
+        setLoadingMessageIndex((prevIndex) => 
+          (prevIndex + 1) % loadingMessages.length
+        );
+      }, 3000); // Change message every 3 seconds
+
+      return () => {
+        rotateAnimation.stop();
+        pulseAnimation.stop();
+        clearInterval(messageInterval);
+        // Reset animations
+        rotateAnim.setValue(0);
+        scaleAnim.setValue(1);
+      };
+    }
+  }, [analysisState, rotateAnim, scaleAnim, loadingMessages.length]);
+
+  // Smooth text transition animation
+  React.useEffect(() => {
+    if (analysisState === AnalysisState.PROCESSING) {
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 0.3,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [loadingMessageIndex, fadeAnim, analysisState]);
 
   // Extract metrics from analysis
   const getMetricsFromAnalysis = (): MetricItem[] => {
@@ -173,24 +327,72 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
   }, [analysisState, latestAnalysis?.created_at]);
 
   const handleRefresh = async () => {
+    console.log('🔄 Manual refresh triggered');
     setRefreshing(true);
-    await Promise.all([
-      refetchAnalyses(),
-      refetchLatest(),
-      analytics.refetch(),
-    ]);
-    // Update state after refresh
-    const newState = await getAnalysisState();
-    setAnalysisState(newState);
-    setRefreshing(false);
+    
+    try {
+      await Promise.all([
+        refetchAnalyses(),
+        refetchLatest(),
+        analytics.refetch(),
+      ]);
+      
+      // Update state after refresh
+      const newState = await getAnalysisState();
+      console.log('📊 State after refresh:', newState);
+      setAnalysisState(newState);
+    } catch (error) {
+      console.error('❌ Error during refresh:', error);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const handleTakeNewAnalysis = async () => {
+    console.log('📷 Taking new analysis...');
     // Clear cooldown when user takes new analysis
     await AsyncStorage.removeItem(ANALYSIS_COOLDOWN_KEY);
+    
+    // Force refresh to get the latest state
+    await refetchLatest();
+    await refetchAnalyses();
+    
     if (onNavigateToCamera) {
       onNavigateToCamera();
     }
+  };
+
+  // Custom loading component
+  const renderLoadingIndicator = () => {
+    const spin = rotateAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '360deg'],
+    });
+
+    return (
+      <View style={styles.loadingContainer}>
+        <Animated.View
+          style={[
+            styles.loadingRing,
+            {
+              transform: [{ rotate: spin }, { scale: scaleAnim }],
+            },
+          ]}
+        >
+          <View style={styles.loadingRingInner} />
+        </Animated.View>
+        <View style={styles.loadingCenter}>
+          <Animated.View 
+            style={[
+              styles.loadingDot,
+              {
+                transform: [{ scale: scaleAnim }],
+              },
+            ]}
+          />
+        </View>
+      </View>
+    );
   };
 
   const metrics = getMetricsFromAnalysis();
@@ -218,11 +420,26 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
       case AnalysisState.PROCESSING:
         return (
           <View style={styles.processingCard}>
-            <LoadingSpinner size={48} />
-            <Text style={styles.processingTitle}>Analyzing your skin...</Text>
+            {renderLoadingIndicator()}
+            <Animated.View style={{ opacity: fadeAnim }}>
+              <Text style={styles.processingTitle}>
+                {loadingMessages[loadingMessageIndex]}
+              </Text>
+            </Animated.View>
             <Text style={styles.processingSubtitle}>
-              This usually takes 1-2 minutes. We'll update automatically when ready!
+              We're analyzing your skin using advanced AI. This process creates detailed insights about your skin health.
             </Text>
+            <View style={styles.progressDots}>
+              {loadingMessages.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.progressDot,
+                    index === loadingMessageIndex && styles.progressDotActive,
+                  ]}
+                />
+              ))}
+            </View>
           </View>
         );
 
@@ -373,6 +590,16 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
     );
   }
 
+  console.log('📊 AnalysisScreen render:', {
+    analysisState,
+    latestAnalysis: latestAnalysis ? {
+      id: latestAnalysis.id,
+      status: latestAnalysis.status,
+      created_at: latestAnalysis.created_at
+    } : null,
+    isLoading: latestLoading
+  });
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -395,7 +622,9 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
         </View>
 
         {/* Main Content */}
-        {renderMainContent()}
+        <Animated.View style={{ opacity: stateTransitionAnim }}>
+          {renderMainContent()}
+        </Animated.View>
 
         {/* Countdown/Status Section */}
         {renderCountdownSection()}
@@ -405,7 +634,7 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
           <SectionHeading style={styles.sectionTitle}>Actions</SectionHeading>
           <View style={styles.actionsGrid}>
             <IconFeatureCard
-              icon="📷"
+              icon="camera"
               title={analysisState === AnalysisState.NO_ANALYSIS ? "Start Analysis" : "New Analysis"}
               description={isNewAnalysisDisabled ? "Available " + (timeUntilNext === 'Ready now!' ? 'now' : timeUntilNext) : "Take your daily photo"}
               onPress={isNewAnalysisDisabled ? undefined : handleTakeNewAnalysis}
@@ -415,7 +644,7 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
               ]}
             />
             <IconFeatureCard
-              icon="📊"
+              icon="trending-up"
               title="Progress"
               description="View trends"
               onPress={onNavigateToProgress}
@@ -448,7 +677,10 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
           
           <ScrollView style={styles.modalContent}>
             {latestAnalysis?.image_url && (
-              <LatestResultsCard imageUrl={latestAnalysis.image_url} metrics={metrics} />
+              <LatestResultsCard 
+                imageUrl={latestAnalysis.image_url} 
+                metrics={metrics} 
+              />
             )}
             
             <View style={styles.modalInfoSection}>
@@ -545,22 +777,100 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.l,
     marginBottom: spacing.l,
     backgroundColor: colors.surfaceNeutral,
-    borderRadius: 16,
-    padding: spacing.xl,
+    borderRadius: 24,
+    padding: spacing.xl * 2, // Increased from spacing.xl * 1.5
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 8,
   },
   processingTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.textPrimary,
-    marginTop: spacing.m,
-    marginBottom: spacing.s,
+    marginTop: spacing.xl * 2, // Increased from spacing.xl
+    marginBottom: spacing.m, // Increased from spacing.s
+    textAlign: 'center',
   },
   processingSubtitle: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.textSecondary,
     textAlign: 'center',
-    marginBottom: spacing.l,
+    marginBottom: spacing.xl, // Increased from spacing.l
+    lineHeight: 22,
+  },
+
+  // Custom loading animation styles
+  loadingContainer: {
+    position: 'relative',
+    width: 120,
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingRing: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3,
+    borderColor: colors.accentGreen + '30',
+    borderTopColor: colors.accentGreen,
+    borderRightColor: colors.accentGreen,
+  },
+  loadingRingInner: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: colors.accentGreen + '20',
+    borderTopColor: colors.accentGreen + '60',
+    margin: 7,
+  },
+  loadingCenter: {
+    position: 'absolute',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.accentGreen + '10',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingDot: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: colors.accentGreen,
+    shadowColor: colors.accentGreen,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  progressDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: spacing.xl * 1.5, // Increased from spacing.l
+    gap: spacing.s,
+  },
+  progressDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.textSecondary + '40',
+  },
+  progressDotActive: {
+    backgroundColor: colors.accentGreen,
+    transform: [{ scale: 1.2 }],
   },
 
   // Error state
