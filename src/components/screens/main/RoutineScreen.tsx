@@ -56,6 +56,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
   const [selectedTab, setSelectedTab] = React.useState<'morning' | 'evening'>('morning');
   const [completedSteps, setCompletedSteps] = React.useState<string[]>([]);
   const [showCelebration, setShowCelebration] = React.useState(false);
+  const [previousStreak, setPreviousStreak] = React.useState(0);
   
   // Fetch data
   const { data: routines, refetch: refetchRoutines, error: routinesError } = useActiveRoutines();
@@ -65,6 +66,13 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
   const { isAuthenticated } = useAuthStore();
   const recordProgress = useRecordRoutineProgress();
   const insets = useSafeAreaInsets();
+  
+  // Track previous streak for animation
+  React.useEffect(() => {
+    if (streakData?.current_streak !== undefined) {
+      setPreviousStreak(streakData.current_streak);
+    }
+  }, [streakData?.current_streak]);
   
   // Daily completion tracking
   const { 
@@ -371,6 +379,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
       <ConfettiCelebration
         visible={showCelebration}
         currentStreak={currentStreak || 1}
+        previousStreak={previousStreak}
         onComplete={() => setShowCelebration(false)}
       />
     </View>

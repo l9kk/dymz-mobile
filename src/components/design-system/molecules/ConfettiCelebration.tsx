@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, Text, Animated, Dimensions } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { colors, spacing, typography } from '../tokens';
 
 interface StreakCelebrationProps {
@@ -56,7 +57,7 @@ const getStreakMessage = (streak: number): string => {
 export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
   visible,
   currentStreak,
-  previousStreak = currentStreak - 1,
+  previousStreak = 0,
   message,
   onComplete,
 }) => {
@@ -71,20 +72,93 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
   
+  // Refs for cleanup
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const listenerIdRef = useRef<string | null>(null);
+  const animationsRef = useRef<Animated.CompositeAnimation[]>([]);
+  const vibrationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  
   const onCompleteRef = useRef(onComplete);
 
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
+  // Cleanup function
+  const cleanup = useCallback(() => {
+    if (animationTimeoutRef.current) {
+      clearTimeout(animationTimeoutRef.current);
+      animationTimeoutRef.current = null;
+    }
+    
+    if (listenerIdRef.current) {
+      streakCountAnim.removeListener(listenerIdRef.current);
+      listenerIdRef.current = null;
+    }
+    
+    // Clear all vibration timeouts
+    vibrationTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    vibrationTimeoutsRef.current = [];
+    
+    // Stop all running animations
+    animationsRef.current.forEach(animation => {
+      animation.stop();
+    });
+    animationsRef.current = [];
+    
+    setIsAnimating(false);
+    setParticles([]);
+  }, [streakCountAnim]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return cleanup;
+  }, [cleanup]);
+
+  // Vibration helper functions
+  const scheduleVibration = useCallback((type: Haptics.ImpactFeedbackStyle, delay: number = 0) => {
+    const timeout = setTimeout(() => {
+      Haptics.impactAsync(type);
+    }, delay);
+    vibrationTimeoutsRef.current.push(timeout);
+  }, []);
+
+  const createPulseVibrationPattern = useCallback(() => {
+    // Create a pulsing vibration pattern that matches the badge pulse
+    const pulseInterval = 1600; // 800ms up + 800ms down
+    const maxPulses = 3; // Limit to avoid overwhelming the user
+    
+    for (let i = 0; i < maxPulses; i++) {
+      scheduleVibration(Haptics.ImpactFeedbackStyle.Light, 800 + (i * pulseInterval));
+    }
+  }, [scheduleVibration]);
+
+  const createCountUpVibrationPattern = useCallback((duration: number) => {
+    // Create subtle vibrations during count-up animation
+    const vibrationCount = Math.min(currentStreak - previousStreak, 5); // Limit to avoid spam
+    const interval = duration / vibrationCount;
+    
+    for (let i = 0; i < vibrationCount; i++) {
+      scheduleVibration(Haptics.ImpactFeedbackStyle.Light, i * interval);
+    }
+  }, [currentStreak, previousStreak, scheduleVibration]);
+
+  const createParticleExplosionVibration = useCallback(() => {
+    // Create a burst of light vibrations for particle explosion
+    const particleVibrations = [0, 100, 200, 300, 500]; // Staggered timing
+    particleVibrations.forEach(delay => {
+      scheduleVibration(Haptics.ImpactFeedbackStyle.Light, delay);
+    });
+  }, [scheduleVibration]);
+
   useEffect(() => {
     if (visible && !isAnimating) {
       setIsAnimating(true);
       setDisplayStreak(previousStreak);
       
-      // Create streak-themed particles
+      // Create optimized particle system (reduced count for performance)
       const newParticles: ParticleProps[] = [];
-      const particleCount = Math.min(40, 20 + currentStreak * 2);
+      const particleCount = Math.min(25, 15 + currentStreak);
       
       for (let i = 0; i < particleCount; i++) {
         const particleTypes: ('star' | 'fire' | 'circle' | 'streak')[] = ['star', 'fire', 'circle', 'streak'];
@@ -108,8 +182,8 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
       pulseAnim.setValue(1);
       glowAnim.setValue(0);
 
-      // Main entrance animation sequence
-      Animated.sequence([
+      // Main entrance animation sequence with vibration
+      const entranceAnimation = Animated.sequence([
         // 1. Fade in background
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -129,24 +203,35 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
           duration: 600,
           useNativeDriver: true,
         }),
-      ]).start();
+      ]);
 
-      // Count up animation for streak number with listener
+      // Start entrance vibration
+      scheduleVibration(Haptics.ImpactFeedbackStyle.Medium, 0); // Immediate impact
+      scheduleVibration(Haptics.ImpactFeedbackStyle.Light, 300); // On bounce
+
+      animationsRef.current.push(entranceAnimation);
+      entranceAnimation.start();
+
+      // Count up animation for streak number with proper cleanup
       const countAnimation = Animated.timing(streakCountAnim, {
         toValue: currentStreak,
         duration: 1000,
         useNativeDriver: false,
       });
 
-      // Add listener to update display text
-      const listenerId = streakCountAnim.addListener(({ value }) => {
+      // Add listener with proper cleanup tracking
+      listenerIdRef.current = streakCountAnim.addListener(({ value }) => {
         setDisplayStreak(Math.round(value));
       });
 
+      // Start count-up vibration pattern
+      createCountUpVibrationPattern(1000);
+
+      animationsRef.current.push(countAnimation);
       countAnimation.start();
 
       // Pulse animation for streak badge
-      Animated.loop(
+      const pulseAnimation = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, {
             toValue: 1.1,
@@ -159,11 +244,17 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
             useNativeDriver: true,
           }),
         ])
-      ).start();
+      );
+
+      // Start pulse vibration pattern
+      createPulseVibrationPattern();
+
+      animationsRef.current.push(pulseAnimation);
+      pulseAnimation.start();
 
       // Particle explosion animation
       const particleAnimations = newParticles.map((particle, index) => {
-        const delay = index * 20;
+        const delay = index * 15; // Slightly faster particle timing
         const endX = screenWidth * 0.5 + (Math.random() - 0.5) * screenWidth;
         const endY = screenHeight * 0.3 + Math.random() * screenHeight * 0.4;
         
@@ -180,7 +271,7 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
             // Move to position
             Animated.timing(particle.x, {
               toValue: endX,
-              duration: 1500,
+              duration: 1500, // Slightly faster for better performance
               useNativeDriver: true,
             }),
             Animated.timing(particle.y, {
@@ -198,29 +289,35 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
           // Fade out
           Animated.timing(particle.opacity, {
             toValue: 0,
-            duration: 500,
+            duration: 400,
             useNativeDriver: true,
           }),
         ]);
       });
 
-      Animated.parallel(particleAnimations).start();
+      const allParticleAnimations = Animated.parallel(particleAnimations);
+      
+      // Start particle explosion vibration
+      createParticleExplosionVibration();
+      
+      animationsRef.current.push(allParticleAnimations);
+      allParticleAnimations.start();
 
-      // Auto complete after animation
-      const autoCompleteTimeout = setTimeout(() => {
+      // Auto complete with proper cleanup
+      animationTimeoutRef.current = setTimeout(() => {
+        // Final completion vibration
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        
         if (onCompleteRef.current) {
           onCompleteRef.current();
         }
-      }, 2500);
-
-      return () => {
-        clearTimeout(autoCompleteTimeout);
-        streakCountAnim.removeListener(listenerId);
-      };
+      }, 2200); // Slightly shorter duration
 
     } else if (!visible && isAnimating) {
-      // Exit animation
-      Animated.parallel([
+      // Exit animation with subtle vibration
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      
+      const exitAnimation = Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
           duration: 300,
@@ -231,12 +328,21 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
           duration: 300,
           useNativeDriver: true,
         }),
-      ]).start(() => {
-        setIsAnimating(false);
-        setParticles([]);
+      ]);
+
+      animationsRef.current.push(exitAnimation);
+      exitAnimation.start(() => {
+        cleanup();
       });
     }
-  }, [visible, currentStreak, previousStreak]);
+
+    // Cleanup on dependency change
+    return () => {
+      if (!visible && isAnimating) {
+        cleanup();
+      }
+    };
+  }, [visible, currentStreak, previousStreak, cleanup]);
 
   const renderParticle = (particle: ParticleProps) => {
     const rotateInterpolate = particle.rotation.interpolate({
@@ -304,8 +410,9 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
         styles.celebrationCard,
         { 
           transform: [
-            { scale: scaleAnim },
-            { scale: pulseAnim }
+            { 
+              scale: Animated.multiply(scaleAnim, pulseAnim)
+            }
           ]
         }
       ]}>

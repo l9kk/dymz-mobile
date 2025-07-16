@@ -15,13 +15,15 @@ interface MainAppProps {
   onNavigateToHelp?: () => void;
   onNavigateToPrivacy?: () => void;
   onSignOut?: () => void;
+  onDeleteAccount?: () => void;
 }
 
 export const MainApp: React.FC<MainAppProps> = ({
   onNavigateToCamera,
   onNavigateToHelp,
   onNavigateToPrivacy,
-  onSignOut
+  onSignOut,
+  onDeleteAccount
 }) => {
   const [currentTab, setCurrentTab] = useState<TabRoute>('home');
   const [showInsights, setShowInsights] = useState(false);
@@ -113,6 +115,7 @@ export const MainApp: React.FC<MainAppProps> = ({
               onNavigateToHelp={onNavigateToHelp}
               onNavigateToPrivacy={onNavigateToPrivacy}
               onSignOut={handleSignOut}
+              onDeleteAccount={onDeleteAccount}
             />
           </ErrorBoundary>
         );
