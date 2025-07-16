@@ -280,7 +280,7 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
       </View>
 
       {/* Show save button if routines haven't been saved yet and no active routines exist */}
-      {(!userRoutines?.routines || userRoutines.routines.length === 0) && !routinesSaved && (
+      {!routinesSaved && (
         <PrimaryButton
           title={isSaving ? "Saving Routines..." : "Save My Routines"}
           onPress={handleSaveRoutines}

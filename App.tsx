@@ -5,6 +5,7 @@ import { AppProviders } from './src/providers/AppProviders';
 import { useAuth } from './src/stores/authStore';
 import { useCompleteOnboarding, useCreateOnboardingFromUserData } from './src/hooks/api/useUser';
 import { useAnalysisWorkflow } from './src/hooks/api/useAnalysis';
+import { UserApiService } from './src/services/userApi';
 import { 
   SplashScreen, 
   OnboardingTakePicture, 
@@ -925,6 +926,27 @@ const AppContent: React.FC = () => {
     transitionToScreen('welcome-auth');
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      console.log('🗑️ Delete account requested');
+      
+      // Call the API to delete the account
+      const userApiService = new UserApiService();
+      await userApiService.deleteUserProfile();
+      
+      console.log('✅ Account deleted successfully');
+      
+      // Reset data and go back to welcome screen
+      setUserData({});
+      transitionToScreen('welcome-auth');
+    } catch (error) {
+      console.error('❌ Error deleting account:', error);
+      // Even if the API call fails, still sign out for user safety
+      setUserData({});
+      transitionToScreen('welcome-auth');
+    }
+  };
+
   const handleNavigateToHelp = () => {
     transitionToScreen('help-support');
   };
@@ -1166,6 +1188,7 @@ const AppContent: React.FC = () => {
           onSignOut={handleSignOut}
           onNavigateToHelp={handleNavigateToHelp}
           onNavigateToPrivacy={handleNavigateToPrivacy}
+          onDeleteAccount={handleDeleteAccount}
         />;
       case 'user-profile':
         return <UserProfile onBack={handleBack} onSignOut={handleSignOut} />;
