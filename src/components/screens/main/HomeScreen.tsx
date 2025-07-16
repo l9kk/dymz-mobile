@@ -27,6 +27,7 @@ import {
   getAnalysisAvailabilityStatus, 
   formatTimeUntilMidnight 
 } from '../../../utils/analysisTimer';
+import { boostMetrics, boostMetricsWithPersistence } from '../../../utils/metricBoosting';
 
 interface HomeScreenProps {
   onNavigateToAnalysis?: () => void;
@@ -96,14 +97,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const bottomPadding = insets.bottom + TAB_BAR_HEIGHT + spacing.l;
 
   // Extract metrics from analysis
-  const getMetricsFromAnalysis = (): any[] => {
+  const getMetricsFromAnalysis = async (): Promise<any[]> => {
     if (!latestAnalysis?.skin_metrics?.metrics) {
       return [];
     }
 
     const metrics = latestAnalysis.skin_metrics.metrics;
     
-    return Object.entries(metrics).map(([key, value]) => {
+    const rawMetrics = Object.entries(metrics).map(([key, value]) => {
       let score = 0;
       
       if (typeof value === 'number') {
@@ -119,9 +120,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         isLocked: false
       };
     }).filter(metric => metric.score < 100); // Only show metrics with meaningful data
+    
+    // Apply metric boosting with persistence if enabled
+    return await boostMetricsWithPersistence(rawMetrics, latestAnalysis.id);
   };
 
-  const metrics = getMetricsFromAnalysis();
+  const [metrics, setMetrics] = React.useState<any[]>([]);
+
+  // Load metrics when latestAnalysis changes
+  React.useEffect(() => {
+    const loadMetrics = async () => {
+      const processedMetrics = await getMetricsFromAnalysis();
+      setMetrics(processedMetrics);
+    };
+
+    loadMetrics();
+  }, [latestAnalysis?.id, latestAnalysis?.skin_metrics]);
 
   // Helper function to check if user has completed daily tasks locally
   const hasCompletedDailyTasks = (): boolean => {
@@ -894,4 +908,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.textPrimary,
   },
-}); 
+});

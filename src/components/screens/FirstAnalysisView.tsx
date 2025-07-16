@@ -10,6 +10,7 @@ import { colors, spacing } from '../design-system/tokens';
 import { useLatestAnalysis } from '../../hooks/api/useAnalysis';
 import { useAuthStore } from '../../stores/authStore';
 import { useEffect } from 'react';
+import { boostMetrics, boostMetricsWithPersistence, testMetricBoosting } from '../../utils/metricBoosting';
 
 interface FirstAnalysisViewProps {
   onBuildRoutine?: () => void;
@@ -56,7 +57,7 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
   }, [analysis?.status, shouldFetchData, isAuthenticated, refetch]);
 
   // Map analysis results to metrics format
-  const getMetricsFromAnalysis = () => {
+  const getMetricsFromAnalysis = async () => {
     console.log('🔍 FirstAnalysisView - Checking analysis data availability:', {
       hasAnalysisDataProp: !!analysisData,
       hasFetchedAnalysis: !!analysis,
@@ -177,15 +178,31 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
         }
       ].filter(metric => metric.score < 100 || !metric.isLocked); // Only show metrics with meaningful data
       
-      console.log('📊 Processed metrics for display:', processedMetrics);
-      return processedMetrics;
+      // Apply metric boosting with persistence - this ensures consistent results per analysis
+      const boostedMetrics = await boostMetricsWithPersistence(processedMetrics, dataToUse.id);
+      
+      // Test the boosting logic (development only)
+      testMetricBoosting();
+      
+      console.log('📊 Processed metrics for display:', boostedMetrics);
+      return boostedMetrics;
     }
 
     console.log('⚠️ No skin metrics available from backend - Status:', dataToUse.status);
     return [];
   };
 
-  const metrics = getMetricsFromAnalysis();
+  const [metrics, setMetrics] = React.useState<any[]>([]);
+
+  // Load metrics when component mounts or analysis changes
+  React.useEffect(() => {
+    const loadMetrics = async () => {
+      const processedMetrics = await getMetricsFromAnalysis();
+      setMetrics(processedMetrics);
+    };
+
+    loadMetrics();
+  }, [analysisData, analysis, photoUri]);
 
   // Show authentication required state if not authenticated
   if (shouldFetchData && !isAuthenticated) {

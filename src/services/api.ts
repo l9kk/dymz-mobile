@@ -58,10 +58,10 @@ const createApiClient = (): AxiosInstance => {
                         if (Config.APP.DEBUG) {
                             console.log('🔄 Supabase token expiring soon, refreshing...');
                         }
-                        
+
                         try {
                             const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
-                            
+
                             if (!refreshError && refreshed.session?.access_token) {
                                 if (Config.APP.DEBUG) {
                                     console.log('✅ Token refreshed successfully');
@@ -166,37 +166,37 @@ const createApiClient = (): AxiosInstance => {
             // Handle 401 Unauthorized - refresh token or logout
             if (error.response?.status === 401 && !error.config?._retry) {
                 console.log('🔄 401 error - attempting token refresh...');
-                
+
                 try {
                     // Mark this request as retried to prevent infinite loops
                     error.config._retry = true;
-                    
+
                     // Attempt to refresh the session
                     const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
-                    
+
                     if (!refreshError && refreshed.session?.access_token) {
                         console.log('✅ Token refresh successful, retrying request...');
-                        
+
                         // Update the Authorization header with the new token
                         error.config.headers.Authorization = `Bearer ${refreshed.session.access_token}`;
-                        
+
                         // Retry the original request
                         return client(error.config);
                     } else {
                         console.log('❌ Token refresh failed, redirecting to login...');
-                        
+
                         // Clear the session if refresh failed
                         await supabase.auth.signOut();
-                        
+
                         // Reject with a clear error message
                         return Promise.reject(new Error('Authentication failed - please log in again'));
                     }
                 } catch (refreshError) {
                     console.error('Token refresh exception:', refreshError);
-                    
+
                     // Clear the session on refresh failure
                     await supabase.auth.signOut();
-                    
+
                     return Promise.reject(new Error('Authentication failed - please log in again'));
                 }
             }
