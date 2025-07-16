@@ -18,6 +18,7 @@ import {
   getAnalysisAvailabilityStatus, 
   formatTimeUntilMidnight 
 } from '../../../utils/analysisTimer';
+import { boostMetrics, boostMetricsWithPersistence } from '../../../utils/metricBoosting';
 
 interface AnalysisScreenProps {
   onNavigateToCamera?: () => void;
@@ -257,14 +258,14 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
   }, [loadingMessageIndex, fadeAnim, analysisState]);
 
   // Extract metrics from analysis
-  const getMetricsFromAnalysis = (): MetricItem[] => {
+  const getMetricsFromAnalysis = async (): Promise<MetricItem[]> => {
     if (!latestAnalysis?.skin_metrics?.metrics) {
       return [];
     }
 
     const metrics = latestAnalysis.skin_metrics.metrics;
     
-    return Object.entries(metrics).map(([key, value]) => {
+    const rawMetrics = Object.entries(metrics).map(([key, value]) => {
       let score = 0;
       
       if (typeof value === 'number') {
@@ -280,7 +281,15 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
         isLocked: false
       };
     }).filter(metric => metric.score < 100); // Only show metrics with meaningful data
+    
+    // Apply metric boosting with persistence if enabled
+    return await boostMetricsWithPersistence(rawMetrics, latestAnalysis.id);
   };
+
+  // METRIC BOOSTING FUNCTIONALITY - EASILY REMOVABLE
+  // Note: The actual boosting logic is now in utils/metricBoosting.ts
+  // This can be easily removed by removing the import and this function call above
+  // END METRIC BOOSTING FUNCTIONALITY
 
   // Countdown logic with daily reset
   React.useEffect(() => {
@@ -388,7 +397,18 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
     );
   };
 
-  const metrics = getMetricsFromAnalysis();
+  const [metrics, setMetrics] = React.useState<MetricItem[]>([]);
+
+  // Load metrics when latestAnalysis changes
+  React.useEffect(() => {
+    const loadMetrics = async () => {
+      const processedMetrics = await getMetricsFromAnalysis();
+      setMetrics(processedMetrics);
+    };
+
+    loadMetrics();
+  }, [latestAnalysis?.id, latestAnalysis?.skin_metrics]);
+
   const totalAnalyses = analytics.overview?.total_analyses || 0;
 
   // Render different states
@@ -1158,4 +1178,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: 'white',
   },
-}); 
+});

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing } from '../tokens';
 import { Icon } from '../atoms/Icon';
+import { boostAverageScore } from '../../../utils/metricBoosting';
 
 interface ProgressSubRow {
   icon: string;
@@ -36,7 +37,7 @@ export const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({
 }) => {
   const defaultSubRows = [
     { icon: 'star', text: 'Keep going strong!' }, 
-    ...(averageScore ? [{ icon: 'analytics-outline', text: `Average skin score: ${averageScore}` }] : []),
+    ...(averageScore ? [{ icon: 'analytics-outline', text: `Average skin score: ${Math.round(boostAverageScore(averageScore))}` }] : []),
     ...(improvingMetrics && totalMetrics ? [{ icon: 'trending-up', text: `${improvingMetrics}/${totalMetrics} metrics improving` }] : []),
     ...(currentStreak ? [{ icon: 'flame', text: `${currentStreak} day streak` }] : [])
   ];

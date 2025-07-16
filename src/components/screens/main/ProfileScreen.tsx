@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Image, Alert } from 'react-native';
 import { 
   SectionHeading,
   StatParagraph,
@@ -28,13 +28,15 @@ interface ProfileScreenProps {
   onNavigateToHelp?: () => void;
   onNavigateToPrivacy?: () => void;
   onSignOut?: () => void;
+  onDeleteAccount?: () => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onNavigateToEdit,
   onNavigateToHelp,
   onNavigateToPrivacy,
-  onSignOut
+  onSignOut,
+  onDeleteAccount
 }) => {
   const [refreshing, setRefreshing] = React.useState(false);
   
@@ -54,6 +56,28 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       refetchStreaks()
     ]);
     setRefreshing(false);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            if (onDeleteAccount) {
+              onDeleteAccount();
+            }
+          }
+        }
+      ]
+    );
   };
 
   const isLoading = !profile || !userStats || !gamificationStats;
@@ -117,12 +141,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           value={userStats.total_analyses || 0}
           label="Analyses"
           variant="primary"
-        />
-        <StatPill
-          value={streakData?.current_streak || 0}
-          label="Day Streak"
-          variant="secondary"
-          icon="flame"
         />
       </View>
 
@@ -257,6 +275,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <Text style={styles.menuText}>Privacy Policy</Text>
           <Text style={styles.menuArrow}>→</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.deleteAccountButton} onPress={handleDeleteAccount}>
+          <Text style={styles.deleteAccountIcon}>🗑️</Text>
+          <Text style={styles.deleteAccountText}>Delete Account</Text>
+          <Text style={styles.deleteAccountArrow}>→</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Sign Out Button */}
@@ -268,7 +292,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* App Info */}
       <View style={styles.appInfo}>
-        <Text style={styles.appVersion}>Dymz AI v1.0.0</Text>
+        <Text style={styles.appVersion}>Dymz AI v1.1.0</Text>
         <StarRatingBadge />
       </View>
     </ScrollView>
@@ -352,7 +376,7 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     paddingHorizontal: spacing.l,
     marginBottom: spacing.xl,
   },
@@ -579,4 +603,30 @@ const styles = StyleSheet.create({
     color: colors.success,
     opacity: 1,
   },
-}); 
+  
+  // Delete Account styles
+  deleteAccountButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.m,
+    paddingHorizontal: spacing.l,
+    backgroundColor: 'rgba(255, 0, 0, 0.05)',
+    marginHorizontal: spacing.l,
+    marginBottom: spacing.s,
+    borderRadius: 12,
+  },
+  deleteAccountIcon: {
+    fontSize: 20,
+    marginRight: spacing.m,
+  },
+  deleteAccountText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#E74C3C',
+    fontWeight: '600',
+  },
+  deleteAccountArrow: {
+    fontSize: 18,
+    color: '#E74C3C',
+  },
+});
