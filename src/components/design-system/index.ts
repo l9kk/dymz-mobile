@@ -45,6 +45,7 @@ export { FeatureHighlightTile } from './molecules/FeatureHighlightTile';
 export { IconFeatureCard } from './molecules/IconFeatureCard';
 export { ImproveRingRow } from './molecules/ImproveRingRow';
 export { InsightsHeader } from './molecules/InsightsHeader';
+export { LanguageSelector } from './molecules/LanguageSelector';
 export { MetricsCarousel } from './molecules/MetricsCarousel';
 export { MetricTrendCard } from './molecules/MetricTrendCard';
 export { MotivationImageGrid } from './molecules/MotivationImageGrid';

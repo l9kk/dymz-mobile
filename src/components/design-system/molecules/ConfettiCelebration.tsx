@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, Text, Animated, Dimensions } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, typography } from '../tokens';
 
 interface StreakCelebrationProps {
@@ -44,14 +45,14 @@ const getStreakEmoji = (streak: number): string => {
   return '🎉';
 };
 
-const getStreakMessage = (streak: number): string => {
-  if (streak === 1) return 'Great Start!';
-  if (streak >= 30) return 'Legendary Streak!';
-  if (streak >= 21) return 'Incredible Streak!';
-  if (streak >= 14) return 'Amazing Streak!';
-  if (streak >= 7) return 'On Fire!';
-  if (streak >= 3) return 'Building Momentum!';
-  return 'Keep Going!';
+const getStreakMessage = (streak: number, t: (key: string) => string): string => {
+  if (streak === 1) return t('celebration.messages.greatStart');
+  if (streak >= 30) return t('celebration.messages.legendary');
+  if (streak >= 21) return t('celebration.messages.incredible');
+  if (streak >= 14) return t('celebration.messages.amazing');
+  if (streak >= 7) return t('celebration.messages.onFire');
+  if (streak >= 3) return t('celebration.messages.building');
+  return t('celebration.messages.keepGoing');
 };
 
 export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
@@ -61,6 +62,7 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
   message,
   onComplete,
 }) => {
+  const { t } = useTranslation();
   const [particles, setParticles] = useState<ParticleProps[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [displayStreak, setDisplayStreak] = useState(previousStreak);
@@ -391,7 +393,7 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
   if (!visible && !isAnimating) return null;
 
   const streakEmoji = getStreakEmoji(currentStreak);
-  const streakMessage = message || getStreakMessage(currentStreak);
+  const streakMessage = message || getStreakMessage(currentStreak, t);
 
   return (
     <Animated.View 
@@ -435,9 +437,9 @@ export const ConfettiCelebration: React.FC<StreakCelebrationProps> = ({
         
         {/* Messages */}
         <View style={styles.messagesContainer}>
-          <Text style={styles.streakLabel}>Day Streak!</Text>
+          <Text style={styles.streakLabel}>{t('celebration.dayStreak')}</Text>
           <Text style={styles.celebrationMessage}>{streakMessage}</Text>
-          <Text style={styles.encouragementText}>Keep up the amazing work!</Text>
+          <Text style={styles.encouragementText}>{t('celebration.encouragement')}</Text>
         </View>
       </Animated.View>
     </Animated.View>

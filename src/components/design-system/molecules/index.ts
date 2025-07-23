@@ -7,6 +7,7 @@ export { EmojiBulletList } from './EmojiBulletList';
 export { ExampleImageGrid } from './ExampleImageGrid';
 export { FeatureHighlightTile } from './FeatureHighlightTile';
 export { IconFeatureCard } from './IconFeatureCard';
+export { LanguageSelector } from './LanguageSelector';
 export { MetricsCarousel } from './MetricsCarousel';
 export { MotivationImageGrid } from './MotivationImageGrid';
 export { PillTagWrapGrid } from './PillTagWrapGrid';

@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Dimensions, InteractionManager, Alert, StatusBar } from 'react-native';
 import * as Linking from 'expo-linking';
+
+// Initialize i18n before any components render
+import './src/i18n';
+
 import { AppProviders } from './src/providers/AppProviders';
 import { useAuth } from './src/stores/authStore';
 import { useCompleteOnboarding, useCreateOnboardingFromUserData } from './src/hooks/api/useUser';
@@ -151,6 +155,7 @@ const AppContent: React.FC = () => {
   const [emailForAuth, setEmailForAuth] = useState<string>('');
   const [passwordForAuth, setPasswordForAuth] = useState<string>('');
   const [cameraContext, setCameraContext] = useState<CameraContext>('onboarding');
+  const [editingFromMainApp, setEditingFromMainApp] = useState<boolean>(false);
   
   // Backend integration hooks
   const { submitUserData, isLoading: isSubmittingOnboarding } = useCreateOnboardingFromUserData();
@@ -869,11 +874,34 @@ const AppContent: React.FC = () => {
   };
 
   const handleCustomRoutineDetailBack = () => {
-    transitionToScreen('match-summary', 'back');
+    if (editingFromMainApp) {
+      // If we're editing from main app, go back to main app
+      setEditingFromMainApp(false);
+      transitionToScreen('main-app', 'back');
+    } else {
+      // Otherwise, go back to match summary (original behavior)
+      transitionToScreen('match-summary', 'back');
+    }
+  };
+
+  const handleNavigateToEditRoutine = (routine: any) => {
+    // Store the routine data for editing
+    console.log('Navigating to edit routine:', routine);
+    // Set a flag to indicate we're editing from main-app
+    setEditingFromMainApp(true);
+    // TODO: Store routine data in state or context for CustomRoutineDetail to access
+    transitionToScreen('custom-routine-detail');
   };
 
   const handleCustomRoutineDetailComplete = () => {
-    // Submit onboarding data to backend before completing
+    if (editingFromMainApp) {
+      // If we're editing from main app, just go back to main app
+      setEditingFromMainApp(false);
+      transitionToScreen('main-app');
+      return;
+    }
+
+    // Submit onboarding data to backend before completing (original onboarding flow)
     if (isAuthenticated && userData) {
       console.log('Submitting onboarding data to backend:', userData);
       
@@ -1188,6 +1216,7 @@ const AppContent: React.FC = () => {
           onSignOut={handleSignOut}
           onNavigateToHelp={handleNavigateToHelp}
           onNavigateToPrivacy={handleNavigateToPrivacy}
+          onNavigateToEditRoutine={handleNavigateToEditRoutine}
           onDeleteAccount={handleDeleteAccount}
         />;
       case 'user-profile':
