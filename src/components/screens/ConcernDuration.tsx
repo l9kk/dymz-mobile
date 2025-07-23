@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { 
   BackButton, 
   LinearProgressStepper, 
@@ -27,6 +28,13 @@ export const ConcernDuration: React.FC<ConcernDurationProps> = ({
   onDurationSelected,
   selectedConcern,
 }) => {
+  const { t } = useTranslation();
+  
+  const DURATION_OPTIONS = [
+    { id: '4+ years', label: t('concernDuration.options.fourPlusYears') },
+    { id: '1-3 years', label: t('concernDuration.options.oneToThreeYears') }, 
+    { id: 'A few months or less', label: t('concernDuration.options.fewMonthsOrLess') }
+  ];
   const handleDurationPress = (durationId: string) => {
     onDurationSelected?.(durationId);
   };
@@ -47,7 +55,7 @@ export const ConcernDuration: React.FC<ConcernDurationProps> = ({
 
         <View style={styles.content}>
           <EmphasisHeadline 
-            parts={["How long have you had", `${selectedConcern?.toLowerCase() || 'this concern'}?`]}
+            parts={[t('concernDuration.howLongPart1'), `${selectedConcern?.toLowerCase() || t('concernDuration.thisConcern')}?`]}
             accentIndices={[1]}
             style={styles.title}
           />
@@ -60,7 +68,7 @@ export const ConcernDuration: React.FC<ConcernDurationProps> = ({
           </View>
 
           <InfoNote 
-            text="Understanding the duration helps us recommend the right treatment intensity and set realistic timelines for improvement."
+            text={t('concernDuration.infoNote')}
             style={styles.infoNote}
           />
         </View>

@@ -1,0 +1,985 @@
+{
+    "navigation": {
+        "tabs": {
+            "home": "Home",
+            "analysis": "Analysis", 
+            "routine": "Routine",
+            "profile": "Profile"
+        },
+        "errorBoundary": {
+            "insightsUnavailable": "Insights screen temporarily unavailable",
+            "homeUnavailable": "Home screen temporarily unavailable",
+            "analysisUnavailable": "Analysis screen temporarily unavailable", 
+            "routineUnavailable": "Routine screen temporarily unavailable",
+            "profileUnavailable": "Profile screen temporarily unavailable"
+        }
+    },
+    "common": {
+        "continue": "Continue",
+        "back": "Back",
+        "submit": "Submit",
+        "loading": "Loading...",
+        "error": "Something went wrong",
+        "retry": "Retry",
+        "cancel": "Cancel",
+        "done": "Done",
+        "next": "Next",
+        "skip": "Skip",
+        "save": "Save",
+        "tryAgain": "Try Again",
+        "delete": "Delete",
+        "confirm": "Confirm",
+        "yes": "Yes",
+        "no": "No",
+        "ok": "OK",
+        "close": "Close",
+        "open": "Open",
+        "edit": "Edit",
+        "view": "View",
+        "share": "Share",
+        "copy": "Copy",
+        "paste": "Paste",
+        "min": "min",
+        "progressTracking": "Progress tracking",
+        "productRecommendations": "Product recommendations",
+        "personalizedRoutines": "Personalized routines",
+        "dailySkinAnalysis": "Daily skin analysis"
+    },
+    "concernDuration": {
+        "howLongPart1": "How long have you had",
+        "thisConcern": "this concern",
+        "options": {
+            "fourPlusYears": "4+ years",
+            "oneToThreeYears": "1-3 years",
+            "fewMonthsOrLess": "A few months or less"
+        },
+        "infoNote": "Understanding the duration helps us recommend the right treatment intensity and set realistic timelines for improvement."
+    },
+    "loading": {
+        "compressingPhoto": "Compressing your photo...",
+        "uploadingPhoto": "Uploading your photo...",
+        "analyzingSkin": "Analyzing your skin...",
+        "aiAnalyzing": "AI is analyzing your skin...",
+        "almostDone": "Almost done...",
+        "analysisComplete": "Analysis complete!",
+        "preparingPhoto": "Preparing your photo...",
+        "analysisFailed": "Analysis failed",
+        "startingAnalysis": "Starting analysis...",
+        "recordingProgress": "Recording Progress...",
+        "takingPicture": "Taking Picture...",
+        "savingRoutines": "Saving Routines...",
+        "processing": "Processing..."
+    },
+    "skinMetrics": {
+        "hydration": "Hydration",
+        "texture": "Texture",
+        "acne": "Acne",
+        "oiliness": "Oiliness",
+        "pigmentation": "Pigmentation",
+        "pores": "Pores",
+        "redness": "Redness",
+        "dryness": "Dryness",
+        "skinType": "Skin Type",
+        "concerns": "Main Concerns",
+        "recommendations": "Recommendations",
+        "unableToLoad": "Unable to load analysis results"
+    },
+    "onboarding": {
+        "welcome": {
+            "title": "Welcome to Dymz AI",
+            "subtitle": "Your personal skincare journey starts here"
+        },
+        "takePicture": {
+            "title": "Take a selfie to analyze your skin",
+            "subtitle": "Capture a clear photo in good lighting. Make sure your face is well-lit and centered in the frame.",
+            "uploadPhoto": "Upload a photo"
+        },
+        "getResults": {
+            "title": "Get detailed skin analysis results",
+            "subtitle": "Discover insights about your skin health with AI-powered metrics and personalized recommendations."
+        },
+        "productRecommendations": {
+            "title": "Get curated product recommendations",
+            "subtitle": "Curated products just for you",
+            "previewTitle": "Your personalized matches:",
+            "defaultProduct": "Product",
+            "defaultBrand": "Brand",
+            "matchPercentage": "{{percentage}}% match",
+            "categories": {
+                "serums": "Serums",
+                "sunscreen": "Sunscreen",
+                "nightCare": "Night Care",
+                "treatments": "Treatments"
+            },
+            "loading": "Finding your perfect products...",
+            "error": "Unable to load personalized recommendations. You'll see them after completing your analysis.",
+            "subtitleWithProducts": "Based on your analysis, we found {{count}} personalized products that match your skin's needs.",
+            "subtitlePreview": "See how you'll receive personalized skincare products matched to your specific analysis and concerns."
+        },
+        "trackProgress": {
+            "title": "Track your skin improvements",
+            "subtitle": "Visualize your progress with detailed charts, metrics, and weekly comparisons to see real results.",
+            "metrics": {
+                "hydration": "Hydration",
+                "texture": "Texture"
+            },
+            "features": {
+                "charts": "Charts",
+                "metrics": "Metrics", 
+                "goals": "Goals"
+            }
+        },
+        "gender": {
+            "title": "What's your gender?",
+            "subtitle": "This helps us recommend products that work best for your skin type and concerns.",
+            "male": "Male",
+            "female": "Female",
+            "other": "Other",
+            "preferNotToSay": "Prefer not to say",
+            "privacyNote": "Your data is private and secure. We use this information only to personalize your skincare recommendations."
+        },
+        "age": {
+            "title": "What's your age range?",
+            "subtitle": "Different age groups have unique skin needs. Teens might focus on acne, while mature skin needs anti-aging care.",
+            "infoNote": "Age-specific recommendations help us suggest products with the right active ingredients for your skin's current needs.",
+            "options": {
+                "13-18": "13-18 years old",
+                "19-25": "19-25 years old",
+                "26-35": "26-35 years old",
+                "46-55": "46-55 years old",
+                "56+": "56+ years old"
+            }
+        },
+        "skincareExperience": {
+            "title": "What's your skincare experience?",
+            "subtitle": "This helps us tailor recommendations to your comfort level.",
+            "beginner": "Beginner",
+            "intermediate": "Intermediate", 
+            "advanced": "Advanced",
+            "options": {
+                "regular": "I have a regular routine",
+                "occasional": "I use products occasionally",
+                "beginner": "I'm new to skincare"
+            },
+            "infoNote": "This helps us recommend the right level of products for you"
+        },
+        "roadmap": {
+            "planTitle": "Your Personalized Plan",
+            "description": "We're about to reveal your complete skin analysis with personalized insights and recommendations tailored just for you.",
+            "understandingYou": {
+                "title": "Understanding you",
+                "subtitle": "first, we'll get to know your skin"
+            },
+            "yourMotivations": {
+                "title": "Your motivations",
+                "subtitle": "what drives your skincare goals"
+            },
+            "skinAnalysis": {
+                "title": "Your skin analysis",
+                "subtitle": "next, we'll show you detailed insights"
+            },
+            "perfectRoutine": {
+                "title": "Your perfect routine",
+                "subtitle": "then, we'll build personalized recommendations"
+            },
+            "glowUpPlan": {
+                "title": "Your glow up plan",
+                "subtitle": "finally, your complete transformation roadmap"
+            }
+        },
+        "expertOnYou": {
+            "headline": "You're the expert on your skin",
+            "benefit1": "Get personalized product recommendations based on your unique skin analysis",
+            "benefit2": "Understand how each product affects your skin with detailed progress tracking",
+            "benefit3": "Track your skin journey with easy-to-use progress monitoring tools",
+            "benefit4": "Access to 90,000+ skincare products in our comprehensive database"
+        },
+        "socialProof": {
+            "heading": "Join 12,000+ Users Getting Clear Skin",
+            "description": "Join thousands who've transformed their skin with our AI-powered skincare platform. Get personalized routines, track your progress, and achieve the clear, healthy skin you deserve.",
+            "disclaimer": "Results based on user surveys. Individual results may vary.",
+            "feature1Title": "Track Progress",
+            "feature1Description": "Visual skin improvement tracking",
+            "feature2Title": "Smart Routines",
+            "feature2Description": "Personalized daily skincare",
+            "feature3Title": "AI Analysis",
+            "feature3Description": "Advanced skin analysis technology",
+            "feature4Title": "Expert Guidance",
+            "feature4Description": "Dermatologist-backed recommendations"
+        },
+        "database": {
+            "headline": "15,000+ products\nanalyzed for you",
+            "subhead": "Our AI understands ingredients so you don't have to",
+            "feature1": "Science-backed analysis",
+            "feature2": "Personalized matching",
+            "statistic": "94% of users find their perfect routine within 2 weeks"
+        },
+        "trending": {
+            "heading": "Do You Buy\nTrending Products?",
+            "subtitle": "Social media influences 78% of skincare purchases",
+            "infoText": "Discover what's working for people with similar skin concerns",
+            "video1Title": "Skincare Routines",
+            "video1Count": "2.3M videos",
+            "video2Title": "Product Reviews",
+            "video2Count": "1.8M videos",
+            "video3Title": "Before & After",
+            "video3Count": "945K videos",
+            "video4Title": "Trending Now",
+            "video4Count": "3.1M videos"
+        },
+        "productUsage": {
+            "question": "Have you tried products to fix your skin concern?",
+            "infoNote": "Your experience with previous products helps us understand what works best for your skin and what to avoid."
+        },
+        "successUnderstanding": {
+            "title": "We're getting to\nknow you!",
+            "subtitle": "Your personalized analysis is almost ready"
+        },
+        "successSkinIssues": {
+            "title": "Your skin issues",
+            "subtitle": "We're analyzing your concerns now! 👀\nGet ready for personalized insights about your skin."
+        },
+        "successMotivations": {
+            "title": "Your motivations",
+            "subtitle": "Perfect! We now understand what drives you.\nLet's analyze your skin and create your\npersonalized routine 🌟"
+        },
+        "skinIssuesIntro": {
+            "titlePart1": "Finally, let's look at your",
+            "titlePart2": "skin issues!",
+            "subtitle": "Understanding your specific skin concerns helps us create the most accurate analysis and personalized recommendations for your routine.",
+            "statement": "Our AI analyzes 8 key metrics across thousands of data points to give you the most comprehensive skin assessment."
+        },
+        "motivationIntro": {
+            "title": "Next, let's find out what's driving you!",
+            "subtitle": "Research shows that understanding your motivation is crucial to making real changes.",
+            "bodyCopy": "We'll help you stay motivated and consistent so you don't fall off track!"
+        },
+        "knowYouBetter": {
+            "title": "Let's get to know you better",
+            "subtitle": "A few quick questions will help us personalize your skincare recommendations",
+            "caption": "Join 50,000+ users on their skincare journey",
+            "bodyCopy": "Our AI has helped over 50,000 people discover their perfect skincare routine and achieve healthier, more radiant skin."
+        }
+    },
+    "support": {
+        "title": "Help & Support",
+        "loadingOptions": "Loading support options...",
+        "welcome": {
+            "title": "👋 How can we help you?",
+            "text": "Find answers to common questions or get in touch with our support team."
+        },
+        "quickActions": "Quick Actions",
+        "actions": {
+            "emailSupport": "Email Support",
+            "emailDescription": "Get personalized help from our support team",
+            "visitWebsite": "Visit Support Website",
+            "websiteDescription": "Browse our complete help center and tutorials"
+        },
+        "faqTitle": "Frequently Asked Questions",
+        "faq": {
+            "q1": {
+                "question": "How accurate is the AI skin analysis?",
+                "answer": "Our AI skin analysis uses advanced computer vision algorithms trained on thousands of dermatologist-validated images. While highly accurate, it should be used as a guide and not replace professional dermatological advice."
+            },
+            "q2": {
+                "question": "How often should I take a new skin analysis?",
+                "answer": "We recommend taking a new analysis every 4-6 weeks to track your progress. Your skin changes with seasons, products, and time, so regular analysis helps keep your routine optimized."
+            },
+            "q3": {
+                "question": "Why am I not seeing results from my routine?",
+                "answer": "Skincare results typically take 6-12 weeks to become visible. Ensure you're following your routine consistently and using products as directed. If concerns persist, consider consulting a dermatologist."
+            },
+            "q4": {
+                "question": "Can I use my own products instead of recommendations?",
+                "answer": "Absolutely! Our routine builder focuses on ingredients and steps. You can substitute recommended products with similar ones you already own or prefer."
+            },
+            "q5": {
+                "question": "How do I cancel my account?",
+                "answer": "You can delete your account through the Profile > Privacy Policy section, or contact our support team. All your data will be permanently removed within 30 days."
+            },
+            "q6": {
+                "question": "Is my skin photo data secure?",
+                "answer": "Yes, your photos are encrypted and processed securely. We never share personal data with third parties. Photos are automatically deleted after analysis unless you choose to save them for progress tracking."
+            }
+        },
+        "appInfo": {
+            "title": "App Information",
+            "version": "App Version",
+            "lastUpdated": "Last Updated",
+            "updateDate": "July 2025",
+            "supportEmail": "Support Email"
+        },
+        "stillNeedHelp": "Still Need Help?",
+        "contactDescription": "Can't find what you're looking for? Our support team is here to help!",
+        "contactSupport": "Contact Support",
+        "email": {
+            "subject": "Dymz AI Support Request",
+            "body": "Hi Dymz AI team,\\n\\nI need help with:\\n\\n(Please describe your issue or question here)\\n\\nApp Version: 1.0.0\\nDevice: ",
+            "notAvailable": "Email Not Available",
+            "sendTo": "Please send your support request to: {{email}}",
+            "copyEmail": "Copy Email"
+        },
+        "cannotOpenLink": "Cannot Open Link",
+        "websiteVisit": "Please visit our website at dymzai.com for more support options.",
+        "linkError": "Link Error",
+        "tryAgainLater": "Unable to open support website. Please try again later."
+    },
+    "camera": {
+        "guidelines": "Camera Guidelines",
+        "takePhoto": "Take Photo",
+        "takePicture": "Take Picture",
+        "retake": "Retake",
+        "grantPermission": "Grant Permission",
+        "cameraPermission": "Camera permission required",
+        "permissionDescription": "We need access to your camera to analyze your skin",
+        "optimizationInfo": "We optimize your photo for the best analysis quality while keeping your data secure.",
+        "aiExaminationInfo": "Our AI is examining your skin for various concerns including texture, tone, and potential issues.",
+        "notReady": "Camera not ready",
+        "waitForInitialization": "Please wait for the camera to initialize",
+        "failedToTakePicture": "Failed to take picture. Please try again.",
+        "permissionTitle": "We need your permission to show the camera",
+        "takeSelfieTitle": "Take a selfie so that your skin can be analyzed",
+        "initializingCamera": "Initializing camera..."
+    },
+    "analysis": {
+        "processing": "Analyzing your skin...",
+        "almostDone": "Almost done!",
+        "results": "Your Results",
+        "skinType": "Skin Type",
+        "concerns": "Main Concerns",
+        "recommendations": "Recommendations",
+        "takePhotoAnalysis": "Take Photo Analysis",
+        "reportIssue": "Report Issue",
+        "failedToAnalyze": "Failed to analyze your skin. Please try again.",
+        "title": "Skin Analysis",
+        "subtitles": {
+            "noAnalysis": "Start your skin health journey",
+            "processing": "Analysis in progress...",
+            "readyForNew": "Ready for your daily analysis",
+            "hasCompleted": "Your skin analysis results"
+        },
+        "loadingMessages": {
+            "analyzing": "Analyzing your skin...",
+            "detectingTexture": "Detecting skin texture...",
+            "measuringClarity": "Measuring skin clarity...",
+            "calculatingScores": "Calculating health scores...",
+            "almostReady": "Almost ready!"
+        },
+        "stats": {
+            "nextScanIn": "Next Scan In",
+            "totalScans": "Total Scans",
+            "status": "Status",
+            "ready": "Ready!"
+        },
+        "states": {
+            "failed": "Analysis failed",
+            "readyTitle": "Ready for your next scan!",
+            "readySubtitle": "Your daily analysis is now available. Tap to analyze again.",
+            "defaultError": "Something went wrong. Tap to try again."
+        },
+        "actions": {
+            "title": "Actions",
+            "startAnalysis": "Start Analysis",
+            "newAnalysis": "New Analysis",
+            "progress": "Progress",
+            "analysisDescription": "Take your daily photo",
+            "progressDescription": "View trends",
+            "availableNow": "now",
+            "available": "Available"
+        },
+        "nextAnalysis": {
+            "title": "📅 Next Analysis",
+            "message": "Your next daily analysis will be available {{time}}",
+            "readyNow": "now"
+        },
+        "latestAnalysis": {
+            "sectionTitle": "📊 Latest Analysis",
+            "metricsAnalyzed": "{{count}} skin metrics analyzed",
+            "tapToView": "Tap to view analysis details",
+            "tapToViewFull": "Tap to view full results",
+            "viewFullResults": "View Full Results",
+            "complete": "Complete"
+        },
+        "modal": {
+            "title": "Analysis Results",
+            "analysisDate": "Analysis Date",
+            "metricsAnalyzed": "Metrics Analyzed",
+            "healthIndicators": "{{count}} skin health indicators",
+            "close": "✕"
+        },
+        "errors": {
+            "loadingData": "Loading your analysis data..."
+        },
+        "welcome": {
+            "emoji": "🎉",
+            "title": "Welcome to Your Skin Journey!",
+            "subtitle": "Let's start by taking your first skin analysis. Our AI will analyze your skin and provide personalized insights.",
+            "features": [
+                "📸 Daily skin analysis",
+                "📊 Progress tracking",
+                "🧴 Product recommendations",
+                "💪 Personalized routines"
+            ]
+        },
+        "processingScreen": {
+            "messages": {
+                "analyzing": "Analyzing your skin...",
+                "detecting": "Detecting skin metrics...",
+                "processing": "Processing results...",
+                "almostReady": "Almost ready!"
+            },
+            "subtitle": "Our AI is analyzing your skin in detail",
+            "progress": "Processing...",
+            "factTitle": "💡 Did you know?",
+            "factText": "Our AI analyzes over 15 different skin metrics to give you personalized insights"
+        }
+    },
+    "home": {
+        "title": "Home",
+        "welcome": "Welcome back!",
+        "stats": {
+            "dayStreak": "Day Streak",
+            "improvement": "Improvement"
+        },
+        "streak": {
+            "dayStreak": "{{count}} Day Streak!",
+            "dayStreakShort": "{{count}} day streak",
+            "motivation": "Amazing! You're {{daysAway}} days away from your {{milestone}}-day milestone!",
+            "personalBest": "Personal Best: {{days}} days",
+            "backendOffline": "Backend offline"
+        },
+        "quickActions": {
+            "takeAnalysis": "Take Analysis",
+            "checkRoutine": "Check Routine",
+            "streakProgress": "Streak Progress",
+            "analytics": "Analytics",
+            "analysisDescription": "Track your skin progress",
+            "routineDescription": "View today's steps",
+            "analyticsDescription": "View insights"
+        },
+        "errors": {
+            "backendConnection": "⚠️ Backend Connection Issue",
+            "unableToConnect": "Unable to connect to the backend server",
+            "retry": "Retry",
+            "noDataAvailable": "🔌 No {{dataType}} data - Backend not responding"
+        },
+        "dataTypes": {
+            "stats": "stats",
+            "progress": "progress", 
+            "streak data": "streak data"
+        },
+        "auth": {
+            "required": "🔐 Authentication Required",
+            "signInMessage": "Please sign in to view your personalized dashboard",
+            "signIn": "Sign In"
+        },
+        "loading": {
+            "authentication": "Checking authentication...",
+            "dashboard": "Loading your dashboard..."
+        },
+        "checkIn": {
+            "title": "Complete Daily Check-in",
+            "subtitle": "Track your progress and earn rewards",
+            "modalTitle": "Complete Your Daily Check-in",
+            "steps": {
+                "takePhoto": "Take a photo for skin analysis",
+                "completeRoutine": "Complete your skincare routine"
+            },
+            "buttonText": "Take Photo",
+            "viewRoutine": "View Routine"
+        },
+        "modals": {
+            "analysisResults": "Full Analysis Results",
+            "analysisDate": "Analysis Date",
+            "metricsAnalyzed": "Metrics Analyzed"
+        },
+        "journey": {
+            "ready": "Ready to Start Your Journey?",
+            "start": "Start your skincare journey today and build healthy habits!"
+        },
+        "sections": {
+            "yourProgress": "Your Progress",
+            "yourStreakJourney": "Your Streak Journey",
+            "quickActions": "Quick Actions"
+        }
+    },
+    "celebration": {
+        "dayStreak": "Day Streak!",
+        "encouragement": "Keep up the amazing work!",
+        "messages": {
+            "greatStart": "Great Start!",
+            "legendary": "Legendary Streak!",
+            "incredible": "Incredible Streak!",
+            "amazing": "Amazing Streak!",
+            "onFire": "On Fire!",
+            "building": "Building Momentum!",
+            "keepGoing": "Keep Going!"
+        }
+    },
+    "weeklyProgress": {
+        "keepGoing": "Keep going strong!",
+        "averageScore": "Average skin score: {{score}}",
+        "metricsImproving": "{{improving}}/{{total}} metrics improving",
+        "dayStreak": "{{count}} day streak",
+        "thisWeekScanned": "This week you scanned",
+        "times": "Times"
+    },
+    "resultsLegend": {
+        "title": "Understanding Your Scores",
+        "description": "Each circular score represents different aspects of your skin health. Here's how to read them:",
+        "note": "Higher scores indicate better skin health in that area. Don't worry about lower scores—we'll help you improve them with personalized recommendations."
+    },
+    "routine": {
+        "morning": "Morning Routine",
+        "evening": "Evening Routine",
+        "completed": "Completed",
+        "steps": "steps",
+        "timeRemaining": "time remaining",
+        "allComplete": "All routines completed for today!",
+        "buildMyRoutine": "Build My Routine",
+        "saveMyRoutines": "Save My Routines",
+        "customRoutineDesc": "Your personalized routines based on your skin analysis and preferences.",
+        "aiRoutineDesc": "AI-recommended routines based on your skin analysis, concerns, and preferences for optimal results.",
+        "unknownProduct": "Unknown Product",
+        "product": "Product",
+        "applyAsDirected": "Apply as directed",
+        "noAnalysisFound": "No analysis found. Please complete skin analysis first.",
+        "myMorningRoutine": "My Morning Routine",
+        "myEveningRoutine": "My Evening Routine",
+        "aiGeneratedMorningNote": "AI-generated morning routine based on skin analysis",
+        "aiGeneratedEveningNote": "AI-generated evening routine based on skin analysis",
+        "failedToSaveRoutines": "Failed to save routines. Please try again later.",
+        "loadingPersonalizedRoutines": "Loading your personalized routines...",
+        "yourCustomRoutines": "Your Custom Routines",
+        "activePersonalizedRoutines": "✓ Active personalized routines",
+        "routinesSavedSuccessfully": "Routines saved successfully!",
+        "loading": "Loading your routines...",
+        "edit": "Edit",
+        "noRoutineYet": "No {{type}} routine yet",
+        "tryAgain": "Try Again",
+        "morningFull": "Morning",
+        "eveningFull": "Evening",
+        "completedToday": "✅ {{type}} routine completed today!",
+        "morningRemaining": "☀️ Morning routine remaining",
+        "eveningRemaining": "🌙 Evening routine remaining",
+        "allCompleted": "🎉 All routines completed today! Great job!",
+        "routineComplete": "✅ {{type}} Routine Complete",
+        "getStarted": "Tap steps above to get started (0/{{total}})",
+        "completeWithCheckmark": "Complete {{type}} Routine ✓ ({{completed}}/{{total}})",
+        "completeProgress": "Complete {{type}} Routine ({{completed}}/{{total}})",
+        "progressHint": "💡 Complete all {{total}} steps to submit your routine",
+        "todaysSteps": "Today's Steps",
+        "unableToLoad": "⚠️ Unable to load routines",
+        "checkConnection": "Please check your connection and try again"
+    },
+    "profile": {
+        "title": "Profile",
+        "settings": "Settings",
+        "language": "Language",
+        "notifications": "Notifications",
+        "privacy": "Privacy Policy",
+        "support": "Help & Support",
+        "version": "Version",
+        "signOut": "Sign Out",
+        "analyses": "Analyses",
+        "readyToStart": "Ready to Start?",
+        "deleteAccount": "Delete Account",
+        "deleteConfirmation": "Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.",
+        "contactSupportTeam": "Contact Support Team",
+        "milestones": "Milestone Progress",
+        "streakStats": {
+            "current": "Current",
+            "best": "Best", 
+            "nextGoal": "Next Goal"
+        },
+        "streakProgress": {
+            "title": "Streak Progress",
+            "dayStreak": "{{count}} Day Streak!",
+            "milestones": {
+                "firstDay": "First Day",
+                "building": "Building",
+                "onFire": "On Fire",
+                "amazing": "Amazing",
+                "incredible": "Incredible",
+                "legendary": "Legendary"
+            },
+            "daysToMilestone": "{{days}} days to next milestone",
+            "daysCount": "{{count}} day",
+            "daysCount_plural": "{{count}} days",
+            "dataUnavailable": "🔌 Streak data unavailable - Backend offline"
+        },
+        "completion": "Profile {{percentage}}% complete",
+        "memberSince": {
+            "recently": "Recently"
+        },
+        "appVersion": "Dymz AI v1.1.0"
+    },
+    "userProfile": {
+        "title": "Profile",
+        "loading": "Loading your profile...",
+        "error": "Unable to load profile",
+        "tabs": {
+            "profile": "Profile",
+            "stats": "Stats",
+            "settings": "Settings"
+        },
+        "alerts": {
+            "success": "Success",
+            "error": "Error",
+            "profileUpdated": "Profile updated successfully!",
+            "updateFailed": "Failed to update profile. Please try again."
+        },
+        "signOut": {
+            "title": "Sign Out",
+            "message": "Are you sure you want to sign out?",
+            "cancel": "Cancel",
+            "confirm": "Sign Out"
+        },
+        "profileInfo": {
+            "title": "Profile Information",
+            "userId": "User ID",
+            "displayName": "Display Name",
+            "timezone": "Timezone",
+            "completion": "Profile Completion",
+            "ageRange": "Age Range",
+            "gender": "Gender",
+            "experience": "Skincare Experience",
+            "memberSince": "Member Since",
+            "notSet": "Not set",
+            "notSpecified": "Not specified",
+            "unknown": "Unknown"
+        },
+        "streak": {
+            "title": "Streak Progress",
+            "current": "Current Streak",
+            "best": "Best Streak",
+            "nextGoal": "Next Goal"
+        },
+        "journey": {
+            "title": "Your Journey",
+            "skinScans": "Skin Scans",
+            "dayStreak": "Day Streak",
+            "routineAdherence": "% Routine Adherence"
+        },
+        "activity": {
+            "title": "Recent Activity",
+            "lastScan": "Last Skin Scan",
+            "totalCheckIns": "Total Check-ins",
+            "currentStreak": "Current Streak",
+            "never": "Never",
+            "days": "days"
+        },
+        "noData": "No stats available yet",
+        "settings": {
+            "notifications": {
+                "title": "Notifications",
+                "routineReminders": "Routine Reminders",
+                "progressUpdates": "Progress Updates"
+            },
+            "privacy": {
+                "title": "Privacy",
+                "dataSharing": "Data Sharing",
+                "anonymousAnalytics": "Anonymous Analytics"
+            },
+            "tapToConfigure": "Tap to configure"
+        }
+    },
+    "settings": {
+        "language": "Language",
+        "selectLanguage": "Select Language",
+        "systemDefault": "System Default"
+    },
+    "auth": {
+        "welcomeTitle": "Welcome to Dymz AI",
+        "welcomeSubtitle": "AI-powered skincare analysis and personalized recommendations",
+        "enterEmail": "Enter your email",
+        "emailPlaceholder": "your@email.com",
+        "verifyCode": "Verify Code",
+        "codePlaceholder": "Enter 6-digit code",
+        "signIn": "Sign In",
+        "createAccount": "Create Account",
+        "password": "Password",
+        "passwordPlaceholder": "Password",
+        "legalDisclaimer": "By proceeding, you agree to our Terms of Service and Privacy Policy.",
+        "emailEnter": {
+            "title": "Create your account",
+            "subtitle": "Enter your email and password to get started",
+            "passwordPlaceholder": "Password (min 6 characters)",
+            "createAccount": "Create Account",
+            "creatingAccount": "Creating Account…",
+            "errors": {
+                "invalidEmail": "Please enter a valid email",
+                "passwordTooShort": "Password must be at least 6 characters",
+                "failedToCreate": "Failed to create account"
+            }
+        },
+        "emailSignIn": {
+            "title": "Welcome back",
+            "subtitle": "Sign in to your account",
+            "signingIn": "Signing in…",
+            "forgotPassword": "Forgot password?",
+            "errors": {
+                "invalidEmail": "Please enter a valid email",
+                "passwordTooShort": "Password must be at least 6 characters",
+                "failedToSignIn": "Failed to sign in"
+            }
+        },
+        "emailVerify": {
+            "subtitle": "Enter the 6-digit code we sent to\n{{email}}",
+            "verify": "Verify",
+            "verifying": "Verifying…",
+            "resendCode": "Resend code",
+            "resending": "Resending…",
+            "resendIn": "Resend in {{time}}",
+            "errors": {
+                "enter6DigitCode": "Enter 6-digit code",
+                "invalidCode": "Invalid code",
+                "failedToResend": "Failed to resend code"
+            }
+        }
+    },
+    "concerns": {
+        "duration": {
+            "howLongHad": "How long have you had",
+            "thisConcern": "this concern?",
+            "durationHelp": "Understanding the duration helps us recommend the right treatment intensity and set realistic timelines for improvement."
+        }
+    },
+    "errors": {
+        "analysisId": "Analysis ID",
+        "status": "Status",
+        "loadingStatus": "Loading..."
+    },
+    "error": {
+        "retry": "Retry",
+        "debugInfo": "Debug Info:",
+        "backendNote": "ℹ️ Backend errors are expected during development. The app will work normally once the backend is running.",
+        "backendConnectionIssue": "Backend Connection Issue",
+        "somethingWentWrong": "Something went wrong"
+    },
+    "buttons": {
+        "signUp": "Sign up",
+        "alreadyHaveAccount": "Already have account?",
+        "letsDoIt": "Let's do it!",
+        "signOut": "Sign Out",
+        "contactPrivacyTeam": "Contact Privacy Team",
+        "sendTestNotification": "Send Test Notification",
+        "sending": "Sending...",
+        "saveChanges": "Save Changes",
+        "saving": "Saving...",
+        "seeYourResults": "See your results",
+        "startYourJourney": "Start Your Journey",
+        "revealRecommendations": "Reveal your recommendations",
+        "yesIFollowTrends": "Yes, I Follow Trends",
+        "tryAgain": "Try Again",
+        "buildYourRoutine": "Build Your Routine →",
+        "seeYourAnalysis": "See your analysis →"
+    },
+    "forms": {
+        "yes": "Yes",
+        "no": "No",
+        "next": "Next"
+    },
+    "stats": {
+        "skinScans": "Skin Scans",
+        "dayStreak": "Day Streak",
+        "products": "products",
+        "stickToRoutine": "Stick to their routine",
+        "seeImprovements": "See improvements in 4 weeks"
+    },
+    "processing": {
+        "analyzingYourSkin": "Analyzing your skin...",
+        "detectingSkinMetrics": "Detecting skin metrics...",
+        "processingResults": "Processing results...",
+        "almostReady": "Almost ready!"
+    },
+    "explanations": {
+        "sunExposure": "Sun exposure affects your skin's needs. This helps us recommend the right level of protection and active ingredients for your routine.",
+        "productUsageHelp": "Your experience with previous products helps us understand what works best for your skin and what to avoid.",
+        "productEffectFeedback": "Your feedback helps us improve our recommendations and find products that will work better for your unique skin needs.",
+        "ageSpecificHelp": "Age-specific recommendations help us suggest products with the right active ingredients for your skin's current needs.",
+        "skincareExperienceHelp": "This helps us recommend the right level of products for you",
+        "motivationHelp": "Understanding your motivation helps us prioritize the right ingredients and create a routine that matches your goals and timeline."
+    },
+    "questions": {
+        "biggestSkinConcern": "What's your biggest skin concern?",
+        "whyImproveConcern": "Why do you want to improve your {concern}?",
+        "skinIssuesIntro": "Finally, let's look at your skin issues!",
+        "dailyReminders": "Would you like daily reminders to stay on track?"
+    },
+    "statements": {
+        "forgetRoutine": "I keep forgetting to stick to my skincare routine and always lose motivation after a few days."
+    },
+    "productEffects": {
+        "didntDoMuch": "Didn't do much"
+    },
+    "notifications": {
+        "title": "Dymz AI would like to send you notifications",
+        "body": "Notifications may include alerts, sounds, and icon badges. These can be configured in Settings.",
+        "allow": "Allow",
+        "dontAllow": "Don't Allow",
+        "success": "Success",
+        "error": "Error",
+        "preferencesUpdated": "Notification preferences updated successfully!",
+        "updateFailed": "Failed to update preferences. Please try again.",
+        "testTitle": "Test Notification",
+        "testBody": "This is a test notification from Dymz AI!",
+        "testSent": "Test notification sent!",
+        "testFailed": "Failed to send test notification",
+        "statusTitle": "Notification Status",
+        "enabled": "🔔 Notifications Enabled",
+        "disabled": "🔕 Notifications Disabled",
+        "enabledDescription": "You're receiving personalized skincare reminders and updates.",
+        "disabledDescription": "Enable notifications to get personalized skincare reminders and progress updates.",
+        "enableInSettings": "Enable notifications in your device settings to receive updates.",
+        "routineReminders": "Routine Reminders",
+        "dailyReminders": "Daily Reminders",
+        "dailyRemindersDesc": "Reminder to complete your skincare routine",
+        "progressAnalysis": "Progress & Analysis",
+        "analysisNotifications": "Analysis Notifications",
+        "analysisNotificationsDesc": "Notification when your skin analysis is ready",
+        "streakNotifications": "Streak Notifications",
+        "streakNotificationsDesc": "Notification when you reach streak milestones",
+        "productTips": "Product & Tips",
+        "tipsNotifications": "Tips Notifications",
+        "tipsNotificationsDesc": "Receive helpful skincare tips and advice",
+        "marketingNotifications": "Marketing Notifications",
+        "marketingNotificationsDesc": "Receive updates about new features and products",
+        "deviceInfo": "Device Information",
+        "registeredDevices": "Registered devices"
+    },
+    "buildRoutine": {
+        "unknownProduct": "Unknown Product",
+        "unknownBrand": "Unknown Brand",
+        "errors": {
+            "recommendationsUnavailable": "⚠️ Product Recommendations Unavailable",
+            "completeAnalysisFirst": "Complete your skin analysis first to get personalized product recommendations.",
+            "unableToConnect": "Unable to connect to the product recommendation service.",
+            "backendStatus": "Backend Status",
+            "unknown": "Unknown",
+            "connectionFailed": "Connection failed",
+            "backendNotResponding": "🔌 Backend Not Responding",
+            "serviceNotResponding": "The product recommendation service is not responding. This could be due to:",
+            "possibleCauses": "• Backend server is offline\n• Network connectivity issues\n• Service temporarily unavailable"
+        },
+        "buttons": {
+            "continueAnyway": "Continue Anyway →",
+            "continueWithoutRecommendations": "Continue Without Recommendations →"
+        }
+    },
+    "captureGuidelines": {
+        "title": "Follow these tips for the best skin analysis",
+        "naturalLighting": "Use natural lighting - avoid harsh shadows",
+        "armLength": "Hold phone at arm's length for best results",
+        "lookDirectly": "Look directly at the camera with a neutral expression",
+        "removeMakeup": "Remove makeup, glasses, and hair from face",
+        "faceCentered": "Keep your face centered in the frame"
+    },
+    "insights": {
+        "loading": "Loading your insights...",
+        "yourSkinType": "Your Skin Type",
+        "weekOverview": "Week {{weekNumber}} Overview",
+        "skinMetrics": "Skin Metrics",
+        "focusAreas": "Focus Areas",
+        "errors": {
+            "unableToLoad": "Unable to Load Insights",
+            "checkConnection": "Please check your connection and try again.",
+            "failedToLoad": "Failed to load insights"
+        },
+        "emptyState": {
+            "title": "No Insights Yet",
+            "description": "Complete your first skin analysis to see detailed insights about your progress."
+        }
+    },
+    "selectTopConcern": {
+        "titlePart1": "What's your biggest",
+        "titlePart2": "skin concern?",
+        "subtitle": "Pick the one area you'd most like to improve. We'll prioritize this in your personalized routine.",
+        "concerns": {
+            "acne": "Acne",
+            "blackheads": "Blackheads",
+            "dryness": "Dryness",
+            "oilySkin": "Oily Skin",
+            "darkSpots": "Dark Spots",
+            "redness": "Redness",
+            "fineLines": "Fine Lines",
+            "largePores": "Large Pores",
+            "sensitivity": "Sensitivity",
+            "unevenTexture": "Uneven Texture"
+        }
+    },
+    "sunExposure": {
+        "title": "What's your average daily sun exposure?",
+        "options": {
+            "low": "Low (< 2 h/day)",
+            "occasional": "Occasional (2–4 h/day)",
+            "high": "High (> 4 h/day)"
+        },
+        "infoNote": "Sun exposure affects your skin's needs. This helps us recommend the right level of protection and active ingredients for your routine."
+    },
+    "surveyStatement": {
+        "yes": "Yes",
+        "no": "No"
+    },
+    "motivationWhyConcern": {
+        "titlePart1": "Why do you want to improve",
+        "titlePart2": "your {{concern}}?",
+        "defaultConcern": "skin concern",
+        "options": {
+            "insecurity": "It makes me feel insecure about my appearance",
+            "health": "I want healthier, more balanced skin",
+            "confidence": "I want confidence without makeup",
+            "discomfort": "It causes physical discomfort or irritation",
+            "event": "I have an upcoming important event",
+            "aging": "I want to prevent future skin aging"
+        },
+        "infoNote": "Understanding your motivation helps us prioritize the right ingredients and create a routine that matches your goals and timeline."
+    },
+    "productEffectFeedback": {
+        "title": "How did the products affect your skin?",
+        "options": {
+            "helpedLot": "Helped a lot",
+            "helpedLittle": "Helped a little",
+            "noEffect": "Didn't do much",
+            "madeWorse": "Made it worse"
+        },
+        "infoNote": "Your feedback helps us improve our recommendations and find products that will work better for your unique skin needs."
+    },
+    "notificationsPermission": {
+        "questionTitle": "Would you like daily reminders to stay on track?",
+        "statementQuote": "I keep forgetting to stick to my skincare routine and always lose motivation after a few days.",
+        "overlay": {
+            "title": "Dymz AI would like to send you notifications",
+            "body": "Notifications may include alerts, sounds, and icon badges. These can be configured in Settings.",
+            "allowText": "Allow",
+            "dontAllowText": "Don't Allow"
+        }
+    },
+    "ratingPrompt": {
+        "title": "Love Dymz AI? ✨",
+        "body1": "We're a small team working hard to help you achieve your best skin! ✨",
+        "body2": "This app is built for people who want real results, not marketing hype. ❤️",
+        "userCount": "+15,000 Dymz users",
+        "testimonials": {
+            "sarah": {
+                "text": "This app completely transformed my skincare routine! The AI recommendations were spot-on.",
+                "highlighted": ["transformed my skincare routine", "spot-on"]
+            },
+            "mike": {
+                "text": "Finally found products that actually work for my sensitive skin. Game changer!",
+                "highlighted": ["actually work", "Game changer"]
+            }
+        },
+        "rateButton": "let's rate! ⭐",
+        "dismissButton": "not rn 🙈"
+    },
+    "actions": {
+        "continue": "Continue"
+    },
+    "matchSummary": {
+        "title": "We found a great product match!",
+        "matchText": "{{percentage}}% match",
+        "moreSteps": "+ {{count}} more steps",
+        "revealButton": "Reveal full routine"
+    }
+}

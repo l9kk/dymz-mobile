@@ -9,6 +9,7 @@ import {
   InfoNote
 } from '../design-system';
 import { colors, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface ProductUsageYesNoProps {
   onBack?: () => void;
@@ -23,9 +24,11 @@ export const ProductUsageYesNo: React.FC<ProductUsageYesNoProps> = ({
   progressValue = 80,
   currentDot = 1
 }) => {
+  const { t } = useTranslation();
+  
   const usageOptions = [
-    { id: 'yes', label: 'Yes' },
-    { id: 'no', label: 'No' },
+    { id: 'yes', label: t('forms.yes') },
+    { id: 'no', label: t('forms.no') },
   ];
 
   const handleOptionPress = (optionId: string) => {
@@ -45,7 +48,7 @@ export const ProductUsageYesNo: React.FC<ProductUsageYesNoProps> = ({
 
       <View style={styles.header}>
         <SectionHeading>
-          Have you tried products to fix your skin concern?
+          {t('onboarding.productUsage.question')}
         </SectionHeading>
       </View>
 
@@ -62,7 +65,7 @@ export const ProductUsageYesNo: React.FC<ProductUsageYesNoProps> = ({
       />
 
       <InfoNote 
-        text="Your experience with previous products helps us understand what works best for your skin and what to avoid."
+        text={t('onboarding.productUsage.infoNote')}
         style={styles.infoNote}
       />
     </ScrollView>

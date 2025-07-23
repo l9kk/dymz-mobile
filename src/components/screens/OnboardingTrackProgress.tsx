@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { Icon } from '../design-system/atoms/Icon';
 import { ProgressRingStat } from '../design-system/molecules/ProgressRingStat';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
@@ -13,10 +14,12 @@ interface OnboardingTrackProgressProps {
 export const OnboardingTrackProgress: React.FC<OnboardingTrackProgressProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
+  
   // Sample progress data to show the concept
   const ringStats = [
-    { score: 85, title: 'Hydration' },
-    { score: 72, title: 'Texture' },
+    { score: 85, title: t('onboarding.trackProgress.metrics.hydration') },
+    { score: 72, title: t('onboarding.trackProgress.metrics.texture') },
   ];
 
   return (
@@ -53,29 +56,29 @@ export const OnboardingTrackProgress: React.FC<OnboardingTrackProgressProps> = (
           <View style={styles.featureRow}>
             <View style={styles.featureItem}>
               <Icon name="analytics-outline" size={24} color={colors.accentPalette[0]} />
-              <Text style={styles.featureLabel}>Charts</Text>
+              <Text style={styles.featureLabel}>{t('onboarding.trackProgress.features.charts')}</Text>
             </View>
             <View style={styles.featureItem}>
               <Icon name="bar-chart-outline" size={24} color={colors.accentPalette[1]} />
-              <Text style={styles.featureLabel}>Metrics</Text>
+              <Text style={styles.featureLabel}>{t('onboarding.trackProgress.features.metrics')}</Text>
             </View>
             <View style={styles.featureItem}>
               <Icon name="trophy-outline" size={24} color={colors.accentPalette[2]} />
-              <Text style={styles.featureLabel}>Goals</Text>
+              <Text style={styles.featureLabel}>{t('onboarding.trackProgress.features.goals')}</Text>
             </View>
           </View>
         </View>
         
         <Text style={styles.title}>
-          Track your skin improvements
+          {t('onboarding.trackProgress.title')}
         </Text>
         
         <Text style={styles.subtitle}>
-          Visualize your progress with detailed charts, metrics, and weekly comparisons to see real results.
+          {t('onboarding.trackProgress.subtitle')}
         </Text>
         
         <PrimaryButton 
-          title="Continue" 
+          title={t('actions.continue')} 
           onPress={onContinue}
           style={styles.button}
         />

@@ -13,6 +13,7 @@ import { getProductImageByIndex } from '../../utils/imageUrls';
 import { useRoutines, useRoutineRecommendations, useCreateRoutine } from '../../hooks/api/useRoutines';
 import { useLatestAnalysis } from '../../hooks/api/useAnalysis';
 import { RoutineRecommendationResponse, RoutineCreateRequest } from '../../services/routinesApi';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface RoutineStep {
   stepNumber: number;
@@ -107,10 +108,11 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
   morningRoutine,
   eveningRoutine
 }) => {
+  const { t } = useTranslation();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [routinesSaved, setRoutinesSaved] = useState(false);
-  const tabOptions = ['Morning Routine', 'Night Routine'];
+  const tabOptions = [t('routine.morning'), t('routine.evening')];
   
   // Fetch user's routines and recommendations
   const { data: userRoutines, isLoading: routinesLoading, refetch: refetchRoutines } = useRoutines();
@@ -132,9 +134,9 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
   const convertRoutineSteps = (routineSteps: any[] = []): RoutineStep[] => {
     return routineSteps.map((step, index) => ({
       stepNumber: step.step_number || index + 1,
-      productName: step.product?.name || step.product_name || 'Unknown Product',
-      productRole: step.product?.category || step.category || 'Product',
-      instruction: step.instructions || step.instruction || 'Apply as directed',
+      productName: step.product?.name || step.product_name || t('routine.unknownProduct'),
+      productRole: step.product?.category || step.category || t('routine.product'),
+      instruction: step.instructions || step.instruction || t('routine.applyAsDirected'),
       thumbnailUri: step.product?.image_url || getProductImageByIndex(index),
       matchPercentage: step.match_percentage || Math.floor(Math.random() * 20) + 80 // Fallback with realistic range
     }));
@@ -156,7 +158,7 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
   // Function to save routines
   const handleSaveRoutines = async () => {
     if (!analysis?.id) {
-      Alert.alert('Error', 'No analysis found. Please complete skin analysis first.');
+      Alert.alert(t('common.error'), t('routine.noAnalysisFound'));
       return;
     }
 
@@ -167,7 +169,7 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
       
       // Prepare routine data for morning routine - aligned with OpenAPI schema
       const morningRoutineData: RoutineCreateRequest = {
-        name: 'My Morning Routine',
+        name: t('routine.myMorningRoutine'),
         routine_type: 'morning',
         steps: routineData.morning.map((step, index) => ({
           step: step.productName, // Use product name as step name (max 50 chars per API)
@@ -177,12 +179,12 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
           optional: false
         })),
         analysis_id: analysis.id,
-        notes: 'AI-generated morning routine based on skin analysis' // Max 1000 chars per API
+        notes: t('routine.aiGeneratedMorningNote') // Max 1000 chars per API
       };
 
       // Prepare routine data for evening routine - aligned with OpenAPI schema
       const eveningRoutineData: RoutineCreateRequest = {
-        name: 'My Evening Routine',
+        name: t('routine.myEveningRoutine'),
         routine_type: 'evening',
         steps: routineData.evening.map((step, index) => ({
           step: step.productName, // Use product name as step name (max 50 chars per API)
@@ -192,7 +194,7 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
           optional: false
         })),
         analysis_id: analysis.id,
-        notes: 'AI-generated evening routine based on skin analysis' // Max 1000 chars per API
+        notes: t('routine.aiGeneratedEveningNote') // Max 1000 chars per API
       };
 
       // Save both routines
@@ -215,9 +217,9 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
     } catch (error) {
       console.error('Failed to save routines:', error);
       Alert.alert(
-        'Error', 
-        'Failed to save routines. Please try again later.',
-        [{ text: 'OK' }]
+        t('common.error'), 
+        t('routine.failedToSaveRoutines'),
+        [{ text: t('common.ok') }]
       );
     } finally {
       setIsSaving(false);
@@ -229,7 +231,7 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
     return (
       <View style={[styles.container, styles.centerContent]}>
         <LoadingSpinner size={48} />
-        <Text style={styles.loadingText}>Loading your personalized routines...</Text>
+        <Text style={styles.loadingText}>{t('routine.loadingPersonalizedRoutines')}</Text>
       </View>
     );
   }
@@ -240,20 +242,20 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
       
       <View style={styles.header}>
         <SectionHeading>
-          Your Custom Routines
+          {t('routine.yourCustomRoutines')}
         </SectionHeading>
         
         <Text style={styles.subtitle}>
           {userRoutines?.routines && userRoutines.routines.length > 0 
-            ? "Your personalized routines based on your skin analysis and preferences."
-            : "AI-recommended routines based on your skin analysis, concerns, and preferences for optimal results."
+            ? t('routine.customRoutineDesc')
+            : t('routine.aiRoutineDesc')
           }
         </Text>
         
         {/* Show routine source info */}
         {userRoutines?.routines && userRoutines.routines.length > 0 && (
           <Text style={styles.sourceInfo}>
-            ✓ Active personalized routines
+            {t('routine.activePersonalizedRoutines')}
           </Text>
         )}
       </View>
@@ -282,7 +284,7 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
       {/* Show save button if routines haven't been saved yet and no active routines exist */}
       {!routinesSaved && (
         <PrimaryButton
-          title={isSaving ? "Saving Routines..." : "Save My Routines"}
+          title={isSaving ? t('loading.savingRoutines') : t('routine.saveMyRoutines')}
           onPress={handleSaveRoutines}
           disabled={isSaving}
           style={styles.saveButton}
@@ -293,7 +295,7 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
       {routinesSaved && (
         <View style={styles.successMessage}>
           <Text style={styles.successEmoji}>✅</Text>
-          <Text style={styles.successText}>Routines saved successfully!</Text>
+          <Text style={styles.successText}>{t('routine.routinesSavedSuccessfully')}</Text>
         </View>
       )}
     </ScrollView>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { 
   BackButton, 
   LinearProgressStepper, 
@@ -18,17 +19,18 @@ interface ExperienceOption {
   label: string;
 }
 
-const experienceOptions: ExperienceOption[] = [
-  { id: 'regular', label: 'I have a regular routine' },
-  { id: 'occasional', label: 'I use products occasionally' },
-  { id: 'beginner', label: 'I\'m new to skincare' },
-];
-
 export const OnboardingSkincareExperience: React.FC<OnboardingSkincareExperienceProps> = ({
   onBack,
   onContinue
 }) => {
+  const { t } = useTranslation();
   const [selectedExperience, setSelectedExperience] = useState<string>('');
+
+  const experienceOptions: ExperienceOption[] = [
+    { id: 'regular', label: t('onboarding.skincareExperience.options.regular') },
+    { id: 'occasional', label: t('onboarding.skincareExperience.options.occasional') },
+    { id: 'beginner', label: t('onboarding.skincareExperience.options.beginner') },
+  ];
 
   const handleExperienceSelect = (experienceId: string) => {
     setSelectedExperience(experienceId);
@@ -51,7 +53,7 @@ export const OnboardingSkincareExperience: React.FC<OnboardingSkincareExperience
 
         <View style={styles.content}>
           <Text style={styles.title}>
-            What's your skincare experience?
+            {t('onboarding.skincareExperience.title')}
           </Text>
 
           <VerticalOptionList
@@ -62,7 +64,7 @@ export const OnboardingSkincareExperience: React.FC<OnboardingSkincareExperience
           />
 
           <InfoNote 
-            text="This helps us recommend the right level of products for you"
+            text={t('onboarding.skincareExperience.infoNote')}
             style={styles.infoNote}
           />
         </View>
