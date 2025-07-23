@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import {
   BackButton,
   SectionHeading,
@@ -19,65 +20,66 @@ interface PolicySection {
   content: string;
 }
 
-const policySections: PolicySection[] = [
-  {
-    id: 'overview',
-    title: 'Overview',
-    content: 'At Dymz AI, we respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, and safeguard your information when you use our skincare analysis app.'
-  },
-  {
-    id: 'information-collected',
-    title: 'Information We Collect',
-    content: 'We collect information you provide directly to us, such as:\n\n• Profile information (age, gender, skin type)\n• Photos you upload for skin analysis\n• Skincare routine preferences and history\n• App usage data and interactions\n• Device information and identifiers\n\nWe do not sell your personal data to third parties.'
-  },
-  {
-    id: 'how-we-use-info',
-    title: 'How We Use Your Information',
-    content: 'We use your information to:\n\n• Provide personalized skin analysis and recommendations\n• Improve our AI algorithms and app functionality\n• Send you relevant skincare tips and reminders (with your consent)\n• Provide customer support\n• Ensure app security and prevent fraud\n• Comply with legal obligations'
-  },
-  {
-    id: 'data-protection',
-    title: 'Data Protection & Security',
-    content: 'We implement industry-standard security measures to protect your data:\n\n• All photos are encrypted during transmission and storage\n• Personal data is stored on secure, encrypted servers\n• We use secure authentication methods\n• Regular security audits and updates\n• Limited access to data on a need-to-know basis\n\nPhotos uploaded for analysis are automatically deleted after processing unless you choose to save them for progress tracking.'
-  },
-  {
-    id: 'sharing-disclosure',
-    title: 'Information Sharing',
-    content: 'We do not sell, trade, or rent your personal information. We may share information only in these limited circumstances:\n\n• With your explicit consent\n• To comply with legal requirements\n• To protect our rights and prevent fraud\n• With trusted service providers who help operate our app (under strict confidentiality agreements)\n• In case of business transfers (with prior notice)'
-  },
-  {
-    id: 'your-rights',
-    title: 'Your Rights & Choices',
-    content: 'You have the right to:\n\n• Access your personal data\n• Correct inaccurate information\n• Delete your account and data\n• Opt-out of marketing communications\n• Data portability (download your data)\n• Withdraw consent at any time\n\nTo exercise these rights, contact us at askhat.ss23@gmail.com or through the app settings.'
-  },
-  {
-    id: 'cookies-tracking',
-    title: 'Cookies & Tracking',
-    content: 'We use minimal tracking technologies:\n\n• Essential cookies for app functionality\n• Analytics to understand app usage (anonymized)\n• No third-party advertising cookies\n• No cross-app tracking\n\nYou can manage these preferences in your device settings.'
-  },
-  {
-    id: 'children-privacy',
-    title: 'Children\'s Privacy',
-    content: 'Our app is not intended for children under 13. We do not knowingly collect personal information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately.'
-  },
-  {
-    id: 'changes',
-    title: 'Changes to This Policy',
-    content: 'We may update this privacy policy from time to time. We will notify you of any material changes through the app or by email. Your continued use of the app after changes indicates acceptance of the updated policy.'
-  },
-  {
-    id: 'contact',
-    title: 'Contact Us',
-    content: 'If you have questions about this privacy policy or our data practices, please contact us:\n\n• Email: askhat.ss23@gmail.com\n• Support: askhat.ss23@gmail.com\n• Address: [Company Address]\n\nLast updated: July 2025'
-  }
-];
-
 export const PrivacyPolicyScreen: React.FC<PrivacyPolicyScreenProps> = ({
   onBack
 }) => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [expandedSection, setExpandedSection] = useState<string | null>('overview');
   const [isLoading, setIsLoading] = useState(false);
+
+  const policySections: PolicySection[] = [
+    {
+      id: 'overview',
+      title: t('privacy.sections.overview.title'),
+      content: t('privacy.sections.overview.content')
+    },
+    {
+      id: 'information-collected',
+      title: t('privacy.sections.informationCollected.title'),
+      content: t('privacy.sections.informationCollected.content')
+    },
+    {
+      id: 'how-we-use-info',
+      title: t('privacy.sections.howWeUse.title'),
+      content: t('privacy.sections.howWeUse.content')
+    },
+    {
+      id: 'data-protection',
+      title: t('privacy.sections.dataProtection.title'),
+      content: t('privacy.sections.dataProtection.content')
+    },
+    {
+      id: 'sharing-disclosure',
+      title: t('privacy.sections.sharing.title'),
+      content: t('privacy.sections.sharing.content')
+    },
+    {
+      id: 'your-rights',
+      title: t('privacy.sections.yourRights.title'),
+      content: t('privacy.sections.yourRights.content')
+    },
+    {
+      id: 'cookies-tracking',
+      title: t('privacy.sections.cookies.title'),
+      content: t('privacy.sections.cookies.content')
+    },
+    {
+      id: 'children-privacy',
+      title: t('privacy.sections.children.title'),
+      content: t('privacy.sections.children.content')
+    },
+    {
+      id: 'changes',
+      title: t('privacy.sections.changes.title'),
+      content: t('privacy.sections.changes.content')
+    },
+    {
+      id: 'contact',
+      title: t('privacy.sections.contact.title'),
+      content: t('privacy.sections.contact.content')
+    }
+  ];
 
   const toggleSection = (id: string) => {
     setExpandedSection(expandedSection === id ? null : id);
@@ -98,14 +100,14 @@ export const PrivacyPolicyScreen: React.FC<PrivacyPolicyScreenProps> = ({
         Alert.alert(
           'Contact Privacy Team',
           `Please email your privacy questions to: ${email}`,
-          [{ text: 'OK' }]
+          [{ text: t('common.ok') }]
         );
       }
     } catch (error) {
       Alert.alert(
         'Contact Privacy Team',
         `Please email us at: ${email}`,
-        [{ text: 'OK' }]
+        [{ text: t('common.ok') }]
       );
     }
   };
@@ -115,7 +117,7 @@ export const PrivacyPolicyScreen: React.FC<PrivacyPolicyScreenProps> = ({
       'Delete Account',
       'To delete your account and all associated data, please contact our support team. This action cannot be undone.',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         { 
           text: 'Contact Support', 
           style: 'destructive', 

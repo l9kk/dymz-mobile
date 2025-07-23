@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { 
   BackButton,
   LinearProgressStepper,
@@ -23,11 +24,13 @@ export const ProductEffectFeedback: React.FC<ProductEffectFeedbackProps> = ({
   progressValue = 85,
   currentDot = 2
 }) => {
+  const { t } = useTranslation();
+  
   const effectOptions = [
-    { id: 'helped-lot', label: 'Helped a lot' },
-    { id: 'helped-little', label: 'Helped a little' },
-    { id: 'no-effect', label: "Didn't do much" },
-    { id: 'made-worse', label: 'Made it worse' },
+    { id: 'helped-lot', label: t('productEffectFeedback.options.helpedLot') },
+    { id: 'helped-little', label: t('productEffectFeedback.options.helpedLittle') },
+    { id: 'no-effect', label: t('productEffectFeedback.options.noEffect') },
+    { id: 'made-worse', label: t('productEffectFeedback.options.madeWorse') },
   ];
 
   const handleOptionPress = (optionId: string) => {
@@ -46,7 +49,7 @@ export const ProductEffectFeedback: React.FC<ProductEffectFeedbackProps> = ({
 
       <View style={styles.header}>
         <SectionHeading>
-          How did the products affect your skin?
+          {t('productEffectFeedback.title')}
         </SectionHeading>
       </View>
 
@@ -63,7 +66,7 @@ export const ProductEffectFeedback: React.FC<ProductEffectFeedbackProps> = ({
       />
 
       <InfoNote 
-        text="Your feedback helps us improve our recommendations and find products that will work better for your unique skin needs."
+        text={t('productEffectFeedback.infoNote')}
         style={styles.infoNote}
       />
     </ScrollView>

@@ -8,6 +8,7 @@ import {
   StatParagraph 
 } from '../design-system';
 import { colors, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface PlanRoadmapProps {
   onContinue?: () => void;
@@ -16,28 +17,29 @@ interface PlanRoadmapProps {
 export const PlanRoadmap: React.FC<PlanRoadmapProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
   const steps = [
     {
-      title: "Understanding you",
+      title: t('onboarding.roadmap.understandingYou.title'),
       status: "done" as const
     },
     {
-      title: "Your motivations", 
+      title: t('onboarding.roadmap.yourMotivations.title'), 
       status: "done" as const
     },
     {
-      title: "Your skin analysis",
-      subtitle: "next, we'll show you detailed insights",
+      title: t('onboarding.roadmap.skinAnalysis.title'),
+      subtitle: t('onboarding.roadmap.skinAnalysis.subtitle'),
       status: "current" as const
     },
     {
-      title: "Your perfect routine",
-      subtitle: "then, we'll build personalized recommendations",
+      title: t('onboarding.roadmap.perfectRoutine.title'),
+      subtitle: t('onboarding.roadmap.perfectRoutine.subtitle'),
       status: "upcoming" as const
     },
     {
-      title: "Your glow up plan",
-      subtitle: "finally, your complete transformation roadmap",
+      title: t('onboarding.roadmap.glowUpPlan.title'),
+      subtitle: t('onboarding.roadmap.glowUpPlan.subtitle'),
       status: "upcoming" as const
     }
   ];
@@ -52,7 +54,7 @@ export const PlanRoadmap: React.FC<PlanRoadmapProps> = ({
         >
           <View style={styles.content}>
             <SectionHeading style={styles.heading}>
-              Your Personalized Plan
+              {t('onboarding.roadmap.planTitle')}
             </SectionHeading>
             
             <View style={styles.timelineContainer}>
@@ -67,7 +69,7 @@ export const PlanRoadmap: React.FC<PlanRoadmapProps> = ({
             </View>
 
             <StatParagraph style={styles.description}>
-              We're about to reveal your complete skin analysis with personalized insights and recommendations tailored just for you.
+              {t('onboarding.roadmap.description')}
             </StatParagraph>
           </View>
         </ScrollView>
@@ -75,7 +77,7 @@ export const PlanRoadmap: React.FC<PlanRoadmapProps> = ({
 
       <View style={styles.buttonContainer}>
         <PrimaryButton
-          title="See your analysis →"
+          title={t('buttons.seeYourAnalysis')}
           onPress={onContinue}
         />
       </View>

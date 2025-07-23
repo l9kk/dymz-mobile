@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { 
   PrimaryButton,
   SectionHeading
@@ -18,47 +19,48 @@ interface RatingPromptProps {
   onDismiss?: () => void;
 }
 
-const TESTIMONIAL_DATA = [
-  {
-    avatarUri: 'https://images.unsplash.com/photo-1553514029-1318c9127859?w=48&h=48&fit=crop&crop=face',
-    username: 'Sarah M.',
-    rating: 5,
-    testimonialText: 'This app completely transformed my skincare routine! The AI recommendations were spot-on.',
-    highlightedPhrases: ['transformed my skincare routine', 'spot-on']
-  },
-  {
-    avatarUri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=face',
-    username: 'Mike R.',
-    rating: 5,
-    testimonialText: 'Finally found products that actually work for my sensitive skin. Game changer!',
-    highlightedPhrases: ['actually work', 'Game changer']
-  }
-];
-
 export const RatingPrompt: React.FC<RatingPromptProps> = ({
   onRateApp,
   onDismiss,
 }) => {
+  const { t } = useTranslation();
+  
+  const TESTIMONIAL_DATA = [
+    {
+      avatarUri: 'https://images.unsplash.com/photo-1553514029-1318c9127859?w=48&h=48&fit=crop&crop=face',
+      username: 'Sarah M.',
+      rating: 5,
+      testimonialText: t('ratingPrompt.testimonials.sarah.text'),
+      highlightedPhrases: t('ratingPrompt.testimonials.sarah.highlighted', { returnObjects: true }) as string[]
+    },
+    {
+      avatarUri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=face',
+      username: 'Mike R.',
+      rating: 5,
+      testimonialText: t('ratingPrompt.testimonials.mike.text'),
+      highlightedPhrases: t('ratingPrompt.testimonials.mike.highlighted', { returnObjects: true }) as string[]
+    }
+  ];
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           <SectionHeading>
-            Love Dymz AI? ✨
+            {t('ratingPrompt.title')}
           </SectionHeading>
           
           <Text style={styles.bodyText}>
-            We're a small team working hard to help you achieve your best skin! ✨
+            {t('ratingPrompt.body1')}
           </Text>
           
           <Text style={styles.bodyText}>
-            This app is built for people who want real results, not marketing hype. ❤️
+            {t('ratingPrompt.body2')}
           </Text>
 
           <View style={styles.socialProofContainer}>
             <AvatarGroupCount
               avatarUris={getTestimonialAvatars()}
-              userCount="+15,000 Dymz users"
+              userCount={t('ratingPrompt.userCount')}
             />
           </View>
 
@@ -77,13 +79,13 @@ export const RatingPrompt: React.FC<RatingPromptProps> = ({
 
           <View style={styles.buttonsContainer}>
             <PrimaryButton 
-              title="let's rate! ⭐"
+              title={t('ratingPrompt.rateButton')}
               onPress={onRateApp}
               style={styles.rateButton}
             />
             
             <SecondaryTextLink
-              title="not rn 🙈"
+              title={t('ratingPrompt.dismissButton')}
               onPress={onDismiss}
             />
           </View>

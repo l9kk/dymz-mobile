@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { colors, typography, spacing } from '../design-system/tokens';
 
 interface ProcessingAnalysisProps {
@@ -12,16 +13,17 @@ export const ProcessingAnalysis: React.FC<ProcessingAnalysisProps> = ({
   onComplete,
   duration = 3000
 }) => {
+  const { t } = useTranslation();
   const [pulseAnim] = useState(new Animated.Value(1));
   const [rotationAnim] = useState(new Animated.Value(0));
   const [progressAnim] = useState(new Animated.Value(0));
   const [currentMessage, setCurrentMessage] = useState(0);
 
   const messages = [
-    "Analyzing your skin...",
-    "Detecting skin metrics...",
-    "Processing results...",
-    "Almost ready!"
+    t('analysis.processingScreen.messages.analyzing'),
+    t('analysis.processingScreen.messages.detecting'),
+    t('analysis.processingScreen.messages.processing'),
+    t('analysis.processingScreen.messages.almostReady')
   ];
 
   useEffect(() => {
@@ -134,7 +136,7 @@ export const ProcessingAnalysis: React.FC<ProcessingAnalysisProps> = ({
             {messages[currentMessage]}
           </Text>
           <Text style={styles.subMessage}>
-            Our AI is analyzing your skin in detail
+            {t('analysis.processingScreen.subtitle')}
           </Text>
         </View>
 
@@ -148,14 +150,14 @@ export const ProcessingAnalysis: React.FC<ProcessingAnalysisProps> = ({
               ]} 
             />
           </View>
-          <Text style={styles.progressText}>Processing...</Text>
+          <Text style={styles.progressText}>{t('analysis.processingScreen.progress')}</Text>
         </View>
 
         {/* Fun Facts */}
         <View style={styles.factsContainer}>
-          <Text style={styles.factTitle}>💡 Did you know?</Text>
+          <Text style={styles.factTitle}>{t('analysis.processingScreen.factTitle')}</Text>
           <Text style={styles.factText}>
-            Our AI analyzes over 15 different skin metrics to give you personalized insights
+            {t('analysis.processingScreen.factText')}
           </Text>
         </View>
       </View>
