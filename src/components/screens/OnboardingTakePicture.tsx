@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Icon } from '../design-system/atoms/Icon';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { colors, typography, spacing } from '../design-system/tokens';
@@ -9,6 +10,8 @@ interface OnboardingTakePictureProps {
 }
 
 export const OnboardingTakePicture: React.FC<OnboardingTakePictureProps> = ({ onContinue }) => {
+  const { t } = useTranslation();
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -21,15 +24,15 @@ export const OnboardingTakePicture: React.FC<OnboardingTakePictureProps> = ({ on
         </View>
         
         <Text style={styles.title}>
-          Take a selfie to analyze your skin
+          {t('onboarding.takePicture.title')}
         </Text>
         
         <Text style={styles.subtitle}>
-          Capture a clear photo in good lighting. Make sure your face is well-lit and centered in the frame.
+          {t('onboarding.takePicture.subtitle')}
         </Text>
         
         <PrimaryButton 
-          title="Continue" 
+          title={t('actions.continue')} 
           onPress={onContinue}
           style={styles.button}
         />

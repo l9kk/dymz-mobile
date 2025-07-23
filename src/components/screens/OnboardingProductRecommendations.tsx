@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { Icon } from '../design-system/atoms/Icon';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { ProductCard } from '../design-system/molecules/ProductCard';
@@ -22,6 +23,7 @@ export const OnboardingProductRecommendations: React.FC<OnboardingProductRecomme
   shouldFetchData = false, // Default to false - only fetch when explicitly told to
   analysisData = null
 }) => {
+  const { t } = useTranslation();
   // Only fetch latest analysis if we don't have data passed and we should fetch
   const { data: latestAnalysis } = useLatestAnalysis(shouldFetchData && !analysisData);
   
@@ -86,7 +88,7 @@ export const OnboardingProductRecommendations: React.FC<OnboardingProductRecomme
         {/* Product Preview Section */}
         {showRealProducts ? (
           <View style={styles.productsPreview}>
-            <Text style={styles.previewTitle}>Your personalized matches:</Text>
+            <Text style={styles.previewTitle}>{t('onboarding.productRecommendations.previewTitle')}</Text>
             <ScrollView 
               horizontal 
               showsHorizontalScrollIndicator={false}
@@ -100,13 +102,13 @@ export const OnboardingProductRecommendations: React.FC<OnboardingProductRecomme
                     resizeMode="cover"
                   />
                   <Text style={styles.productName} numberOfLines={2}>
-                    {product.name || 'Product'}
+                    {product.name || t('onboarding.productRecommendations.defaultProduct')}
                   </Text>
                   <Text style={styles.productBrand} numberOfLines={1}>
-                    {product.brand || 'Brand'}
+                    {product.brand || t('onboarding.productRecommendations.defaultBrand')}
                   </Text>
                   <Text style={styles.productMatch}>
-                    {Math.round((product.recommendation_score || 0.8) * 100)}% match
+                    {t('onboarding.productRecommendations.matchPercentage', { percentage: Math.round((product.recommendation_score || 0.8) * 100) })}
                   </Text>
                 </View>
               ))}
@@ -118,21 +120,21 @@ export const OnboardingProductRecommendations: React.FC<OnboardingProductRecomme
             <View style={styles.iconRow}>
               <View style={styles.smallIconContainer}>
                 <Icon name="water-outline" size={32} color={colors.accentPalette[0]} />
-                <Text style={styles.iconLabel}>Serums</Text>
+                <Text style={styles.iconLabel}>{t('onboarding.productRecommendations.categories.serums')}</Text>
               </View>
               <View style={styles.smallIconContainer}>
                 <Icon name="sunny-outline" size={32} color={colors.accentPalette[1]} />
-                <Text style={styles.iconLabel}>Sunscreen</Text>
+                <Text style={styles.iconLabel}>{t('onboarding.productRecommendations.categories.sunscreen')}</Text>
               </View>
             </View>
             <View style={styles.iconRow}>
               <View style={styles.smallIconContainer}>
                 <Icon name="moon-outline" size={32} color={colors.accentPalette[3]} />
-                <Text style={styles.iconLabel}>Night Care</Text>
+                <Text style={styles.iconLabel}>{t('onboarding.productRecommendations.categories.nightCare')}</Text>
               </View>
               <View style={styles.smallIconContainer}>
                 <Icon name="shield-checkmark-outline" size={32} color={colors.accentPalette[2]} />
-                <Text style={styles.iconLabel}>Treatments</Text>
+                <Text style={styles.iconLabel}>{t('onboarding.productRecommendations.categories.treatments')}</Text>
               </View>
             </View>
           </View>
@@ -141,31 +143,31 @@ export const OnboardingProductRecommendations: React.FC<OnboardingProductRecomme
         {isLoading && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator color={colors.primary} size="large" />
-            <Text style={styles.loadingText}>Finding your perfect products...</Text>
+            <Text style={styles.loadingText}>{t('onboarding.productRecommendations.loading')}</Text>
           </View>
         )}
 
         {recommendationsError && shouldFetchData && (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>
-              Unable to load personalized recommendations. You'll see them after completing your analysis.
+              {t('onboarding.productRecommendations.error')}
             </Text>
           </View>
         )}
         
         <Text style={styles.title}>
-          Get curated product recommendations
+          {t('onboarding.productRecommendations.title')}
         </Text>
         
         <Text style={styles.subtitle}>
           {showRealProducts 
-            ? `Based on your analysis, we found ${recommendations.recommendations.length} personalized products that match your skin's needs.`
-            : 'See how you\'ll receive personalized skincare products matched to your specific analysis and concerns.'
+            ? t('onboarding.productRecommendations.subtitleWithProducts', { count: recommendations.recommendations.length })
+            : t('onboarding.productRecommendations.subtitlePreview')
           }
         </Text>
         
         <PrimaryButton 
-          title="Continue" 
+          title={t('actions.continue')} 
           onPress={onContinue}
           style={styles.button}
         />

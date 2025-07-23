@@ -5,6 +5,7 @@ import {
   PrimaryButton
 } from '../design-system';
 import { colors, typography, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -17,6 +18,7 @@ interface SuccessUnderstandingProps {
 export const SuccessUnderstanding: React.FC<SuccessUnderstandingProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
@@ -80,17 +82,17 @@ export const SuccessUnderstanding: React.FC<SuccessUnderstandingProps> = ({
           </Animated.View>
 
           <Text style={styles.title}>
-            We're getting to{'\n'}know you!
+            {t('onboarding.successUnderstanding.title')}
           </Text>
 
           <Text style={styles.subtitle}>
-            Your personalized analysis is almost ready
+            {t('onboarding.successUnderstanding.subtitle')}
           </Text>
         </View>
 
         <View style={styles.buttonSection}>
           <PrimaryButton
-            title="Continue"
+            title={t('buttons.continue')}
             onPress={onContinue}
             style={styles.continueButton}
           />

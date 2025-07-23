@@ -4,6 +4,7 @@ import { SectionHeading, PrimaryButton, Icon, IconNames } from '../design-system
 import { SocialVideoTile } from '../design-system/molecules/SocialVideoTile';
 import { colors, spacing } from '../design-system/tokens';
 import { getSocialVideoImageByKey } from '../../utils/imageUrls';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface TrendingProductsIntroProps {
   onContinue?: () => void;
@@ -12,29 +13,31 @@ interface TrendingProductsIntroProps {
 export const TrendingProductsIntro: React.FC<TrendingProductsIntroProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
+  
   const socialVideos = [
     {
       id: 1,
-      title: 'Skincare Routines',
-      count: '2.3M videos',
+      title: t('onboarding.trending.video1Title'),
+      count: t('onboarding.trending.video1Count'),
       iconName: IconNames.skincare,
     },
     {
       id: 2,
-      title: 'Product Reviews',
-      count: '1.8M videos',
+      title: t('onboarding.trending.video2Title'),
+      count: t('onboarding.trending.video2Count'),
       iconName: IconNames.star,
     },
     {
       id: 3,
-      title: 'Before & After',
-      count: '945K videos',
+      title: t('onboarding.trending.video3Title'),
+      count: t('onboarding.trending.video3Count'),
       iconName: IconNames.camera,
     },
     {
       id: 4,
-      title: 'Trending Now',
-      count: '3.1M videos',
+      title: t('onboarding.trending.video4Title'),
+      count: t('onboarding.trending.video4Count'),
       iconName: IconNames.trending,
     },
   ];
@@ -43,10 +46,10 @@ export const TrendingProductsIntro: React.FC<TrendingProductsIntroProps> = ({
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <View style={styles.headerSection}>
         <SectionHeading style={styles.heading}>
-          Do You Buy{'\n'}Trending Products?
+          {t('onboarding.trending.heading')}
         </SectionHeading>
         <Text style={styles.subtitle}>
-          Social media influences 78% of skincare purchases
+          {t('onboarding.trending.subtitle')}
         </Text>
       </View>
 
@@ -87,13 +90,13 @@ export const TrendingProductsIntro: React.FC<TrendingProductsIntroProps> = ({
 
       <View style={styles.infoSection}>
         <Text style={styles.infoText}>
-          Discover what's working for people with similar skin concerns
+          {t('onboarding.trending.infoText')}
         </Text>
       </View>
 
       <View style={styles.buttonContainer}>
         <PrimaryButton
-          title="Yes, I Follow Trends"
+          title={t('buttons.yesIFollowTrends')}
           onPress={onContinue}
         />
       </View>

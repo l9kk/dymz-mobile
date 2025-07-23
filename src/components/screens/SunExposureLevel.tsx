@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { 
   BackButton,
   LinearProgressStepper,
@@ -23,10 +24,12 @@ export const SunExposureLevel: React.FC<SunExposureLevelProps> = ({
   progressValue = 75,
   currentDot = 0
 }) => {
+  const { t } = useTranslation();
+  
   const exposureOptions = [
-    { id: 'low', label: 'Low (< 2 h/day)' },
-    { id: 'occasional', label: 'Occasional (2–4 h/day)' },
-    { id: 'high', label: 'High (> 4 h/day)' },
+    { id: 'low', label: t('sunExposure.options.low') },
+    { id: 'occasional', label: t('sunExposure.options.occasional') },
+    { id: 'high', label: t('sunExposure.options.high') },
   ];
 
   const handleOptionPress = (optionId: string) => {
@@ -45,7 +48,7 @@ export const SunExposureLevel: React.FC<SunExposureLevelProps> = ({
 
       <View style={styles.header}>
         <SectionHeading>
-          What's your average daily sun exposure?
+          {t('sunExposure.title')}
         </SectionHeading>
       </View>
 
@@ -62,7 +65,7 @@ export const SunExposureLevel: React.FC<SunExposureLevelProps> = ({
       />
 
       <InfoNote 
-        text="Sun exposure affects your skin's needs. This helps us recommend the right level of protection and active ingredients for your routine."
+        text={t('sunExposure.infoNote')}
         style={styles.infoNote}
       />
     </ScrollView>

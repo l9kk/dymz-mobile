@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { BackButton, StatementCard, SurveyProgressBar, BinaryChoiceRow } from '../design-system';
 import { colors, spacing, typography } from '../design-system/tokens';
 import { getStatementImageByKey, ImageUrls } from '../../utils/imageUrls';
@@ -26,6 +27,7 @@ export const SurveyStatementYN: React.FC<SurveyStatementYNProps> = ({
   statementQuote,
   statementImageKey,
 }) => {
+  const { t } = useTranslation();
   const statementImage = { uri: getStatementImageByKey(statementImageKey) };
 
   return (
@@ -58,8 +60,8 @@ export const SurveyStatementYN: React.FC<SurveyStatementYNProps> = ({
         <BinaryChoiceRow
           onYesPress={onYes}
           onNoPress={onNo}
-          yesText="Yes"
-          noText="No"
+          yesText={t('surveyStatement.yes')}
+          noText={t('surveyStatement.no')}
         />
       </ScrollView>
     </SafeAreaView>
