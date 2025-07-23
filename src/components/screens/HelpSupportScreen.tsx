@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import {
   BackButton,
   SectionHeading,
@@ -19,45 +20,46 @@ interface FAQItem {
   answer: string;
 }
 
-const faqData: FAQItem[] = [
-  {
-    id: '1',
-    question: 'How accurate is the AI skin analysis?',
-    answer: 'Our AI skin analysis uses advanced computer vision algorithms trained on thousands of dermatologist-validated images. While highly accurate, it should be used as a guide and not replace professional dermatological advice.'
-  },
-  {
-    id: '2',
-    question: 'How often should I take a new skin analysis?',
-    answer: 'We recommend taking a new analysis every 4-6 weeks to track your progress. Your skin changes with seasons, products, and time, so regular analysis helps keep your routine optimized.'
-  },
-  {
-    id: '3',
-    question: 'Why am I not seeing results from my routine?',
-    answer: 'Skincare results typically take 6-12 weeks to become visible. Ensure you\'re following your routine consistently and using products as directed. If concerns persist, consider consulting a dermatologist.'
-  },
-  {
-    id: '4',
-    question: 'Can I use my own products instead of recommendations?',
-    answer: 'Absolutely! Our routine builder focuses on ingredients and steps. You can substitute recommended products with similar ones you already own or prefer.'
-  },
-  {
-    id: '5',
-    question: 'How do I cancel my account?',
-    answer: 'You can delete your account through the Profile > Privacy Policy section, or contact our support team. All your data will be permanently removed within 30 days.'
-  },
-  {
-    id: '6',
-    question: 'Is my skin photo data secure?',
-    answer: 'Yes, your photos are encrypted and processed securely. We never share personal data with third parties. Photos are automatically deleted after analysis unless you choose to save them for progress tracking.'
-  }
-];
-
 export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
   onBack
 }) => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const faqData: FAQItem[] = [
+    {
+      id: '1',
+      question: t('support.faq.q1.question'),
+      answer: t('support.faq.q1.answer')
+    },
+    {
+      id: '2',
+      question: t('support.faq.q2.question'),
+      answer: t('support.faq.q2.answer')
+    },
+    {
+      id: '3',
+      question: t('support.faq.q3.question'),
+      answer: t('support.faq.q3.answer')
+    },
+    {
+      id: '4',
+      question: t('support.faq.q4.question'),
+      answer: t('support.faq.q4.answer')
+    },
+    {
+      id: '5',
+      question: t('support.faq.q5.question'),
+      answer: t('support.faq.q5.answer')
+    },
+    {
+      id: '6',
+      question: t('support.faq.q6.question'),
+      answer: t('support.faq.q6.answer')
+    }
+  ];
 
   const toggleFAQ = (id: string) => {
     setExpandedFAQ(expandedFAQ === id ? null : id);
@@ -65,8 +67,8 @@ export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
 
   const handleEmailSupport = async () => {
     const email = 'askhat.ss23@gmail.com';
-    const subject = 'Dymz AI Support Request';
-    const body = 'Hi Dymz AI team,\n\nI need help with:\n\n(Please describe your issue or question here)\n\nApp Version: 1.0.0\nDevice: ';
+    const subject = t('support.email.subject');
+    const body = t('support.email.body');
     
     const emailUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
@@ -76,16 +78,16 @@ export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
         await Linking.openURL(emailUrl);
       } else {
         Alert.alert(
-          'Email Not Available',
-          `Please send your support request to: ${email}`,
-          [{ text: 'Copy Email', onPress: () => {/* Copy to clipboard */} }, { text: 'OK' }]
+          t('support.email.notAvailable'),
+          t('support.email.sendTo', { email }),
+          [{ text: t('support.email.copyEmail'), onPress: () => {/* Copy to clipboard */} }, { text: t('common.ok') }]
         );
       }
     } catch (error) {
       Alert.alert(
-        'Contact Support',
-        `Please email us at: ${email}`,
-        [{ text: 'OK' }]
+        t('support.contactSupport'),
+        t('support.email.sendTo', { email }),
+        [{ text: t('common.ok') }]
       );
     }
   };
@@ -97,10 +99,10 @@ export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
       if (canOpen) {
         await Linking.openURL(websiteUrl);
       } else {
-        Alert.alert('Cannot Open Link', 'Please visit our website at dymzai.com for more support options.');
+        Alert.alert(t('support.cannotOpenLink'), t('support.websiteVisit'));
       }
     } catch (error) {
-      Alert.alert('Link Error', 'Unable to open support website. Please try again later.');
+      Alert.alert(t('support.linkError'), t('support.tryAgainLater'));
     }
   };
 
@@ -129,7 +131,7 @@ export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
     return (
       <View style={[styles.container, styles.centerContent]}>
         <LoadingSpinner size={48} />
-        <Text style={styles.loadingText}>Loading support options...</Text>
+        <Text style={styles.loadingText}>{t('support.loadingOptions')}</Text>
       </View>
     );
   }
@@ -138,30 +140,30 @@ export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: spacing.l + insets.top }]}>
         <BackButton onPress={onBack} />
-        <SectionHeading style={styles.title}>Help & Support</SectionHeading>
+        <SectionHeading style={styles.title}>{t('support.title')}</SectionHeading>
       </View>
 
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
         {/* Welcome Section */}
         <View style={styles.welcomeSection}>
-          <Text style={styles.welcomeTitle}>👋 How can we help you?</Text>
+          <Text style={styles.welcomeTitle}>{t('support.welcome.title')}</Text>
           <Text style={styles.welcomeText}>
-            Find answers to common questions or get in touch with our support team.
+            {t('support.welcome.text')}
           </Text>
         </View>
 
         {/* Quick Actions */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <Text style={styles.sectionTitle}>{t('support.quickActions')}</Text>
           
           <TouchableOpacity style={styles.actionCard} onPress={handleEmailSupport}>
             <View style={styles.actionIcon}>
               <Text style={styles.actionEmoji}>📧</Text>
             </View>
             <View style={styles.actionContent}>
-              <Text style={styles.actionTitle}>Email Support</Text>
+              <Text style={styles.actionTitle}>{t('support.actions.emailSupport')}</Text>
               <Text style={styles.actionDescription}>
-                Get personalized help from our support team
+                {t('support.actions.emailDescription')}
               </Text>
             </View>
             <Text style={styles.actionArrow}>→</Text>
@@ -172,9 +174,9 @@ export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
               <Text style={styles.actionEmoji}>🌐</Text>
             </View>
             <View style={styles.actionContent}>
-              <Text style={styles.actionTitle}>Visit Support Website</Text>
+              <Text style={styles.actionTitle}>{t('support.actions.visitWebsite')}</Text>
               <Text style={styles.actionDescription}>
-                Browse our complete help center and tutorials
+                {t('support.actions.websiteDescription')}
               </Text>
             </View>
             <Text style={styles.actionArrow}>→</Text>
@@ -183,7 +185,7 @@ export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
 
         {/* FAQ Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
+          <Text style={styles.sectionTitle}>{t('support.faqTitle')}</Text>
           <View style={styles.faqContainer}>
             {faqData.map(renderFAQItem)}
           </View>
@@ -191,21 +193,21 @@ export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
 
         {/* App Information */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>App Information</Text>
+          <Text style={styles.sectionTitle}>{t('support.appInfo.title')}</Text>
           
           <View style={styles.infoCard}>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>App Version</Text>
+              <Text style={styles.infoLabel}>{t('support.appInfo.version')}</Text>
               <Text style={styles.infoValue}>1.0.0</Text>
             </View>
             
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Last Updated</Text>
-              <Text style={styles.infoValue}>July 2025</Text>
+              <Text style={styles.infoLabel}>{t('support.appInfo.lastUpdated')}</Text>
+              <Text style={styles.infoValue}>{t('support.appInfo.updateDate')}</Text>
             </View>
             
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Support Email</Text>
+              <Text style={styles.infoLabel}>{t('support.appInfo.supportEmail')}</Text>
               <Text style={styles.infoValue}>askhat.ss23@gmail.com</Text>
             </View>
           </View>
@@ -213,13 +215,13 @@ export const HelpSupportScreen: React.FC<HelpSupportScreenProps> = ({
 
         {/* Contact Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Still Need Help?</Text>
+          <Text style={styles.sectionTitle}>{t('support.stillNeedHelp')}</Text>
           <Text style={styles.contactText}>
-            Can't find what you're looking for? Our support team is here to help!
+            {t('support.contactDescription')}
           </Text>
           
           <PrimaryButton
-            title="Contact Support Team"
+            title={t('profile.contactSupportTeam')}
             onPress={handleEmailSupport}
             style={styles.contactButton}
           />

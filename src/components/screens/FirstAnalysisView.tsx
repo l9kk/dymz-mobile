@@ -11,6 +11,7 @@ import { useLatestAnalysis } from '../../hooks/api/useAnalysis';
 import { useAuthStore } from '../../stores/authStore';
 import { useEffect } from 'react';
 import { boostMetrics, boostMetricsWithPersistence, testMetricBoosting } from '../../utils/metricBoosting';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface FirstAnalysisViewProps {
   onBuildRoutine?: () => void;
@@ -25,6 +26,7 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
   analysisData,
   shouldFetchData = true
 }) => {
+  const { t } = useTranslation();
   console.log('🎯 FirstAnalysisView component rendered with props:', {
     hasOnBuildRoutine: !!onBuildRoutine,
     hasPhotoUri: !!photoUri,
@@ -138,42 +140,42 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
       const processedMetrics = [
         { 
           score: Math.round((1 - (metrics.hydration?.score || 0)) * 100), 
-          title: "Hydration",
+          title: t('skinMetrics.hydration'),
           isLocked: false 
         },
         { 
           score: Math.round((1 - (metrics.texture?.score || 0)) * 100), 
-          title: "Texture",
+          title: t('skinMetrics.texture'),
           isLocked: false 
         },
         { 
           score: Math.round((1 - (metrics.acne?.score || 0)) * 100), 
-          title: "Acne",
+          title: t('skinMetrics.acne'),
           isLocked: false 
         },
         { 
           score: Math.round((1 - (metrics.oiliness?.score || 0)) * 100), 
-          title: "Oiliness",
+          title: t('skinMetrics.oiliness'),
           isLocked: false 
         },
         { 
           score: Math.round((1 - (metrics.pigmentation?.score || 0)) * 100), 
-          title: "Pigmentation",
+          title: t('skinMetrics.pigmentation'),
           isLocked: false 
         },
         { 
           score: Math.round((1 - (metrics.pores?.score || 0)) * 100), 
-          title: "Pores",
+          title: t('skinMetrics.pores'),
           isLocked: !metrics.pores 
         },
         { 
           score: Math.round((1 - (metrics.redness?.score || 0)) * 100), 
-          title: "Redness",
+          title: t('skinMetrics.redness'),
           isLocked: !metrics.redness 
         },
         { 
           score: Math.round((1 - (metrics.dryness?.score || 0)) * 100), 
-          title: "Dryness",
+          title: t('skinMetrics.dryness'),
           isLocked: !metrics.dryness 
         }
       ].filter(metric => metric.score < 100 || !metric.isLocked); // Only show metrics with meaningful data
@@ -213,7 +215,7 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
           Please sign in to view your analysis results
         </Text>
         <PrimaryButton
-          title="Sign In"
+          title={t('auth.signIn')}
           onPress={() => {
             console.log('Navigate to sign in - user needs to authenticate');
             // In a real app, this would navigate to sign in screen
@@ -247,7 +249,7 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
           {errorData?.error_message || 'Unable to analyze your photo'}
         </Text>
         <PrimaryButton
-          title="Try Again"
+          title={t('common.tryAgain')}
           onPress={() => {
             console.log('Retry analysis - navigate back to camera');
             // In a real app, this would navigate back to camera
@@ -286,7 +288,7 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
           </Text>
         )}
         <PrimaryButton
-          title={isBackendAIFailure ? "Report Issue" : "Try Again"}
+          title={isBackendAIFailure ? t('analysis.reportIssue') : t('common.tryAgain')}
           onPress={() => {
             if (isBackendAIFailure) {
               console.error('🚨 CRITICAL: Backend AI processing failed. Gemini API integration is broken.');
@@ -300,7 +302,7 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
               Alert.alert(
                 'AI Processing Error',
                 'Your analysis.py backend is not properly processing images with Gemini API. Please check your backend logs and fix the integration.',
-                [{ text: 'OK' }]
+                [{ text: t('common.ok') }]
               );
             } else {
               console.log('Retry analysis - check backend connection');
@@ -327,9 +329,9 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
   if (shouldFetchData && error) {
     return (
       <SafeAreaView style={[styles.container, styles.centerContent]}>
-        <Text style={styles.errorText}>Unable to load analysis results</Text>
+        <Text style={styles.errorText}>{t('analysis.unableToLoad')}</Text>
         <PrimaryButton
-          title="Try Again"
+          title={t('buttons.tryAgain')}
           onPress={() => {
             // In a real app, this would trigger a refetch or navigate back
             console.log('Retry button pressed - would refetch analysis data');
@@ -371,7 +373,7 @@ export const FirstAnalysisView: React.FC<FirstAnalysisViewProps> = ({
       {/* Action button - always visible at bottom */}
       <View style={styles.buttonContainer}>
         <PrimaryButton
-          title="Build Your Routine →"
+          title={t('buttons.buildYourRoutine')}
           variant="success"
           onPress={onBuildRoutine}
         />

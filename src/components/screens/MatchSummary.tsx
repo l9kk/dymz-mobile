@@ -8,6 +8,7 @@ import {
   StatPill
 } from '../design-system';
 import { colors, spacing, typography } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -26,21 +27,22 @@ export const MatchSummary: React.FC<MatchSummaryProps> = ({
   morningSteps = ['Cleanser', 'Serum', 'Moisturizer', 'Sunscreen'],
   eveningSteps = ['Cleanser', 'Treatment', 'Night Cream', 'Eye Cream']
 }) => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingTop: spacing.l + insets.top }]}>
       <View style={styles.header}>
         <SectionHeading style={styles.title}>
-          Based on your choices and analysis, we've found products perfect for you
+          {t('matchSummary.title')}
         </SectionHeading>
       </View>
 
       <View style={styles.statSection}>
-        <StatPill value={productCount} label="products" />
+        <StatPill value={productCount} label={t('matchSummary.products')} />
         
         <Text style={styles.matchLine}>
-          that are a {matchPercentage}%+ match for you!
+          {t('matchSummary.matchText', { percentage: matchPercentage })}
         </Text>
       </View>
 
@@ -51,7 +53,7 @@ export const MatchSummary: React.FC<MatchSummaryProps> = ({
             <View style={styles.routineIconContainer}>
               <Text style={styles.routineIcon}>☀️</Text>
             </View>
-            <Text style={styles.routineTitle}>Morning Routine</Text>
+            <Text style={styles.routineTitle}>{t('routine.morning')}</Text>
           </View>
           
           <LinearGradient
@@ -64,14 +66,14 @@ export const MatchSummary: React.FC<MatchSummaryProps> = ({
               <View style={styles.statsRow}>
                 <View style={styles.statItem}>
                   <Text style={styles.statNumber}>{morningSteps.length}</Text>
-                  <Text style={styles.statLabel}>steps</Text>
+                  <Text style={styles.statLabel}>{t('routine.steps')}</Text>
                 </View>
                 
                 <View style={styles.statDivider} />
                 
                 <View style={styles.statItem}>
                   <Text style={styles.statNumber}>{morningSteps.length * 2}</Text>
-                  <Text style={styles.statLabel}>min</Text>
+                  <Text style={styles.statLabel}>{t('common.min')}</Text>
                 </View>
               </View>
               
@@ -86,7 +88,7 @@ export const MatchSummary: React.FC<MatchSummaryProps> = ({
                 {morningSteps.length > 3 && (
                   <View style={styles.stepBadge}>
                     <Text style={styles.stepBadgeText}>
-                      +{morningSteps.length - 3} more
+                      {t('matchSummary.moreSteps', { count: morningSteps.length - 3 })}
                     </Text>
                   </View>
                 )}
@@ -101,7 +103,7 @@ export const MatchSummary: React.FC<MatchSummaryProps> = ({
             <View style={styles.routineIconContainer}>
               <Text style={styles.routineIcon}>🌙</Text>
             </View>
-            <Text style={styles.routineTitle}>Evening Routine</Text>
+            <Text style={styles.routineTitle}>{t('routine.evening')}</Text>
           </View>
           
           <LinearGradient
@@ -114,14 +116,14 @@ export const MatchSummary: React.FC<MatchSummaryProps> = ({
               <View style={styles.statsRow}>
                 <View style={styles.statItem}>
                   <Text style={styles.statNumber}>{eveningSteps.length}</Text>
-                  <Text style={styles.statLabel}>steps</Text>
+                  <Text style={styles.statLabel}>{t('routine.steps')}</Text>
                 </View>
                 
                 <View style={styles.statDivider} />
                 
                 <View style={styles.statItem}>
                   <Text style={styles.statNumber}>{eveningSteps.length * 2}</Text>
-                  <Text style={styles.statLabel}>min</Text>
+                  <Text style={styles.statLabel}>{t('common.min')}</Text>
                 </View>
               </View>
               
@@ -136,7 +138,7 @@ export const MatchSummary: React.FC<MatchSummaryProps> = ({
                 {eveningSteps.length > 3 && (
                   <View style={styles.stepBadge}>
                     <Text style={styles.stepBadgeText}>
-                      +{eveningSteps.length - 3} more
+                      {t('matchSummary.moreSteps', { count: eveningSteps.length - 3 })}
                     </Text>
                   </View>
                 )}
@@ -148,7 +150,7 @@ export const MatchSummary: React.FC<MatchSummaryProps> = ({
 
       <View style={styles.buttonContainer}>
         <PrimaryButton
-          title="Reveal your recommendations"
+          title={t('matchSummary.revealButton')}
           onPress={onContinue}
         />
       </View>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { BackButton } from '../design-system/atoms/BackButton';
 import { colors, spacing, typography } from '../design-system/tokens';
@@ -13,6 +14,7 @@ interface EmailVerifyCodeScreenProps {
 }
 
 export const EmailVerifyCodeScreen: React.FC<EmailVerifyCodeScreenProps> = ({ email, onBack, onVerified }) => {
+  const { t } = useTranslation();
   const [code, setCode] = useState('');
   const { mutate: verifyOtp, isPending } = useOTPVerify();
   const { mutate: resendOtp, isPending: isResending } = useOTPSignIn();
@@ -34,7 +36,7 @@ export const EmailVerifyCodeScreen: React.FC<EmailVerifyCodeScreenProps> = ({ em
 
   const handleVerify = () => {
     if (code.length !== 6) {
-      setError('Enter 6-digit code');
+      setError(t('auth.emailVerify.errors.enter6DigitCode'));
       return;
     }
     setError(null);
@@ -43,10 +45,10 @@ export const EmailVerifyCodeScreen: React.FC<EmailVerifyCodeScreenProps> = ({ em
         if (result.success) {
           onVerified();
         } else {
-          setError(result.error || 'Invalid code');
+          setError(result.error || t('auth.emailVerify.errors.invalidCode'));
         }
       },
-      onError: (e: any) => setError(e?.message || 'Invalid code'),
+      onError: (e: any) => setError(e?.message || t('auth.emailVerify.errors.invalidCode')),
     });
   };
 
@@ -60,7 +62,7 @@ export const EmailVerifyCodeScreen: React.FC<EmailVerifyCodeScreenProps> = ({ em
         setError(null);
       },
       onError: (e: any) => {
-        setError(e?.message || 'Failed to resend code');
+        setError(e?.message || t('auth.emailVerify.errors.failedToResend'));
       }
     });
   };
@@ -78,11 +80,11 @@ export const EmailVerifyCodeScreen: React.FC<EmailVerifyCodeScreenProps> = ({ em
           <BackButton onPress={onBack} />
         </View>
         <View style={styles.content}>
-          <Text style={styles.title}>Verify Code</Text>
-          <Text style={styles.subtitle}>Enter the 6-digit code we sent to {'\n'}{email}</Text>
+          <Text style={styles.title}>{t('auth.verifyCode')}</Text>
+          <Text style={styles.subtitle}>{t('auth.emailVerify.subtitle', { email })}</Text>
           <TextInput
             style={styles.input}
-            placeholder="123456"
+            placeholder={t('auth.codePlaceholder')}
             keyboardType="numeric"
             maxLength={6}
             value={code}
@@ -91,7 +93,7 @@ export const EmailVerifyCodeScreen: React.FC<EmailVerifyCodeScreenProps> = ({ em
           />
           {error && <Text style={styles.error}>{error}</Text>}
           <PrimaryButton
-            title={isPending ? 'Verifying…' : 'Verify'}
+            title={isPending ? t('auth.emailVerify.verifying') : t('auth.emailVerify.verify')}
             onPress={handleVerify}
             disabled={isPending}
             style={{ width: '100%' }}
@@ -103,10 +105,10 @@ export const EmailVerifyCodeScreen: React.FC<EmailVerifyCodeScreenProps> = ({ em
           >
             <Text style={[styles.resendText, (!canResend || isResending) && styles.resendDisabledText]}>
               {isResending 
-                ? 'Resending…' 
+                ? t('auth.emailVerify.resending')
                 : canResend 
-                  ? 'Resend code' 
-                  : `Resend in ${formatTime(resendTimer)}`
+                  ? t('auth.emailVerify.resendCode')
+                  : t('auth.emailVerify.resendIn', { time: formatTime(resendTimer) })
               }
             </Text>
           </TouchableOpacity>

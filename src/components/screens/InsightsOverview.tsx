@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { 
   BackButton, 
   SectionHeading,
@@ -32,35 +33,44 @@ interface MetricTrend {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // Error Fallback Component
-const ErrorFallback: React.FC<{ error?: Error; onRetry?: () => void }> = ({ error, onRetry }) => (
-  <View style={styles.errorContainer}>
-    <Text style={styles.errorTitle}>Unable to Load Insights</Text>
-    <Text style={styles.errorText}>
-      {error?.message || 'Please check your connection and try again.'}
-    </Text>
-    {onRetry && (
-      <PrimaryButton 
-        title="Retry" 
-        onPress={onRetry}
-        style={styles.retryButton}
-      />
-    )}
-  </View>
-);
+const ErrorFallback: React.FC<{ error?: Error; onRetry?: () => void }> = ({ error, onRetry }) => {
+  const { t } = useTranslation();
+  
+  return (
+    <View style={styles.errorContainer}>
+      <Text style={styles.errorTitle}>{t('insights.errors.unableToLoad')}</Text>
+      <Text style={styles.errorText}>
+        {error?.message || t('insights.errors.checkConnection')}
+      </Text>
+      {onRetry && (
+        <PrimaryButton 
+          title={t('common.retry')} 
+          onPress={onRetry}
+          style={styles.retryButton}
+        />
+      )}
+    </View>
+  );
+};
 
 // Loading Component
-const LoadingInsights: React.FC = () => (
-  <View style={[styles.container, styles.loadingContainer]}>
-    <ActivityIndicator size="large" color={colors.primary} />
-    <Text style={styles.loadingText}>Loading your insights...</Text>
-  </View>
-);
+const LoadingInsights: React.FC = () => {
+  const { t } = useTranslation();
+  
+  return (
+    <View style={[styles.container, styles.loadingContainer]}>
+      <ActivityIndicator size="large" color={colors.primary} />
+      <Text style={styles.loadingText}>{t('insights.loading')}</Text>
+    </View>
+  );
+};
 
 export const InsightsOverview: React.FC<InsightsOverviewProps> = ({
   onBack,
   onNavigate,
   style
 }) => {
+  const { t } = useTranslation();
   const [currentMetricIndex, setCurrentMetricIndex] = useState(0);
 
   // Backend data hooks - no fallback data
@@ -258,7 +268,7 @@ export const InsightsOverview: React.FC<InsightsOverviewProps> = ({
             <BackButton onPress={onBack} />
           </View>
           <ErrorFallback 
-            error={new Error(errorMessage || 'Failed to load insights')} 
+            error={new Error(errorMessage || t('insights.errors.failedToLoad'))} 
             onRetry={handleRetry}
           />
         </SafeAreaView>
@@ -275,12 +285,12 @@ export const InsightsOverview: React.FC<InsightsOverviewProps> = ({
             <BackButton onPress={onBack} />
           </View>
           <View style={styles.emptyStateContainer}>
-            <Text style={styles.emptyStateTitle}>No Insights Yet</Text>
+            <Text style={styles.emptyStateTitle}>{t('insights.emptyState.title')}</Text>
             <Text style={styles.emptyStateText}>
-              Complete your first skin analysis to see detailed insights about your progress.
+              {t('insights.emptyState.description')}
             </Text>
             <PrimaryButton 
-              title="Take Photo Analysis" 
+              title={t('analysis.takePhotoAnalysis')} 
               onPress={() => onNavigate?.('CameraPreview')}
               style={styles.emptyStateButton}
             />
@@ -302,7 +312,7 @@ export const InsightsOverview: React.FC<InsightsOverviewProps> = ({
           {/* Skin Type Card */}
           {latestAnalysis?.skin_metrics?.overall_skin_type && (
             <View style={styles.skinTypeCard}>
-              <Text style={styles.skinTypeLabel}>Your Skin Type</Text>
+              <Text style={styles.skinTypeLabel}>{t('insights.yourSkinType')}</Text>
               <Text style={styles.skinTypeValue}>
                 {latestAnalysis.skin_metrics.overall_skin_type}
               </Text>
@@ -312,13 +322,13 @@ export const InsightsOverview: React.FC<InsightsOverviewProps> = ({
           {/* Progress Summary */}
           <View style={styles.section}>
             <StatParagraph style={styles.weekLabel}>
-              {`Week ${progressSummary.weekNumber} Overview`}
+              {t('insights.weekOverview', { weekNumber: progressSummary.weekNumber })}
             </StatParagraph>
           </View>
 
           {/* Metrics Carousel */}
           <View style={styles.metricsSection}>
-            <SectionHeading style={styles.sectionTitle}>Skin Metrics</SectionHeading>
+            <SectionHeading style={styles.sectionTitle}>{t('insights.skinMetrics')}</SectionHeading>
             <MetricsCarousel
               metrics={displayMetrics.map((metric: MetricTrend) => ({
                 score: metric.currentScore,
@@ -344,7 +354,7 @@ export const InsightsOverview: React.FC<InsightsOverviewProps> = ({
           {improvementMetrics.length > 0 && (
             <View style={styles.section}>
               <SectionHeading style={styles.sectionTitle}>
-                Focus Areas
+                {t('insights.focusAreas')}
               </SectionHeading>
               <ImproveRingRow 
                 improvementMetrics={improvementMetrics}
