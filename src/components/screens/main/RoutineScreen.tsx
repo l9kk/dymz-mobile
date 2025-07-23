@@ -18,12 +18,15 @@ import { useActiveRoutines, useRoutineStats, useRecordRoutineProgress } from '..
 import { useUserProfile, useUserStats, useProfileCompletion } from '../../../hooks/api/useUser';
 import { useAuthStore } from '../../../stores/authStore';
 import { useUserStreaks } from '../../../hooks/api/useGamification';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getProductIconByCategory } from '../../../utils/imageUrls';
+import { Ionicons } from '@expo/vector-icons';
 
 interface RoutineScreenProps {
   onNavigateToProducts?: () => void;
   onNavigateToHistory?: () => void;
+  onNavigateToEditRoutine?: (routine: any) => void;
 }
 
 // Helper function to map step names to product icons
@@ -46,12 +49,13 @@ const getStepThumbnail = (stepName: string): any => {
   }
 };
 
-// Debug components removed - production ready
 
 export const RoutineScreen: React.FC<RoutineScreenProps> = ({
   onNavigateToProducts,
-  onNavigateToHistory
+  onNavigateToHistory,
+  onNavigateToEditRoutine
 }) => {
+  const { t } = useTranslation();
   const [refreshing, setRefreshing] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState<'morning' | 'evening'>('morning');
   const [completedSteps, setCompletedSteps] = React.useState<string[]>([]);
@@ -164,13 +168,27 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
     }
   };
 
+  const handleEditRoutine = () => {
+    const routinesArray = Array.isArray(routines?.routines) ? routines.routines : [];
+    const currentRoutine = routinesArray.find((r: any) => 
+      r.routine_type === (selectedTab === 'morning' ? 'morning' : 'evening')
+    );
+    
+    if (currentRoutine && onNavigateToEditRoutine) {
+      onNavigateToEditRoutine({
+        ...currentRoutine,
+        routineType: selectedTab, // Pass current tab for context
+      });
+    }
+  };
+
   const isLoading = !routines && !stats || isDailyStatusLoading;
 
   if (isLoading) {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <LoadingSpinner size={48} />
-        <Text style={styles.loadingText}>Loading your routines...</Text>
+        <Text style={styles.loadingText}>{t('routine.loading')}</Text>
       </View>
     );
   }
@@ -199,10 +217,26 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
       >
         {/* Header Section */}
         <View style={[styles.headerSection, { paddingTop: spacing.l + insets.top }]}>
-          <SectionHeading>My Routine</SectionHeading>
-          <StatParagraph style={styles.subtitle}>
-            Stay consistent with your personalized skincare routine
-          </StatParagraph>
+          <View style={styles.headerRow}>
+            <View style={styles.headerContent}>
+              <SectionHeading>My Routine</SectionHeading>
+              <StatParagraph style={styles.subtitle}>
+                Stay consistent with your personalized skincare routine
+              </StatParagraph>
+            </View>
+            
+            {/* Edit Button - only show if user has routines */}
+            {routines?.routines && routines.routines.length > 0 && (
+              <TouchableOpacity 
+                style={styles.editButton}
+                onPress={handleEditRoutine}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="create-outline" size={20} color={colors.primary} />
+                <Text style={styles.editButtonText}>{t('routine.edit')}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* Routine Tabs */}
@@ -232,19 +266,21 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
             {isRoutineCompletedToday(selectedTab) && (
               <View style={styles.completedIndicator}>
                 <Text style={styles.completedText}>
-                  ✅ {selectedTab === 'morning' ? 'Morning' : 'Evening'} routine completed today!
+                  {t('routine.completedToday', { 
+                    type: selectedTab === 'morning' ? t('routine.morningFull') : t('routine.eveningFull') 
+                  })}
                 </Text>
                 {!isRoutineCompletedToday(selectedTab === 'morning' ? 'evening' : 'morning') && (
                   <Text style={styles.remainingText}>
                     {selectedTab === 'morning' 
-                      ? '🌙 Evening routine remaining' 
-                      : '☀️ Morning routine remaining'
+                      ? t('routine.eveningRemaining')
+                      : t('routine.morningRemaining')
                     }
                   </Text>
                 )}
                 {bothRoutinesCompletedToday() && (
                   <Text style={styles.allCompleteText}>
-                    🎉 All routines completed today! Great job!
+                    {t('routine.allCompleted')}
                   </Text>
                 )}
               </View>
@@ -256,7 +292,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
         {routineSteps.length > 0 ? (
           <View style={styles.section}>
             <SectionHeading style={styles.sectionTitle}>
-              Today's Steps
+              {t('routine.todaysSteps')}
             </SectionHeading>
             
 
@@ -302,14 +338,24 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
             <View style={styles.checkInContainer}>
               <PrimaryButton
                 title={isRoutineCompletedToday(selectedTab)
-                  ? `✅ ${selectedTab === 'morning' ? 'Morning' : 'Evening'} Routine Complete`
+                  ? t('routine.routineComplete', { 
+                      type: selectedTab === 'morning' ? t('routine.morningFull') : t('routine.eveningFull') 
+                    })
                   : recordProgress.isPending 
-                  ? "Recording Progress..." 
+                  ? t('loading.recordingProgress') 
                   : completedSteps.length === 0
-                  ? `Tap steps above to get started (0/${routineSteps.length})`
+                  ? t('routine.getStarted', { total: routineSteps.length })
                   : completedSteps.length === routineSteps.length
-                  ? `Complete ${selectedTab} Routine ✓ (${completedSteps.length}/${routineSteps.length})`
-                  : `Complete ${selectedTab} Routine (${completedSteps.length}/${routineSteps.length})`
+                  ? t('routine.completeWithCheckmark', { 
+                      type: selectedTab, 
+                      completed: completedSteps.length, 
+                      total: routineSteps.length 
+                    })
+                  : t('routine.completeProgress', { 
+                      type: selectedTab, 
+                      completed: completedSteps.length, 
+                      total: routineSteps.length 
+                    })
                 }
                 onPress={handleCheckIn}
                 disabled={
@@ -326,7 +372,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
                completedSteps.length < routineSteps.length && (
                 <View style={styles.progressHint}>
                   <Text style={styles.progressHintText}>
-                    💡 Complete all {routineSteps.length} steps to submit your routine
+                    {t('routine.progressHint', { total: routineSteps.length })}
                   </Text>
                 </View>
               )}
@@ -344,13 +390,13 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
         ) : (
           <View style={styles.emptyState}>
             <Text style={styles.emptyEmoji}>🧴</Text>
-            <Text style={styles.emptyTitle}>No {selectedTab} routine yet</Text>
+            <Text style={styles.emptyTitle}>{t('routine.noRoutineYet', { type: selectedTab })}</Text>
             <Text style={styles.emptySubtitle}>
               Let's create your personalized routine
             </Text>
             <View style={styles.emptyActions}>
               <PrimaryButton
-                title="Build My Routine"
+                title={t('routine.buildMyRoutine')}
                 onPress={onNavigateToProducts}
                 style={styles.emptyButton}
               />
@@ -363,12 +409,12 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
         {/* Error handling - show user-friendly messages */}
         {routinesError && (
           <View style={styles.errorContainer}>
-            <Text style={styles.errorTitle}>⚠️ Unable to load routines</Text>
+            <Text style={styles.errorTitle}>{t('routine.unableToLoad')}</Text>
             <Text style={styles.errorText}>
-              Please check your connection and try again
+              {t('routine.checkConnection')}
             </Text>
             <TouchableOpacity onPress={handleRefresh} style={styles.retryButton}>
-              <Text style={styles.retryButtonText}>Try Again</Text>
+              <Text style={styles.retryButtonText}>{t('routine.tryAgain')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -593,5 +639,39 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.ctaText,
     fontWeight: '600',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    width: '100%',
+  },
+  headerContent: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.s,
+    paddingHorizontal: spacing.m,
+    borderRadius: 20,
+    backgroundColor: colors.backgroundSecondary,
+    marginLeft: spacing.m,
+    marginTop: spacing.xs,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  editButtonText: {
+    fontSize: 14,
+    color: colors.primary,
+    fontWeight: '600',
+    marginLeft: spacing.xs,
   },
 }); 

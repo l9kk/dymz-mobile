@@ -5,6 +5,7 @@ import { BenefitChecklist } from '../design-system/molecules/BenefitChecklist';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { Icon } from '../design-system/atoms/Icon';
 import { colors, typography, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface ValuePropExpertOnYouProps {
   onContinue: () => void;
@@ -13,25 +14,27 @@ interface ValuePropExpertOnYouProps {
 export const ValuePropExpertOnYou: React.FC<ValuePropExpertOnYouProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
+  
   const benefits = [
     {
       id: '1',
-      text: 'Get personalized product recommendations based on your unique skin analysis',
+      text: t('onboarding.expertOnYou.benefit1'),
       type: 'check' as const,
     },
     {
       id: '2', 
-      text: 'Understand how each product affects your skin with detailed progress tracking',
+      text: t('onboarding.expertOnYou.benefit2'),
       type: 'check' as const,
     },
     {
       id: '3',
-      text: 'Track your skin journey with easy-to-use progress monitoring tools',
+      text: t('onboarding.expertOnYou.benefit3'),
       type: 'check' as const,
     },
     {
       id: '4',
-      text: 'Access to 90,000+ skincare products in our comprehensive database',
+      text: t('onboarding.expertOnYou.benefit4'),
       type: 'star' as const,
     },
   ];
@@ -66,7 +69,7 @@ export const ValuePropExpertOnYou: React.FC<ValuePropExpertOnYouProps> = ({
           </View>
           
           <Text style={styles.headline}>
-            You're the expert on your skin
+            {t('onboarding.expertOnYou.headline')}
           </Text>
           
           <BenefitChecklist 
@@ -75,7 +78,7 @@ export const ValuePropExpertOnYou: React.FC<ValuePropExpertOnYouProps> = ({
           />
           
           <PrimaryButton 
-            title="Let's do it!"
+            title={t('buttons.letsDoIt')}
             onPress={onContinue}
             style={styles.button}
           />

@@ -2,11 +2,17 @@ import React, { Component, ReactNode } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { colors, spacing, typography } from '../design-system/tokens';
 import { PrimaryButton } from '../design-system/atoms';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface Props {
   children: ReactNode;
   fallbackMessage?: string;
   onRetry?: () => void;
+  retryText?: string;
+  debugTitle?: string;
+  backendNote?: string;
+  backendConnectionIssueText?: string;
+  somethingWentWrongText?: string;
 }
 
 interface State {
@@ -74,7 +80,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </View>
             
             <Text style={styles.title}>
-              {isNetworkError ? 'Backend Connection Issue' : 'Something went wrong'}
+              {isNetworkError ? (this.props.backendConnectionIssueText || 'Backend Connection Issue') : (this.props.somethingWentWrongText || 'Something went wrong')}
             </Text>
             
             <Text style={styles.message}>
@@ -89,22 +95,21 @@ export class ErrorBoundary extends Component<Props, State> {
             {(isNetworkError || isBackendError) && (
               <View style={styles.noteContainer}>
                 <Text style={styles.note}>
-                  ℹ️ Backend errors are expected during development. 
-                  The app will work normally once the backend is running.
+                  {this.props.backendNote || 'ℹ️ Backend errors are expected during development. The app will work normally once the backend is running.'}
                 </Text>
               </View>
             )}
 
             <View style={styles.buttonContainer}>
               <PrimaryButton 
-                title="Retry"
+                title={this.props.retryText || "Retry"}
                 onPress={this.handleRetry}
               />
             </View>
 
             {__DEV__ && this.state.error && (
               <View style={styles.debugContainer}>
-                <Text style={styles.debugTitle}>Debug Info:</Text>
+                <Text style={styles.debugTitle}>{this.props.debugTitle || "Debug Info:"}</Text>
                 <Text style={styles.debugText} numberOfLines={3}>
                   {this.state.error.toString()}
                 </Text>
@@ -196,4 +201,20 @@ export const useThrowAsyncError = () => {
       throw error;
     });
   }, []);
+};
+
+// Translated wrapper component
+export const TranslatedErrorBoundary: React.FC<Omit<Props, 'retryText' | 'debugTitle' | 'backendNote' | 'backendConnectionIssueText' | 'somethingWentWrongText'>> = (props) => {
+  const { t } = useTranslation();
+  
+  return (
+    <ErrorBoundary
+      {...props}
+      retryText={t('error.retry')}
+      debugTitle={t('error.debugInfo')}
+      backendNote={t('error.backendNote')}
+      backendConnectionIssueText={t('error.backendConnectionIssue')}
+      somethingWentWrongText={t('error.somethingWentWrong')}
+    />
+  );
 }; 

@@ -9,7 +9,8 @@ import {
   SuccessBadge,
   IconFeatureCard,
   AvatarGroupCount,
-  StarRatingBadge
+  StarRatingBadge,
+  LanguageSelector
 } from '../../design-system';
 import { colors, spacing } from '../../design-system/tokens';
 import { 
@@ -22,6 +23,7 @@ import {
   useUserStreaks 
 } from '../../../hooks/api/useGamification';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface ProfileScreenProps {
   onNavigateToEdit?: () => void;
@@ -39,6 +41,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onDeleteAccount
 }) => {
   const [refreshing, setRefreshing] = React.useState(false);
+  const { t } = useTranslation();
   
   // Fetch data
   const { data: profile, refetch: refetchProfile } = useUserProfile();
@@ -60,15 +63,15 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      "Delete Account",
-      "Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.",
+      t('profile.deleteAccount'),
+      t('profile.deleteConfirmation'),
       [
         {
-          text: "Cancel",
+          text: t('common.cancel'),
           style: "cancel"
         },
         {
-          text: "Delete",
+          text: t('common.delete'),
           style: "destructive",
           onPress: () => {
             if (onDeleteAccount) {
@@ -88,14 +91,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
     return (
       <View style={[styles.container, styles.centerContent]}>
         <LoadingSpinner size={48} />
-        <Text style={styles.loadingText}>Loading your profile...</Text>
+        <Text style={styles.loadingText}>{t('userProfile.loading')}</Text>
       </View>
     );
   }
 
   const memberSince = profile.created_at 
-    ? new Date(profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
-    : 'Recently';
+    ? new Date(profile.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long' })
+    : t('profile.memberSince.recently');
 
   return (
     <ScrollView 
@@ -129,7 +132,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               />
             </View>
             <Text style={styles.completionText}>
-              Profile {profileCompletion.completionPercentage}% complete
+              {t('profile.completion', { percentage: profileCompletion.completionPercentage })}
             </Text>
           </TouchableOpacity>
         )}
@@ -139,7 +142,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       <View style={styles.statsRow}>
         <StatPill
           value={userStats.total_analyses || 0}
-          label="Analyses"
+          label={t('profile.analyses')}
           variant="primary"
         />
       </View>
@@ -147,7 +150,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Streak Progress */}
       <View style={styles.section}>
         <SectionHeading style={styles.sectionTitle}>
-          Streak Progress
+          {t('profile.streakProgress.title')}
         </SectionHeading>
 
         {streakData ? (
@@ -155,23 +158,23 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <View style={styles.streakHeader}>
               <Text style={styles.streakTitle}>
                 {streakData.current_streak > 0 
-                  ? `${streakData.current_streak} Day Streak!`
-                  : "Ready to Start?"
+                  ? t('profile.streakProgress.dayStreak', { count: streakData.current_streak })
+                  : t('profile.readyToStart')
                 }
               </Text>
             </View>
             
             {/* Milestone Badges */}
             <View style={styles.milestonesContainer}>
-              <Text style={styles.milestonesTitle}>Milestone Progress</Text>
+              <Text style={styles.milestonesTitle}>{t('profile.milestones')}</Text>
               <View style={styles.milestonesGrid}>
                 {[
-                  { days: 1, emoji: '🎉', label: 'First Day' },
-                  { days: 3, emoji: '✨', label: 'Building' },
-                  { days: 7, emoji: '🔥', label: 'On Fire' },
-                  { days: 14, emoji: '⭐', label: 'Amazing' },
-                  { days: 21, emoji: '💎', label: 'Incredible' },
-                  { days: 30, emoji: '🏆', label: 'Legendary' },
+                  { days: 1, emoji: '🎉', labelKey: 'profile.streakProgress.milestones.firstDay' },
+                  { days: 3, emoji: '✨', labelKey: 'profile.streakProgress.milestones.building' },
+                  { days: 7, emoji: '🔥', labelKey: 'profile.streakProgress.milestones.onFire' },
+                  { days: 14, emoji: '⭐', labelKey: 'profile.streakProgress.milestones.amazing' },
+                  { days: 21, emoji: '💎', labelKey: 'profile.streakProgress.milestones.incredible' },
+                  { days: 30, emoji: '🏆', labelKey: 'profile.streakProgress.milestones.legendary' },
                 ].map((milestone, index) => {
                   const isEarned = streakData.current_streak >= milestone.days;
                   const prevMilestone = index > 0 ? [1, 3, 7, 14, 21, 30][index - 1] : 0;
@@ -200,13 +203,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                         styles.milestoneLabel,
                         isEarned && styles.milestoneLabelEarned
                       ]}>
-                        {milestone.label}
+                        {t(milestone.labelKey)}
                       </Text>
                       <Text style={[
                         styles.milestoneDays,
                         isEarned && styles.milestoneDaysEarned
                       ]}>
-                        {milestone.days} day{milestone.days > 1 ? 's' : ''}
+                        {t('profile.streakProgress.daysCount', { count: milestone.days })}
                       </Text>
                     </View>
                   );
@@ -218,15 +221,15 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <View style={styles.streakStats}>
               <View style={styles.streakStat}>
                 <Text style={styles.streakStatValue}>{streakData.current_streak}</Text>
-                <Text style={styles.streakStatLabel}>Current</Text>
+                <Text style={styles.streakStatLabel}>{t('profile.streakStats.current')}</Text>
               </View>
               <View style={styles.streakStat}>
                 <Text style={styles.streakStatValue}>{streakData.longest_streak}</Text>
-                <Text style={styles.streakStatLabel}>Best</Text>
+                <Text style={styles.streakStatLabel}>{t('profile.streakStats.best')}</Text>
               </View>
               <View style={styles.streakStat}>
                 <Text style={styles.streakStatValue}>{streakData.next_milestone}</Text>
-                <Text style={styles.streakStatLabel}>Next Goal</Text>
+                <Text style={styles.streakStatLabel}>{t('profile.streakStats.nextGoal')}</Text>
               </View>
             </View>
 
@@ -244,7 +247,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   />
                 </View>
                 <Text style={styles.progressText}>
-                  {streakData.next_milestone - streakData.current_streak} days to next milestone
+                  {t('profile.streakProgress.daysToMilestone', { 
+                    days: streakData.next_milestone - streakData.current_streak 
+                  })}
                 </Text>
               </View>
             )}
@@ -252,7 +257,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         ) : (
           <View style={styles.streakProgressCard}>
             <Text style={styles.noDataText}>
-              🔌 Streak data unavailable - Backend offline
+              {t('profile.streakProgress.dataUnavailable')}
             </Text>
           </View>
         )}
@@ -261,24 +266,27 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Settings Menu */}
       <View style={styles.section}>
         <SectionHeading style={styles.sectionTitle}>
-          Settings
+          {t('profile.settings')}
         </SectionHeading>
+
+        {/* Language Selector */}
+        <LanguageSelector style={styles.languageSelectorContainer} />
 
         <TouchableOpacity style={styles.menuItem} onPress={onNavigateToHelp}>
           <Text style={styles.menuIcon}>❓</Text>
-          <Text style={styles.menuText}>Help & Support</Text>
+          <Text style={styles.menuText}>{t('profile.support')}</Text>
           <Text style={styles.menuArrow}>→</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={onNavigateToPrivacy}>
           <Text style={styles.menuIcon}>📄</Text>
-          <Text style={styles.menuText}>Privacy Policy</Text>
+          <Text style={styles.menuText}>{t('profile.privacy')}</Text>
           <Text style={styles.menuArrow}>→</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.deleteAccountButton} onPress={handleDeleteAccount}>
           <Text style={styles.deleteAccountIcon}>🗑️</Text>
-          <Text style={styles.deleteAccountText}>Delete Account</Text>
+          <Text style={styles.deleteAccountText}>{t('profile.deleteAccount')}</Text>
           <Text style={styles.deleteAccountArrow}>→</Text>
         </TouchableOpacity>
       </View>
@@ -286,13 +294,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Sign Out Button */}
       <View style={styles.signOutContainer}>
         <TouchableOpacity style={styles.signOutButton} onPress={onSignOut}>
-          <Text style={styles.signOutText}>Sign Out</Text>
+          <Text style={styles.signOutText}>{t('profile.signOut')}</Text>
         </TouchableOpacity>
       </View>
 
       {/* App Info */}
       <View style={styles.appInfo}>
-        <Text style={styles.appVersion}>Dymz AI v1.1.0</Text>
+        <Text style={styles.appVersion}>{t('profile.appVersion')}</Text>
         <StarRatingBadge />
       </View>
     </ScrollView>
@@ -628,5 +636,9 @@ const styles = StyleSheet.create({
   deleteAccountArrow: {
     fontSize: 18,
     color: '#E74C3C',
+  },
+  languageSelectorContainer: {
+    marginBottom: spacing.l,
+    paddingHorizontal: spacing.l,
   },
 });
