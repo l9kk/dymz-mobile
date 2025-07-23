@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { 
   BackButton, 
   LinearProgressStepper, 
@@ -18,25 +19,26 @@ interface SelectTopConcernProps {
   onGuidePress?: () => void;
 }
 
-const SKIN_CONCERNS = [
-  'Acne',
-  'Blackheads',
-  'Dryness', 
-  'Oily Skin',
-  'Dark Spots',
-  'Redness',
-  'Fine Lines',
-  'Large Pores',
-  'Sensitivity',
-  'Uneven Texture'
-];
-
 export const SelectTopConcern: React.FC<SelectTopConcernProps> = ({
   onBack,
   onConcernSelected,
   onGuidePress,
 }) => {
+  const { t } = useTranslation();
   const [selectedConcern, setSelectedConcern] = useState<string>();
+
+  const SKIN_CONCERNS = [
+    t('selectTopConcern.concerns.acne'),
+    t('selectTopConcern.concerns.blackheads'),
+    t('selectTopConcern.concerns.dryness'),
+    t('selectTopConcern.concerns.oilySkin'),
+    t('selectTopConcern.concerns.darkSpots'),
+    t('selectTopConcern.concerns.redness'),
+    t('selectTopConcern.concerns.fineLines'),
+    t('selectTopConcern.concerns.largePores'),
+    t('selectTopConcern.concerns.sensitivity'),
+    t('selectTopConcern.concerns.unevenTexture')
+  ];
 
   const handleConcernPress = (concern: string) => {
     console.log('🎯 Concern pressed:', concern);
@@ -70,14 +72,13 @@ export const SelectTopConcern: React.FC<SelectTopConcernProps> = ({
 
         <View style={styles.content}>
           <EmphasisHeadline 
-            parts={["What's your biggest", "skin concern?"]}
+            parts={[t('selectTopConcern.titlePart1'), t('selectTopConcern.titlePart2')]}
             accentIndices={[1]}
             style={styles.title}
           />
           
           <Text style={styles.subtitle}>
-            Pick the one area you'd most like to improve. We'll prioritize 
-            this in your personalized routine.
+            {t('selectTopConcern.subtitle')}
           </Text>
 
           <View style={styles.pillContainer}>

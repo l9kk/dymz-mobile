@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { 
   BackButton, 
   PrimaryButton, 
@@ -19,6 +20,7 @@ export const SkinIssuesIntro: React.FC<SkinIssuesIntroProps> = ({
   onBack,
   onContinue,
 }) => {
+  const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -28,14 +30,13 @@ export const SkinIssuesIntro: React.FC<SkinIssuesIntroProps> = ({
 
         <View style={styles.content}>
           <EmphasisHeadline 
-            parts={["Finally, let's look at your", "skin issues!"]}
+            parts={[t('skinIssuesIntro.titlePart1'), t('skinIssuesIntro.titlePart2')]}
             accentIndices={[1]}
             style={styles.title}
           />
           
           <Text style={styles.subtitle}>
-            Understanding your specific skin concerns helps us create the most 
-            accurate analysis and personalized recommendations for your routine.
+            {t('skinIssuesIntro.subtitle')}
           </Text>
 
           <View style={styles.imageContainer}>
@@ -43,13 +44,12 @@ export const SkinIssuesIntro: React.FC<SkinIssuesIntroProps> = ({
           </View>
 
           <Text style={styles.statement}>
-            Our AI analyzes 8 key metrics across thousands of data points 
-            to give you the most comprehensive skin assessment.
+            {t('skinIssuesIntro.statement')}
           </Text>
 
           <View style={styles.buttonContainer}>
             <PrimaryButton 
-              title="Let's do it!"
+              title={t('buttons.letsDoIt')}
               onPress={onContinue}
             />
           </View>

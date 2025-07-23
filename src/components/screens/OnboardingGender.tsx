@@ -6,6 +6,7 @@ import { LinearProgressStepper } from '../design-system/atoms/LinearProgressStep
 import { SegmentedChoiceTile } from '../design-system/molecules/SegmentedChoiceTile';
 import { InfoNote } from '../design-system/atoms/InfoNote';
 import { colors, typography, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface OnboardingGenderProps {
   onBack: () => void;
@@ -17,11 +18,12 @@ export const OnboardingGender: React.FC<OnboardingGenderProps> = ({
   onContinue
 }) => {
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const genderOptions = [
-    { id: 'female', icon: '👩', label: 'Female' },
-    { id: 'male', icon: '👨', label: 'Male' },
-    { id: 'nonbinary', icon: '🧑', label: 'Non-binary' },
+    { id: 'female', icon: '👩', label: t('onboarding.gender.female') },
+    { id: 'male', icon: '👨', label: t('onboarding.gender.male') },
+    { id: 'nonbinary', icon: '🧑', label: t('onboarding.gender.other') },
   ];
 
   const handleGenderSelect = (gender: string) => {
@@ -45,11 +47,11 @@ export const OnboardingGender: React.FC<OnboardingGenderProps> = ({
           />
           
           <Text style={styles.title}>
-            What's your gender?
+            {t('onboarding.gender.title')}
           </Text>
           
           <Text style={styles.subtitle}>
-            This helps us recommend products that work best for your skin type and concerns.
+            {t('onboarding.gender.subtitle')}
           </Text>
           
           <View style={styles.choicesContainer}>
@@ -67,7 +69,7 @@ export const OnboardingGender: React.FC<OnboardingGenderProps> = ({
           </View>
           
           <InfoNote 
-            text="Your data is private and secure. We use this information only to personalize your skincare recommendations."
+            text={t('onboarding.gender.privacyNote')}
             style={styles.infoNote}
           />
         </View>

@@ -10,6 +10,7 @@ import {
   IconNames
 } from '../design-system';
 import { colors, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface SocialProofResultsProps {
   onContinue?: () => void;
@@ -18,26 +19,28 @@ interface SocialProofResultsProps {
 export const SocialProofResults: React.FC<SocialProofResultsProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
+  
   const features = [
     {
       iconName: IconNames.analytics,
-      title: 'Track Progress',
-      description: 'Visual skin improvement tracking'
+      title: t('onboarding.socialProof.feature1Title'),
+      description: t('onboarding.socialProof.feature1Description')
     },
     {
       iconName: IconNames.skincare,
-      title: 'Smart Routines',
-      description: 'Personalized daily skincare'
+      title: t('onboarding.socialProof.feature2Title'),
+      description: t('onboarding.socialProof.feature2Description')
     },
     {
       iconName: IconNames.sparkles,
-      title: 'AI Analysis',
-      description: 'Advanced skin analysis technology'
+      title: t('onboarding.socialProof.feature3Title'),
+      description: t('onboarding.socialProof.feature3Description')
     },
     {
       iconName: IconNames.shield,
-      title: 'Expert Guidance',
-      description: 'Dermatologist-backed recommendations'
+      title: t('onboarding.socialProof.feature4Title'),
+      description: t('onboarding.socialProof.feature4Description')
     }
   ];
 
@@ -51,22 +54,21 @@ export const SocialProofResults: React.FC<SocialProofResultsProps> = ({
           style={styles.successIcon}
         />
         <SectionHeading style={styles.heading}>
-          Join 12,000+ Users Getting Clear Skin
+          {t('onboarding.socialProof.heading')}
         </SectionHeading>
       </View>
 
       <StatsSplitBanner
         stats={[
-          { value: "89%", label: "See improvements in 4 weeks" },
-          { value: "94%", label: "Stick to their routine" }
+          { value: "89%", label: t('stats.seeImprovements') },
+          { value: "94%", label: t('stats.stickToRoutine') }
         ]}
         style={styles.statsSection}
       />
 
       <View style={styles.descriptionSection}>
         <Text style={styles.description}>
-          Join thousands who've transformed their skin with our AI-powered skincare platform. 
-          Get personalized routines, track your progress, and achieve the clear, healthy skin you deserve.
+          {t('onboarding.socialProof.description')}
         </Text>
       </View>
 
@@ -97,11 +99,11 @@ export const SocialProofResults: React.FC<SocialProofResultsProps> = ({
 
       <View style={styles.ctaSection}>
         <PrimaryButton
-          title="Start Your Journey"
+          title={t('buttons.startYourJourney')}
           onPress={onContinue}
         />
         <Text style={styles.disclaimer}>
-          Results based on user surveys. Individual results may vary.
+          {t('onboarding.socialProof.disclaimer')}
         </Text>
       </View>
     </ScrollView>

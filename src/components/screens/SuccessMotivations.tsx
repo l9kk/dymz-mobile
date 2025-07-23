@@ -6,6 +6,7 @@ import {
   spacing,
   colors,
 } from '../design-system';
+import { useTranslation } from '../../hooks/useTranslation';
 // Temporarily commented out until useAwardPoints is implemented
 // import { useAwardPoints } from '../../hooks/api/useGamification';
 
@@ -17,6 +18,7 @@ interface SuccessMotivationsProps {
 }
 
 export const SuccessMotivations: React.FC<SuccessMotivationsProps> = ({ onContinue }) => {
+  const { t } = useTranslation();
   // Award points for completing motivation assessment
   // Temporarily commented out until useAwardPoints is implemented
   // const awardPoints = useAwardPoints();
@@ -97,15 +99,13 @@ export const SuccessMotivations: React.FC<SuccessMotivationsProps> = ({ onContin
           </AnimatedSvg>
         </Animated.View>
         
-        <Text style={styles.title}>Your motivations</Text>
+        <Text style={styles.title}>{t('onboarding.successMotivations.title')}</Text>
         
         <Text style={styles.subtitle}>
-          Perfect! We now understand what drives you.{'\n'}
-          Let's analyze your skin and create your{'\n'}
-          personalized routine 🌟
+          {t('onboarding.successMotivations.subtitle')}
         </Text>
         
-        <PrimaryButton title="Continue" onPress={handleContinue} />
+        <PrimaryButton title={t('buttons.continue')} onPress={handleContinue} />
       </View>
     </View>
   );
