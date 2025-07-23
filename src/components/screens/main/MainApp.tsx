@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { TabNavigator, TabRoute } from '../../navigation/TabNavigator';
 import { HomeScreen } from './HomeScreen';
 import { AnalysisScreen } from './AnalysisScreen';
@@ -14,6 +15,7 @@ interface MainAppProps {
   onNavigateToCamera?: () => void;
   onNavigateToHelp?: () => void;
   onNavigateToPrivacy?: () => void;
+  onNavigateToEditRoutine?: (routine: any) => void;
   onSignOut?: () => void;
   onDeleteAccount?: () => void;
 }
@@ -22,9 +24,11 @@ export const MainApp: React.FC<MainAppProps> = ({
   onNavigateToCamera,
   onNavigateToHelp,
   onNavigateToPrivacy,
+  onNavigateToEditRoutine,
   onSignOut,
   onDeleteAccount
 }) => {
+  const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<TabRoute>('home');
   const [showInsights, setShowInsights] = useState(false);
   const { signOut } = useAuthStore();
@@ -49,7 +53,7 @@ export const MainApp: React.FC<MainAppProps> = ({
   if (showInsights) {
     return (
       <View style={styles.container}>
-        <ErrorBoundary fallbackMessage="Insights screen temporarily unavailable">
+        <ErrorBoundary fallbackMessage={t('navigation.errorBoundary.insightsUnavailable')}>
           <InsightsOverview
             onBack={handleBackFromInsights}
             onNavigate={(screen: string) => {
@@ -78,7 +82,7 @@ export const MainApp: React.FC<MainAppProps> = ({
     switch (currentTab) {
       case 'home':
         return (
-          <ErrorBoundary fallbackMessage="Home screen temporarily unavailable">
+          <ErrorBoundary fallbackMessage={t('navigation.errorBoundary.homeUnavailable')}>
             <HomeScreen
               onNavigateToAnalysis={() => setCurrentTab('analysis')}
               onNavigateToRoutine={() => setCurrentTab('routine')}
@@ -89,7 +93,7 @@ export const MainApp: React.FC<MainAppProps> = ({
       
       case 'analysis':
         return (
-          <ErrorBoundary fallbackMessage="Analysis screen temporarily unavailable">
+          <ErrorBoundary fallbackMessage={t('navigation.errorBoundary.analysisUnavailable')}>
             <AnalysisScreen
               onNavigateToCamera={onNavigateToCamera}
               onNavigateToProgress={handleNavigateToProgress}
@@ -99,17 +103,18 @@ export const MainApp: React.FC<MainAppProps> = ({
       
       case 'routine':
         return (
-          <ErrorBoundary fallbackMessage="Routine screen temporarily unavailable">
+          <ErrorBoundary fallbackMessage={t('navigation.errorBoundary.routineUnavailable')}>
             <RoutineScreen
               onNavigateToProducts={() => {/* TODO: Navigate to products screen */}}
               onNavigateToHistory={() => {/* TODO: Navigate to routine history */}}
+              onNavigateToEditRoutine={onNavigateToEditRoutine}
             />
           </ErrorBoundary>
         );
       
       case 'profile':
         return (
-          <ErrorBoundary fallbackMessage="Profile screen temporarily unavailable">
+          <ErrorBoundary fallbackMessage={t('navigation.errorBoundary.profileUnavailable')}>
             <ProfileScreen
               onNavigateToEdit={() => {/* TODO: Navigate to edit profile */}}
               onNavigateToHelp={onNavigateToHelp}
@@ -122,7 +127,7 @@ export const MainApp: React.FC<MainAppProps> = ({
       
       default:
         return (
-          <ErrorBoundary fallbackMessage="Home screen temporarily unavailable">
+          <ErrorBoundary fallbackMessage={t('navigation.errorBoundary.homeUnavailable')}>
             <HomeScreen
               onNavigateToAnalysis={() => setCurrentTab('analysis')}
               onNavigateToRoutine={() => setCurrentTab('routine')}

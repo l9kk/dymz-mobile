@@ -19,6 +19,7 @@ import {
   formatTimeUntilMidnight 
 } from '../../../utils/analysisTimer';
 import { boostMetrics, boostMetricsWithPersistence } from '../../../utils/metricBoosting';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface AnalysisScreenProps {
   onNavigateToCamera?: () => void;
@@ -46,6 +47,7 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
   onNavigateToCamera,
   onNavigateToProgress
 }) => {
+  const { t } = useTranslation();
   const [refreshing, setRefreshing] = React.useState(false);
   const [timeUntilNext, setTimeUntilNext] = React.useState<string>('');
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -60,11 +62,11 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
   
   // Loading messages that cycle through
   const loadingMessages = [
-    "Analyzing your skin...",
-    "Detecting skin texture...",
-    "Measuring skin clarity...",
-    "Calculating health scores...",
-    "Almost ready!"
+    t('analysis.loadingMessages.analyzing'),
+    t('analysis.loadingMessages.detectingTexture'),
+    t('analysis.loadingMessages.measuringClarity'),
+    t('analysis.loadingMessages.calculatingScores'),
+    t('analysis.loadingMessages.almostReady')
   ];
   
   // Fetch data with polling for processing analyses
@@ -417,15 +419,16 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
       case AnalysisState.NO_ANALYSIS:
         return (
           <TouchableOpacity style={styles.welcomeCard} onPress={handleTakeNewAnalysis}>
-            <Text style={styles.welcomeEmoji}>🌟</Text>
-            <Text style={styles.welcomeTitle}>Welcome to Skin Analysis!</Text>
+            <Text style={styles.welcomeEmoji}>{t('analysis.welcome.emoji')}</Text>
+            <Text style={styles.welcomeTitle}>{t('analysis.welcome.title')}</Text>
             <Text style={styles.welcomeSubtitle}>
-              Take your first selfie to get personalized insights about your skin
+              {t('analysis.welcome.subtitle')}
             </Text>
             <View style={styles.welcomeFeatures}>
-              <Text style={styles.featureText}>✨ AI-powered analysis</Text>
-              <Text style={styles.featureText}>📊 Detailed metrics</Text>
-              <Text style={styles.featureText}>📈 Track your progress</Text>
+              <Text style={styles.featureText}>📸 Daily skin analysis</Text>
+              <Text style={styles.featureText}>📊 Progress tracking</Text>
+              <Text style={styles.featureText}>🧴 Product recommendations</Text>
+              <Text style={styles.featureText}>💪 Personalized routines</Text>
             </View>
           </TouchableOpacity>
         );
@@ -460,9 +463,9 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
         return (
           <TouchableOpacity style={styles.errorCard} onPress={handleTakeNewAnalysis}>
             <Text style={styles.errorEmoji}>😔</Text>
-            <Text style={styles.errorTitle}>Analysis failed</Text>
+            <Text style={styles.errorTitle}>{t('analysis.states.failed')}</Text>
             <Text style={styles.errorSubtitle}>
-              {latestAnalysis?.error_message || 'Something went wrong. Tap to try again.'}
+              {latestAnalysis?.error_message || t('analysis.states.defaultError')}
             </Text>
           </TouchableOpacity>
         );
@@ -472,13 +475,13 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
           <View style={styles.readyStateContainer}>
             <TouchableOpacity style={styles.readyCard} onPress={handleTakeNewAnalysis}>
               <Text style={styles.readyEmoji}>⏰</Text>
-              <Text style={styles.readyTitle}>Ready for your next scan!</Text>
-              <Text style={styles.readySubtitle}>Your daily analysis is now available. Tap to analyze again.</Text>
+              <Text style={styles.readyTitle}>{t('analysis.states.readyTitle')}</Text>
+              <Text style={styles.readySubtitle}>{t('analysis.states.readySubtitle')}</Text>
             </TouchableOpacity>
 
             {latestAnalysis && (
               <View style={styles.historySection}>
-                <Text style={styles.historySectionTitle}>📊 Previous Analysis</Text>
+                <Text style={styles.historySectionTitle}>{t('analysis.latestAnalysis.sectionTitle')}</Text>
                 <TouchableOpacity 
                   style={styles.previousAnalysisCard}
                   onPress={() => setModalVisible(true)}
@@ -493,19 +496,19 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
                       })}
                     </Text>
                     <View style={styles.statusCompleted}>
-                      <Text style={styles.statusText}>✅ Complete</Text>
+                      <Text style={styles.statusText}>✅ {t('analysis.latestAnalysis.complete')}</Text>
                     </View>
                   </View>
                   
                   <Text style={styles.previousAnalysisDescription}>
                     {latestAnalysis.skin_metrics?.metrics 
-                      ? `${Object.keys(latestAnalysis.skin_metrics.metrics).length} skin metrics analyzed`
-                      : 'Tap to view analysis details'
+                      ? t('analysis.latestAnalysis.metricsAnalyzed', { count: Object.keys(latestAnalysis.skin_metrics.metrics).length })
+                      : t('analysis.latestAnalysis.tapToView')
                     }
                   </Text>
                   
                   <View style={styles.tapToViewContainer}>
-                    <Text style={styles.tapToViewText}>Tap to view full results</Text>
+                    <Text style={styles.tapToViewText}>{t('analysis.latestAnalysis.tapToViewFull')}</Text>
                     <Text style={styles.expandIcon}>▶</Text>
                   </View>
                 </TouchableOpacity>
@@ -519,15 +522,15 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
         return (
           <View style={styles.completedStateContainer}>
             <View style={styles.nextAnalysisCard}>
-              <Text style={styles.nextAnalysisTitle}>📅 Next Analysis</Text>
+              <Text style={styles.nextAnalysisTitle}>{t('analysis.nextAnalysis.title')}</Text>
               <Text style={styles.nextAnalysisMessage}>
-                Your next daily analysis will be available {timeUntilNext === 'Ready now!' ? 'now' : timeUntilNext}
+                {t('analysis.nextAnalysis.message', { time: timeUntilNext === 'Ready now!' ? t('analysis.nextAnalysis.readyNow') : timeUntilNext })}
               </Text>
             </View>
 
             {latestAnalysis && (
               <View style={styles.historySection}>
-                <Text style={styles.historySectionTitle}>📊 Latest Analysis</Text>
+                <Text style={styles.historySectionTitle}>{t('analysis.latestAnalysis.sectionTitle')}</Text>
                 <TouchableOpacity 
                   style={styles.previousAnalysisCard}
                   onPress={() => setModalVisible(true)}
@@ -543,19 +546,19 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
                     </Text>
                     <View style={styles.statusCompleted}>
                       <Text style={styles.statusCheckmark}>✓</Text>
-                      <Text style={styles.statusText}>Complete</Text>
+                      <Text style={styles.statusText}>{t('analysis.latestAnalysis.complete')}</Text>
                     </View>
                   </View>
                   
                   <Text style={styles.previousAnalysisDescription}>
                     {latestAnalysis.skin_metrics?.metrics 
-                      ? `${Object.keys(latestAnalysis.skin_metrics.metrics).length} skin metrics analyzed`
-                      : 'Tap to view analysis details'
+                      ? t('analysis.latestAnalysis.metricsAnalyzed', { count: Object.keys(latestAnalysis.skin_metrics.metrics).length })
+                      : t('analysis.latestAnalysis.tapToView')
                     }
                   </Text>
                   
                   <View style={styles.tapToViewContainer}>
-                    <Text style={styles.tapToViewText}>View Full Results</Text>
+                    <Text style={styles.tapToViewText}>{t('analysis.latestAnalysis.viewFullResults')}</Text>
                     <Text style={styles.expandIcon}>→</Text>
                   </View>
                 </TouchableOpacity>
@@ -572,10 +575,10 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
         <View style={styles.countdownRow}>
           <StatPill 
             value={timeUntilNext} 
-            label="Next Scan In" 
+            label={t('analysis.stats.nextScanIn')}
             variant={timeUntilNext === 'Ready now!' ? 'accent' : 'secondary'} 
           />
-          <StatPill value={totalAnalyses} label="Total Scans" variant="secondary" />
+          <StatPill value={totalAnalyses} label={t('analysis.stats.totalScans')} variant="secondary" />
         </View>
       );
     }
@@ -583,8 +586,8 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
     if (analysisState === AnalysisState.READY_FOR_NEW) {
       return (
         <View style={styles.countdownRow}>
-          <StatPill value="Ready!" label="Status" variant="accent" />
-          <StatPill value={totalAnalyses} label="Total Scans" variant="secondary" />
+          <StatPill value={t('analysis.stats.ready')} label={t('analysis.stats.status')} variant="accent" />
+          <StatPill value={totalAnalyses} label={t('analysis.stats.totalScans')} variant="secondary" />
         </View>
       );
     }
@@ -598,7 +601,7 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
     return (
       <View style={[styles.container, styles.centerContent]}>
         <LoadingSpinner size={48} />
-        <Text style={styles.loadingText}>Loading your analysis data...</Text>
+        <Text style={styles.loadingText}>{t('analysis.errors.loadingData')}</Text>
       </View>
     );
   }
@@ -621,15 +624,15 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
       >
         {/* Header */}
         <View style={styles.headerSection}>
-          <SectionHeading>Skin Analysis</SectionHeading>
+          <SectionHeading>{t('analysis.title')}</SectionHeading>
           <StatParagraph style={styles.subtitle}>
             {analysisState === AnalysisState.NO_ANALYSIS 
-              ? 'Start your skin health journey'
+              ? t('analysis.subtitles.noAnalysis')
               : analysisState === AnalysisState.PROCESSING
-              ? 'Analysis in progress...'
+              ? t('analysis.subtitles.processing')
               : analysisState === AnalysisState.READY_FOR_NEW
-              ? 'Ready for your daily analysis'
-              : 'Your skin analysis results'
+              ? t('analysis.subtitles.readyForNew')
+              : t('analysis.subtitles.hasCompleted')
             }
           </StatParagraph>
         </View>
@@ -644,12 +647,12 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
 
         {/* Actions */}
         <View style={styles.section}>
-          <SectionHeading style={styles.sectionTitle}>Actions</SectionHeading>
+          <SectionHeading style={styles.sectionTitle}>{t('analysis.actions.title')}</SectionHeading>
           <View style={styles.actionsGrid}>
             <IconFeatureCard
               icon="camera"
-              title={analysisState === AnalysisState.NO_ANALYSIS ? "Start Analysis" : "New Analysis"}
-              description={isNewAnalysisDisabled ? "Available " + (timeUntilNext === 'Ready now!' ? 'now' : timeUntilNext) : "Take your daily photo"}
+              title={analysisState === AnalysisState.NO_ANALYSIS ? t('analysis.actions.startAnalysis') : t('analysis.actions.newAnalysis')}
+              description={isNewAnalysisDisabled ? t('analysis.actions.available') + " " + (timeUntilNext === 'Ready now!' ? t('analysis.actions.availableNow') : timeUntilNext) : t('analysis.actions.analysisDescription')}
               onPress={isNewAnalysisDisabled ? undefined : handleTakeNewAnalysis}
               style={[
                 styles.actionCard,
@@ -658,8 +661,8 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
             />
             <IconFeatureCard
               icon="trending-up"
-              title="Progress"
-              description="View trends"
+              title={t('analysis.actions.progress')}
+              description={t('analysis.actions.progressDescription')}
               onPress={onNavigateToProgress}
               style={styles.actionCard}
             />
@@ -682,9 +685,9 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Analysis Results</Text>
+            <Text style={styles.modalTitle}>{t('analysis.modal.title')}</Text>
             <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>✕</Text>
+              <Text style={styles.closeButtonText}>{t('analysis.modal.close')}</Text>
             </TouchableOpacity>
           </View>
           
@@ -697,7 +700,7 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
             )}
             
             <View style={styles.modalInfoSection}>
-              <Text style={styles.modalInfoTitle}>Analysis Date</Text>
+              <Text style={styles.modalInfoTitle}>{t('analysis.modal.analysisDate')}</Text>
               <Text style={styles.modalInfoText}>
                 {latestAnalysis && new Date(latestAnalysis.created_at).toLocaleDateString('en-US', {
                   weekday: 'long',
@@ -709,9 +712,9 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
             </View>
 
             <View style={styles.modalInfoSection}>
-              <Text style={styles.modalInfoTitle}>Metrics Analyzed</Text>
+              <Text style={styles.modalInfoTitle}>{t('analysis.modal.metricsAnalyzed')}</Text>
               <Text style={styles.modalInfoText}>
-                {metrics.length} skin health indicators
+                {t('analysis.modal.healthIndicators', { count: metrics.length })}
               </Text>
             </View>
           </ScrollView>

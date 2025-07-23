@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { BackButton } from '../design-system/atoms/BackButton';
 import { colors, spacing, typography } from '../design-system/tokens';
@@ -17,6 +18,7 @@ export const EmailSignInScreen: React.FC<EmailSignInScreenProps> = ({
   onSignInSuccess,
   onForgotPassword 
 }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { mutate: signInWithEmail, isPending } = useEmailSignIn();
@@ -25,11 +27,11 @@ export const EmailSignInScreen: React.FC<EmailSignInScreenProps> = ({
   const handleSignIn = () => {
     // Basic validation
     if (!email.includes('@')) {
-      setError('Please enter a valid email');
+      setError(t('auth.emailSignIn.errors.invalidEmail'));
       return;
     }
     if (!password || password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError(t('auth.emailSignIn.errors.passwordTooShort'));
       return;
     }
     
@@ -39,11 +41,11 @@ export const EmailSignInScreen: React.FC<EmailSignInScreenProps> = ({
         if (result.success) {
           onSignInSuccess();
         } else {
-          setError(result.error || 'Failed to sign in');
+          setError(result.error || t('auth.emailSignIn.errors.failedToSignIn'));
         }
       },
       onError: (e: any) => {
-        setError(e?.message || 'Failed to sign in');
+        setError(e?.message || t('auth.emailSignIn.errors.failedToSignIn'));
       }
     });
   };
@@ -55,13 +57,13 @@ export const EmailSignInScreen: React.FC<EmailSignInScreenProps> = ({
           <BackButton onPress={onBack} />
         </View>
         <View style={styles.content}>
-          <Text style={styles.title}>Welcome back</Text>
-          <Text style={styles.subtitle}>Sign in to your account</Text>
+          <Text style={styles.title}>{t('auth.emailSignIn.title')}</Text>
+          <Text style={styles.subtitle}>{t('auth.emailSignIn.subtitle')}</Text>
           
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
-              placeholder="your@email.com"
+              placeholder={t('auth.emailPlaceholder')}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -71,7 +73,7 @@ export const EmailSignInScreen: React.FC<EmailSignInScreenProps> = ({
             />
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder={t('auth.password')}
               secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
@@ -84,7 +86,7 @@ export const EmailSignInScreen: React.FC<EmailSignInScreenProps> = ({
           {error && <Text style={styles.error}>{error}</Text>}
           
           <PrimaryButton
-            title={isPending ? 'Signing in…' : 'Sign In'}
+            title={isPending ? t('auth.emailSignIn.signingIn') : t('auth.signIn')}
             onPress={handleSignIn}
             disabled={isPending}
             style={styles.signInButton}
@@ -92,7 +94,7 @@ export const EmailSignInScreen: React.FC<EmailSignInScreenProps> = ({
           
           {onForgotPassword && (
             <TouchableOpacity onPress={onForgotPassword} style={styles.forgotPasswordLink}>
-              <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+              <Text style={styles.forgotPasswordText}>{t('auth.emailSignIn.forgotPassword')}</Text>
             </TouchableOpacity>
           )}
         </View>

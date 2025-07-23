@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { BackButton } from '../design-system/atoms/BackButton';
 import { colors, spacing, typography } from '../design-system/tokens';
@@ -12,6 +13,7 @@ interface EmailEnterScreenProps {
 }
 
 export const EmailEnterScreen: React.FC<EmailEnterScreenProps> = ({ onBack, onAccountCreated }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { mutate: signUpWithEmail, isPending } = useEmailSignUp();
@@ -20,11 +22,11 @@ export const EmailEnterScreen: React.FC<EmailEnterScreenProps> = ({ onBack, onAc
   const handleCreateAccount = () => {
     // Basic validation
     if (!email.includes('@')) {
-      setError('Please enter a valid email');
+      setError(t('auth.emailEnter.errors.invalidEmail'));
       return;
     }
     if (!password || password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError(t('auth.emailEnter.errors.passwordTooShort'));
       return;
     }
     
@@ -37,11 +39,11 @@ export const EmailEnterScreen: React.FC<EmailEnterScreenProps> = ({ onBack, onAc
           // Pass email, password, and whether verification is needed
           onAccountCreated(email, password, result.needsVerification || false);
         } else {
-          setError(result.error || 'Failed to create account');
+          setError(result.error || t('auth.emailEnter.errors.failedToCreate'));
         }
       },
       onError: (e: any) => {
-        setError(e?.message || 'Failed to create account');
+        setError(e?.message || t('auth.emailEnter.errors.failedToCreate'));
       }
     });
   };
@@ -53,13 +55,13 @@ export const EmailEnterScreen: React.FC<EmailEnterScreenProps> = ({ onBack, onAc
           <BackButton onPress={onBack} />
         </View>
         <View style={styles.content}>
-          <Text style={styles.title}>Create your account</Text>
-          <Text style={styles.subtitle}>Enter your email and password to get started</Text>
+          <Text style={styles.title}>{t('auth.emailEnter.title')}</Text>
+          <Text style={styles.subtitle}>{t('auth.emailEnter.subtitle')}</Text>
           
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
-              placeholder="your@email.com"
+              placeholder={t('auth.emailPlaceholder')}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -69,7 +71,7 @@ export const EmailEnterScreen: React.FC<EmailEnterScreenProps> = ({ onBack, onAc
             />
             <TextInput
               style={styles.input}
-              placeholder="Password (min 6 characters)"
+              placeholder={t('auth.emailEnter.passwordPlaceholder')}
               secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
@@ -82,7 +84,7 @@ export const EmailEnterScreen: React.FC<EmailEnterScreenProps> = ({ onBack, onAc
           {error && <Text style={styles.error}>{error}</Text>}
           
           <PrimaryButton
-            title={isPending ? 'Creating Account…' : 'Create Account'}
+            title={isPending ? t('auth.emailEnter.creatingAccount') : t('auth.emailEnter.createAccount')}
             onPress={handleCreateAccount}
             disabled={isPending}
           />

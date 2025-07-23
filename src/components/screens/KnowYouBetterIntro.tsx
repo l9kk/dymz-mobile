@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { CircleAvatarCluster } from '../design-system/molecules/CircleAvatarCluster';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { colors, typography, spacing } from '../design-system/tokens';
@@ -12,28 +13,30 @@ interface KnowYouBetterIntroProps {
 export const KnowYouBetterIntro: React.FC<KnowYouBetterIntroProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>
-          Let's get to know you better
+          {t('onboarding.knowYouBetter.title')}
         </Text>
         
         <Text style={styles.subtitle}>
-          A few quick questions will help us personalize your skincare recommendations
+          {t('onboarding.knowYouBetter.subtitle')}
         </Text>
         
         <CircleAvatarCluster 
-          caption="Join 50,000+ users on their skincare journey"
+          caption={t('onboarding.knowYouBetter.caption')}
           style={styles.avatarCluster}
         />
         
         <Text style={styles.bodyCopy}>
-          Our AI has helped over 50,000 people discover their perfect skincare routine and achieve healthier, more radiant skin.
+          {t('onboarding.knowYouBetter.bodyCopy')}
         </Text>
         
         <PrimaryButton 
-          title="Let's do it!" 
+          title={t('buttons.letsDoIt')} 
           onPress={onContinue}
           style={styles.button}
         />

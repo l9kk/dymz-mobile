@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LogoMark } from '../design-system/atoms/LogoMark';
 import { AuthButton } from '../design-system/atoms/AuthButton';
 import { colors, typography, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface WelcomeAuthScreenProps {
   onEmailSignUp: () => void;
@@ -14,6 +15,8 @@ export const WelcomeAuthScreen: React.FC<WelcomeAuthScreenProps> = ({
   onEmailSignUp,
   onEmailSignIn
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -23,12 +26,12 @@ export const WelcomeAuthScreen: React.FC<WelcomeAuthScreenProps> = ({
         </View>
         
         <Text style={styles.heroHeadline}>
-          Discover your skin's potential with AI-powered analysis
+          {t('auth.welcomeSubtitle')}
         </Text>
         
         <View style={styles.authSection}>
           <AuthButton
-            title="Sign up"
+            title={t('buttons.signUp')}
             variant="primary"
             onPress={() => {
               console.log('WelcomeAuthScreen: Sign up pressed');
@@ -38,7 +41,7 @@ export const WelcomeAuthScreen: React.FC<WelcomeAuthScreenProps> = ({
           />
           
           <AuthButton
-            title="Already have account?"
+            title={t('buttons.alreadyHaveAccount')}
             variant="link"
             onPress={() => {
               console.log('WelcomeAuthScreen: Already have account pressed');
@@ -49,7 +52,7 @@ export const WelcomeAuthScreen: React.FC<WelcomeAuthScreenProps> = ({
         </View>
         
         <Text style={styles.legalDisclaimer}>
-          By proceeding, you agree to our Terms of Service and Privacy Policy.
+          {t('auth.legalDisclaimer')}
         </Text>
       </ScrollView>
     </SafeAreaView>
