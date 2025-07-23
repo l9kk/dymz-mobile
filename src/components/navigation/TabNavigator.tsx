@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing } from '../design-system/tokens';
 
 export type TabRoute = 'home' | 'analysis' | 'routine' | 'profile';
@@ -13,16 +14,16 @@ interface TabNavigatorProps {
 
 interface TabItem {
   route: TabRoute;
-  label: string;
+  labelKey: string;
   icon: keyof typeof Ionicons.glyphMap;
   activeIcon?: keyof typeof Ionicons.glyphMap;
 }
 
 const tabs: TabItem[] = [
-  { route: 'home', label: 'Home', icon: 'home-outline', activeIcon: 'home' },
-  { route: 'analysis', label: 'Analysis', icon: 'analytics-outline', activeIcon: 'analytics' },
-  { route: 'routine', label: 'Routine', icon: 'medical-outline', activeIcon: 'medical' },
-  { route: 'profile', label: 'Profile', icon: 'person-outline', activeIcon: 'person' }
+  { route: 'home', labelKey: 'navigation.tabs.home', icon: 'home-outline', activeIcon: 'home' },
+  { route: 'analysis', labelKey: 'navigation.tabs.analysis', icon: 'analytics-outline', activeIcon: 'analytics' },
+  { route: 'routine', labelKey: 'navigation.tabs.routine', icon: 'medical-outline', activeIcon: 'medical' },
+  { route: 'profile', labelKey: 'navigation.tabs.profile', icon: 'person-outline', activeIcon: 'person' }
 ];
 
 export const TabNavigator: React.FC<TabNavigatorProps> = ({
@@ -30,6 +31,7 @@ export const TabNavigator: React.FC<TabNavigatorProps> = ({
   onTabChange
 }) => {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
@@ -58,7 +60,7 @@ export const TabNavigator: React.FC<TabNavigatorProps> = ({
                 styles.tabLabel,
                 isActive && styles.activeTabLabel
               ]}>
-                {tab.label}
+                {t(tab.labelKey)}
               </Text>
             </TouchableOpacity>
           );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { EmojiBulletList } from '../design-system/molecules/EmojiBulletList';
 import { ExampleImageGrid } from '../design-system/molecules/ExampleImageGrid';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
@@ -13,13 +14,15 @@ interface CaptureGuidelinesProps {
 export const CaptureGuidelines: React.FC<CaptureGuidelinesProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
+  
   // Selfie guidelines with emojis
   const guidelines = [
-    { emoji: '💡', text: 'Use natural lighting - avoid harsh shadows' },
-    { emoji: '📱', text: 'Hold phone at arm\'s length for best results' },
-    { emoji: '👀', text: 'Look directly at the camera with a neutral expression' },
-    { emoji: '🚫', text: 'Remove makeup, glasses, and hair from face' },
-    { emoji: '📏', text: 'Keep your face centered in the frame' },
+    { emoji: '💡', text: t('captureGuidelines.naturalLighting') },
+    { emoji: '📱', text: t('captureGuidelines.armLength') },
+    { emoji: '👀', text: t('captureGuidelines.lookDirectly') },
+    { emoji: '🚫', text: t('captureGuidelines.removeMakeup') },
+    { emoji: '📏', text: t('captureGuidelines.faceCentered') },
   ];
 
   return (
@@ -27,7 +30,7 @@ export const CaptureGuidelines: React.FC<CaptureGuidelinesProps> = ({
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <Text style={styles.title}>
-            Follow these tips for the best skin analysis
+            {t('captureGuidelines.title')}
           </Text>
           
           <EmojiBulletList 
@@ -46,7 +49,7 @@ export const CaptureGuidelines: React.FC<CaptureGuidelinesProps> = ({
           />
           
           <PrimaryButton 
-            title="Continue" 
+            title={t('common.continue')} 
             onPress={onContinue}
             style={styles.button}
           />

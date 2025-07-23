@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import {
   SectionHeading,
   StatParagraph,
@@ -17,49 +18,56 @@ interface BuildRoutineIntroProps {
   onContinue?: () => void;
 }
 
-const BackendErrorDisplay: React.FC<{ error: any; onContinue?: () => void }> = ({ error, onContinue }) => (
-  <View style={styles.errorContainer}>
-    <Text style={styles.errorTitle}>⚠️ Product Recommendations Unavailable</Text>
-    <Text style={styles.errorMessage}>
-      {error?.message?.includes('Analysis must be completed') 
-        ? 'Complete your skin analysis first to get personalized product recommendations.'
-        : 'Unable to connect to the product recommendation service.'}
-    </Text>
-    <Text style={styles.errorDetail}>
-      Backend Status: {error?.status || 'Unknown'} - {error?.message || 'Connection failed'}
-    </Text>
-    <View style={styles.buttonContainer}>
-      <PrimaryButton
-        title="Continue Anyway →"
-        onPress={onContinue}
-      />
+const BackendErrorDisplay: React.FC<{ error: any; onContinue?: () => void }> = ({ error, onContinue }) => {
+  const { t } = useTranslation();
+  
+  return (
+    <View style={styles.errorContainer}>
+      <Text style={styles.errorTitle}>{t('buildRoutine.errors.recommendationsUnavailable')}</Text>
+      <Text style={styles.errorMessage}>
+        {error?.message?.includes('Analysis must be completed') 
+          ? t('buildRoutine.errors.completeAnalysisFirst')
+          : t('buildRoutine.errors.unableToConnect')}
+      </Text>
+      <Text style={styles.errorDetail}>
+        {t('buildRoutine.errors.backendStatus')}: {error?.status || t('buildRoutine.errors.unknown')} - {error?.message || t('buildRoutine.errors.connectionFailed')}
+      </Text>
+      <View style={styles.buttonContainer}>
+        <PrimaryButton
+          title={t('buildRoutine.buttons.continueAnyway')}
+          onPress={onContinue}
+        />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
-const NoDataDisplay: React.FC<{ onContinue?: () => void }> = ({ onContinue }) => (
-  <View style={styles.errorContainer}>
-    <Text style={styles.errorTitle}>🔌 Backend Not Responding</Text>
-    <Text style={styles.errorMessage}>
-      The product recommendation service is not responding. This could be due to:
-    </Text>
-    <Text style={styles.errorDetail}>
-      • Backend server is offline{'\n'}
-      • Network connectivity issues{'\n'}
-      • Service temporarily unavailable
-    </Text>
-    <View style={styles.buttonContainer}>
-      <PrimaryButton
-        title="Continue Without Recommendations →"
-        onPress={onContinue}
-      />
+const NoDataDisplay: React.FC<{ onContinue?: () => void }> = ({ onContinue }) => {
+  const { t } = useTranslation();
+  
+  return (
+    <View style={styles.errorContainer}>
+      <Text style={styles.errorTitle}>{t('buildRoutine.errors.backendNotResponding')}</Text>
+      <Text style={styles.errorMessage}>
+        {t('buildRoutine.errors.serviceNotResponding')}
+      </Text>
+      <Text style={styles.errorDetail}>
+        {t('buildRoutine.errors.possibleCauses')}
+      </Text>
+      <View style={styles.buttonContainer}>
+        <PrimaryButton
+          title={t('buildRoutine.buttons.continueWithoutRecommendations')}
+          onPress={onContinue}
+        />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 export const BuildRoutineIntro: React.FC<BuildRoutineIntroProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
   const { data: analysis } = useLatestAnalysis();
   
   // Use polling for analysis if it's processing
@@ -95,8 +103,8 @@ export const BuildRoutineIntro: React.FC<BuildRoutineIntroProps> = ({
       .filter((rec: any) => rec?.id) // Filter out invalid entries
       .map((recommendation: any) => ({
         id: recommendation.id,
-        name: recommendation.name || 'Unknown Product',
-        brand: recommendation.brand || 'Unknown Brand',
+        name: recommendation.name || t('buildRoutine.unknownProduct'),
+        brand: recommendation.brand || t('buildRoutine.unknownBrand'),
         price: recommendation.price || 0,
         imageUri: recommendation.image_url || '',
         rating: recommendation.rating || 0,

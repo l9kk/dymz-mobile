@@ -5,6 +5,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { CapturePreview } from '../design-system/organisms/CapturePreview';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { colors, typography, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface CameraPreviewProps {
   onTakePicture: (photoUri?: string) => void;
@@ -13,6 +14,7 @@ interface CameraPreviewProps {
 export const CameraPreview: React.FC<CameraPreviewProps> = ({
   onTakePicture
 }) => {
+  const { t } = useTranslation();
   const cameraRef = useRef<CameraView>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -24,7 +26,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
 
   const handleTakePicture = async () => {
     if (!cameraRef.current || !isCameraReady) {
-      Alert.alert('Camera not ready', 'Please wait for the camera to initialize');
+      Alert.alert(t('camera.notReady'), t('camera.waitForInitialization'));
       return;
     }
 
@@ -40,7 +42,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
       onTakePicture(photo.uri);
     } catch (error) {
       console.error('Error taking picture:', error);
-      Alert.alert('Error', 'Failed to take picture. Please try again.');
+      Alert.alert(t('common.error'), t('camera.failedToTakePicture'));
     } finally {
       setIsCapturing(false);
     }
@@ -56,8 +58,8 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.title}>We need your permission to show the camera</Text>
-          <PrimaryButton title="Grant Permission" onPress={requestPermission} />
+          <Text style={styles.title}>{t('camera.permissionTitle')}</Text>
+          <PrimaryButton title={t('common.continue')} onPress={requestPermission} />
         </View>
       </SafeAreaView>
     );
@@ -69,7 +71,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
         <View style={styles.header}>
           <Text style={styles.emoji}>📸💥</Text>
           <Text style={styles.title}>
-            Take a selfie so that your skin can be analyzed
+            {t('camera.takeSelfieTitle')}
           </Text>
         </View>
         
@@ -88,7 +90,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
             />
           )}
           <PrimaryButton 
-            title={isCapturing ? "Taking Picture..." : "Take Picture"}
+            title={isCapturing ? t('loading.takingPicture') : t('camera.takePicture')}
             onPress={handleTakePicture}
             style={{
               ...styles.button,
@@ -97,7 +99,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
             disabled={!isCameraReady || isCapturing}
           />
           {!isCameraReady && (
-            <Text style={styles.loadingText}>Initializing camera...</Text>
+            <Text style={styles.loadingText}>{t('camera.initializingCamera')}</Text>
           )}
         </View>
       </View>

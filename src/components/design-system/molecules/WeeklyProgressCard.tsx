@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { colors, typography, spacing } from '../tokens';
 import { Icon } from '../atoms/Icon';
 import { boostAverageScore } from '../../../utils/metricBoosting';
@@ -35,11 +36,13 @@ export const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({
   subRows,
   style
 }) => {
+  const { t } = useTranslation();
+  
   const defaultSubRows = [
-    { icon: 'star', text: 'Keep going strong!' }, 
-    ...(averageScore ? [{ icon: 'analytics-outline', text: `Average skin score: ${Math.round(boostAverageScore(averageScore))}` }] : []),
-    ...(improvingMetrics && totalMetrics ? [{ icon: 'trending-up', text: `${improvingMetrics}/${totalMetrics} metrics improving` }] : []),
-    ...(currentStreak ? [{ icon: 'flame', text: `${currentStreak} day streak` }] : [])
+    { icon: 'star', text: t('weeklyProgress.keepGoing') }, 
+    ...(averageScore ? [{ icon: 'analytics-outline', text: t('weeklyProgress.averageScore', { score: Math.round(boostAverageScore(averageScore)) }) }] : []),
+    ...(improvingMetrics && totalMetrics ? [{ icon: 'trending-up', text: t('weeklyProgress.metricsImproving', { improving: improvingMetrics, total: totalMetrics }) }] : []),
+    ...(currentStreak ? [{ icon: 'flame', text: t('weeklyProgress.dayStreak', { count: currentStreak }) }] : [])
   ];
 
   const displaySubRows = subRows || defaultSubRows;
@@ -47,9 +50,9 @@ export const WeeklyProgressCard: React.FC<WeeklyProgressCardProps> = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.content}>
-        <Text style={styles.headline}>This week you scanned</Text>
+        <Text style={styles.headline}>{t('weeklyProgress.thisWeekScanned')}</Text>
         <Text style={styles.stat}>
-          {scansCompleted}/{totalScansGoal} Times
+          {scansCompleted}/{totalScansGoal} {t('weeklyProgress.times')}
         </Text>
         
         <View style={styles.subRowsContainer}>

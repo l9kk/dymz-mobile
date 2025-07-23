@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Alert } from 'react-native';
 import { LoadingProgressRing, Icon } from '../design-system';
 import { colors, spacing, typography } from '../design-system/tokens';
 import { useAnalysisWithPolling } from '../../hooks/api/useAnalysis';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface AnalysisLoadingProps {
   analysisId?: string;
@@ -15,8 +16,9 @@ export const AnalysisLoading: React.FC<AnalysisLoadingProps> = ({
   analysisId,
   onComplete,
   onError,
-  duration = 3000 // 3 seconds default for mock mode
+  duration = 10000
 }) => {
+  const { t } = useTranslation();
   const [mockProgress, setMockProgress] = useState(0);
   
   // Use real API polling if analysisId is provided
@@ -61,10 +63,10 @@ export const AnalysisLoading: React.FC<AnalysisLoadingProps> = ({
     if (analysisError) {
       console.error('Analysis error:', analysisError);
       onError?.(
-        analysisError.message || 'Failed to analyze your skin. Please try again.'
+        analysisError.message || t('analysis.failedToAnalyze')
       );
     }
-  }, [analysisError, onError]);
+  }, [analysisError, onError, t]);
 
   const getProgressPercentage = () => {
     if (!analysisId) {
@@ -87,24 +89,24 @@ export const AnalysisLoading: React.FC<AnalysisLoadingProps> = ({
 
   const getStatusMessage = () => {
     if (!analysisId) {
-      if (mockProgress < 10) return "Compressing your photo...";
-      if (mockProgress < 30) return "Uploading your photo...";
-      if (mockProgress < 70) return "Analyzing your skin...";
-      if (mockProgress < 100) return "Almost done...";
-      return "Analysis complete!";
+      if (mockProgress < 10) return t('loading.compressingPhoto');
+      if (mockProgress < 30) return t('loading.uploadingPhoto');
+      if (mockProgress < 70) return t('loading.analyzingSkin');
+      if (mockProgress < 100) return t('loading.almostDone');
+      return t('loading.analysisComplete');
     }
     
-    if (!analysis) return "Preparing your photo...";
+    if (!analysis) return t('loading.preparingPhoto');
     
     switch (analysis.status) {
       case 'processing':
-        return "AI is analyzing your skin...";
+        return t('loading.aiAnalyzing');
       case 'completed':
-        return "Analysis complete!";
+        return t('loading.analysisComplete');
       case 'failed':
-        return "Analysis failed";
+        return t('loading.analysisFailed');
       default:
-        return "Starting analysis...";
+        return t('loading.startingAnalysis');
     }
   };
 
@@ -133,8 +135,8 @@ export const AnalysisLoading: React.FC<AnalysisLoadingProps> = ({
         {/* Analysis info */}
         <Text style={styles.infoText}>
           {progress < 30 
-            ? "We optimize your photo for the best analysis quality while keeping your data secure."
-            : "Our AI is examining your skin for various concerns including texture, tone, and potential issues."
+            ? t('camera.optimizationInfo')
+            : t('camera.aiExaminationInfo')
           }
         </Text>
         
@@ -142,10 +144,10 @@ export const AnalysisLoading: React.FC<AnalysisLoadingProps> = ({
         {__DEV__ && analysisId && (
           <View style={styles.debugContainer}>
             <Text style={styles.debugText}>
-              Analysis ID: {analysisId}
+              {t('errors.analysisId')}: {analysisId}
             </Text>
             <Text style={styles.debugText}>
-              Status: {analysis?.status || 'Loading...'}
+              {t('errors.status')}: {analysis?.status || t('errors.loadingStatus')}
             </Text>
             {analysis?.error_message && (
               <Text style={styles.debugError}>
