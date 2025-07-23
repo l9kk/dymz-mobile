@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { BackButton, PrimaryButton, MotivationImageGrid } from '../design-system';
 import { colors, spacing, typography } from '../design-system/tokens';
 import { getMotivationImageArray } from '../../utils/imageUrls';
@@ -14,6 +15,7 @@ export const MotivationIntro: React.FC<MotivationIntroProps> = ({
   onContinue,
   onBack,
 }) => {
+  const { t } = useTranslation();
   const motivationImages = (getMotivationImageArray() || []).map(url => ({ uri: url }));
   
   // Debug logging for image URLs
@@ -31,11 +33,11 @@ export const MotivationIntro: React.FC<MotivationIntroProps> = ({
         
         <View style={styles.headerSection}>
           <Text style={styles.title}>
-            Next, let's find out what's driving you!
+            {t('onboarding.motivationIntro.title')}
           </Text>
           
           <Text style={styles.subtitle}>
-            Research shows that understanding your motivation is crucial to making real changes.
+            {t('onboarding.motivationIntro.subtitle')}
           </Text>
         </View>
         
@@ -51,13 +53,13 @@ export const MotivationIntro: React.FC<MotivationIntroProps> = ({
           </View>
           
           <Text style={styles.bodyCopy}>
-            We'll help you stay motivated and consistent so you don't fall off track!
+            {t('onboarding.motivationIntro.bodyCopy')}
           </Text>
         </View>
         
         <View style={styles.buttonSection}>
           <PrimaryButton
-            title="Let's do it!"
+            title={t('buttons.letsDoIt')}
             onPress={onContinue}
             style={styles.continueButton}
           />

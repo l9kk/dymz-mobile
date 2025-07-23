@@ -13,6 +13,7 @@ import {
   useUpdateNotificationPreferences,
   useSendTestNotification
 } from '../../hooks/api/useNotifications';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface NotificationSettingsProps {
   onBack?: () => void;
@@ -21,6 +22,7 @@ interface NotificationSettingsProps {
 export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
   onBack
 }) => {
+  const { t } = useTranslation();
   const [localPreferences, setLocalPreferences] = useState<any>({});
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -63,22 +65,22 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
     try {
       await updatePreferences.mutateAsync(localPreferences);
       setHasChanges(false);
-      Alert.alert('Success', 'Notification preferences updated successfully!');
+      Alert.alert(t('notifications.success'), t('notifications.preferencesUpdated'));
     } catch (error) {
-      Alert.alert('Error', 'Failed to update preferences. Please try again.');
+      Alert.alert(t('notifications.error'), t('notifications.updateFailed'));
     }
   };
 
   const handleTestNotification = async () => {
     try {
       await sendTestNotification.mutateAsync({
-        title: 'Test Notification',
-        body: 'This is a test notification from Dymz AI!',
+        title: t('notifications.testTitle'),
+        body: t('notifications.testBody'),
         notification_type: 'skincare_tip'
       });
-      Alert.alert('Success', 'Test notification sent!');
+      Alert.alert(t('notifications.success'), t('notifications.testSent'));
     } catch (error) {
-      Alert.alert('Error', 'Failed to send test notification');
+      Alert.alert(t('notifications.error'), t('notifications.testFailed'));
     }
   };
 
@@ -116,7 +118,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
       <View style={[styles.container, styles.centerContent]}>
         <Text style={styles.errorText}>Unable to load notification settings</Text>
         <PrimaryButton
-          title="Try Again"
+          title={t('common.tryAgain')}
           onPress={() => {
             console.log('Retry button pressed - would refetch notification preferences');
           }}
@@ -135,20 +137,20 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
         {/* Notification Status */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Notification Status</Text>
+          <Text style={styles.sectionTitle}>{t('notifications.statusTitle')}</Text>
           <View style={styles.statusCard}>
             <Text style={styles.statusTitle}>
-              {preferences?.reminders_enabled ? '🔔 Notifications Enabled' : '🔕 Notifications Disabled'}
+              {preferences?.reminders_enabled ? t('notifications.enabled') : t('notifications.disabled')}
             </Text>
             <Text style={styles.statusDescription}>
               {preferences?.reminders_enabled 
-                ? 'You\'re receiving personalized skincare reminders and updates.'
-                : 'Enable notifications to get personalized skincare reminders and progress updates.'
+                ? t('notifications.enabledDescription')
+                : t('notifications.disabledDescription')
               }
             </Text>
             {!preferences?.reminders_enabled && (
               <Text style={styles.statusDescription}>
-                Enable notifications in your device settings to receive updates.
+                {t('notifications.enableInSettings')}
               </Text>
             )}
           </View>
@@ -157,11 +159,11 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         {/* Routine Reminders */}
         {preferences?.reminders_enabled && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Routine Reminders</Text>
+            <Text style={styles.sectionTitle}>{t('notifications.routineReminders')}</Text>
             
             {renderPreferenceToggle(
-              'Daily Reminders',
-              'Reminder to complete your skincare routine',
+              t('notifications.dailyReminders'),
+              t('notifications.dailyRemindersDesc'),
               'reminders_enabled',
               localPreferences?.reminders_enabled || false
             )}
@@ -171,18 +173,18 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         {/* Progress & Analysis */}
         {preferences?.reminders_enabled && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Progress & Analysis</Text>
+            <Text style={styles.sectionTitle}>{t('notifications.progressAnalysis')}</Text>
             
             {renderPreferenceToggle(
-              'Analysis Notifications',
-              'Notification when your skin analysis is ready',
+              t('notifications.analysisNotifications'),
+              t('notifications.analysisNotificationsDesc'),
               'analysis_notifications',
               localPreferences?.analysis_notifications || false
             )}
 
             {renderPreferenceToggle(
-              'Streak Notifications',
-              'Notification when you reach streak milestones',
+              t('notifications.streakNotifications'),
+              t('notifications.streakNotificationsDesc'),
               'streak_notifications',
               localPreferences?.streak_notifications || false
             )}
@@ -192,18 +194,18 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         {/* Product & Tips */}
         {preferences?.reminders_enabled && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Product & Tips</Text>
+            <Text style={styles.sectionTitle}>{t('notifications.productTips')}</Text>
             
             {renderPreferenceToggle(
-              'Tips Notifications',
-              'Receive helpful skincare tips and advice',
+              t('notifications.tipsNotifications'),
+              t('notifications.tipsNotificationsDesc'),
               'tips_enabled',
               localPreferences?.tips_enabled || false
             )}
 
             {renderPreferenceToggle(
-              'Marketing Notifications',
-              'Receive updates about new features and products',
+              t('notifications.marketingNotifications'),
+              t('notifications.marketingNotificationsDesc'),
               'marketing_notifications',
               localPreferences?.marketing_notifications || false
             )}
@@ -213,9 +215,9 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         {/* Device Information */}
         {preferences?.reminders_enabled && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Device Information</Text>
+            <Text style={styles.sectionTitle}>{t('notifications.deviceInfo')}</Text>
             <Text style={styles.deviceInfo}>
-              Registered devices: {preferences?.device_tokens_registered || 0}
+              {t('notifications.registeredDevices')}: {preferences?.device_tokens_registered || 0}
             </Text>
           </View>
         )}

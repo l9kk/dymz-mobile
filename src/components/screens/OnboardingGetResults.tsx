@@ -5,6 +5,7 @@ import { Icon } from '../design-system/atoms/Icon';
 import { ProgressRingStat } from '../design-system/molecules/ProgressRingStat';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { colors, typography, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface OnboardingGetResultsProps {
   onContinue: () => void;
@@ -13,9 +14,11 @@ interface OnboardingGetResultsProps {
 export const OnboardingGetResults: React.FC<OnboardingGetResultsProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
+  
   // Mock data for demonstration
   const mockStats = [
-    { score: 85, title: 'Texture' },
+    { score: 85, title: t('skinMetrics.texture') },
     { score: 72, title: 'Brightness' },
   ];
 
@@ -47,15 +50,15 @@ export const OnboardingGetResults: React.FC<OnboardingGetResultsProps> = ({
         </View>
         
         <Text style={styles.title}>
-          Get detailed skin analysis results
+          {t('onboarding.getResults.title')}
         </Text>
         
         <Text style={styles.subtitle}>
-          Discover insights about your skin health with AI-powered metrics and personalized recommendations.
+          {t('onboarding.getResults.subtitle')}
         </Text>
         
         <PrimaryButton 
-          title="Continue" 
+          title={t('common.continue')}
           onPress={onContinue}
           style={styles.button}
         />

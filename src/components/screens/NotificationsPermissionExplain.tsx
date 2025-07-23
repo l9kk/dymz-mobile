@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SurveyStatementYN } from './SurveyStatementYN';
 import { SystemPromptOverlay } from '../design-system/organisms/SystemPromptOverlay';
 import { ImageUrls } from '../../utils/imageUrls';
@@ -16,6 +17,7 @@ export const NotificationsPermissionExplain: React.FC<NotificationsPermissionExp
   currentStep,
   totalSteps,
 }) => {
+  const { t } = useTranslation();
   const [showPermissionPrompt, setShowPermissionPrompt] = useState(false);
 
   const handleYes = () => {
@@ -49,19 +51,19 @@ export const NotificationsPermissionExplain: React.FC<NotificationsPermissionExp
         onBack={onBack}
         currentStep={currentStep}
         totalSteps={totalSteps}
-        questionTitle="Would you like daily reminders to stay on track?"
-        statementQuote="I keep forgetting to stick to my skincare routine and always lose motivation after a few days."
+        questionTitle={t('notificationsPermission.questionTitle')}
+        statementQuote={t('notificationsPermission.statementQuote')}
         statementImageKey="timeConstraints"
       />
       
       <SystemPromptOverlay
         visible={showPermissionPrompt}
-                  title="Dymz AI would like to send you notifications"
-        body="Notifications may include alerts, sounds, and icon badges. These can be configured in Settings."
+        title={t('notificationsPermission.overlay.title')}
+        body={t('notificationsPermission.overlay.body')}
         onAllow={handleAllowNotifications}
         onDontAllow={handleDontAllowNotifications}
-        allowText="Allow"
-        dontAllowText="Don't Allow"
+        allowText={t('notificationsPermission.overlay.allowText')}
+        dontAllowText={t('notificationsPermission.overlay.dontAllowText')}
         pointerCue="👇"
       />
     </>

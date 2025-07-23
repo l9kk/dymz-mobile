@@ -7,6 +7,7 @@ import { VerticalOptionList } from '../design-system/molecules/VerticalOptionLis
 import { InfoNote } from '../design-system/atoms/InfoNote';
 import { ForwardFAB } from '../design-system/atoms/ForwardFAB';
 import { colors, typography, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface OnboardingAgeProps {
   onBack: () => void;
@@ -17,14 +18,15 @@ export const OnboardingAge: React.FC<OnboardingAgeProps> = ({
   onBack,
   onContinue
 }) => {
+  const { t } = useTranslation();
   const [selectedAge, setSelectedAge] = useState<string | null>(null);
 
   const ageOptions = [
-    { id: '13-18', label: '13-18 years old' },
-    { id: '19-25', label: '19-25 years old' },
-    { id: '26-35', label: '26-35 years old' },
-    { id: '46-55', label: '46-55 years old' },
-    { id: '56+', label: '56+ years old' },
+    { id: '13-18', label: t('onboarding.age.options.13-18') },
+    { id: '19-25', label: t('onboarding.age.options.19-25') },
+    { id: '26-35', label: t('onboarding.age.options.26-35') },
+    { id: '46-55', label: t('onboarding.age.options.46-55') },
+    { id: '56+', label: t('onboarding.age.options.56+') },
   ];
 
   const handleContinue = () => {
@@ -46,11 +48,11 @@ export const OnboardingAge: React.FC<OnboardingAgeProps> = ({
           />
           
           <Text style={styles.title}>
-            What's your age range?
+            {t('onboarding.age.title')}
           </Text>
           
           <Text style={styles.subtitle}>
-            Different age groups have unique skin needs. Teens might focus on acne, while mature skin needs anti-aging care.
+            {t('onboarding.age.subtitle')}
           </Text>
           
           <VerticalOptionList
@@ -61,12 +63,12 @@ export const OnboardingAge: React.FC<OnboardingAgeProps> = ({
           />
           
           <InfoNote 
-            text="Age-specific recommendations help us suggest products with the right active ingredients for your skin's current needs."
+            text={t('onboarding.age.infoNote')}
             style={styles.infoNote}
           />
           
           <ForwardFAB
-            label="Next"
+            label={t('common.next')}
             onPress={handleContinue}
             disabled={!selectedAge}
             style={styles.fab}

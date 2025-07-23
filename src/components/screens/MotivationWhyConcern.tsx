@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { 
   BackButton, 
   LinearProgressStepper, 
@@ -17,21 +18,22 @@ interface MotivationWhyConcernProps {
   selectedConcern?: string;
 }
 
-const MOTIVATION_OPTIONS = [
-  { id: 'insecurity', label: 'It makes me feel insecure about my appearance' },
-  { id: 'health', label: 'I want healthier, more balanced skin' },
-  { id: 'confidence', label: 'I want confidence without makeup' },
-  { id: 'discomfort', label: 'It causes physical discomfort or irritation' },
-  { id: 'event', label: 'I have an upcoming important event' },
-  { id: 'aging', label: 'I want to prevent future skin aging' }
-];
-
 export const MotivationWhyConcern: React.FC<MotivationWhyConcernProps> = ({
   onBack,
   onMotivationSelected,
   selectedConcern,
 }) => {
+  const { t } = useTranslation();
   const [selectedMotivation, setSelectedMotivation] = useState<string>();
+
+  const MOTIVATION_OPTIONS = [
+    { id: 'insecurity', label: t('motivationWhyConcern.options.insecurity') },
+    { id: 'health', label: t('motivationWhyConcern.options.health') },
+    { id: 'confidence', label: t('motivationWhyConcern.options.confidence') },
+    { id: 'discomfort', label: t('motivationWhyConcern.options.discomfort') },
+    { id: 'event', label: t('motivationWhyConcern.options.event') },
+    { id: 'aging', label: t('motivationWhyConcern.options.aging') }
+  ];
 
   const handleMotivationPress = (motivationId: string) => {
     setSelectedMotivation(motivationId);
@@ -59,7 +61,7 @@ export const MotivationWhyConcern: React.FC<MotivationWhyConcernProps> = ({
 
         <View style={styles.content}>
           <EmphasisHeadline 
-            parts={["Why do you want to improve", `your ${selectedConcern?.toLowerCase() || 'skin concern'}?`]}
+            parts={[t('motivationWhyConcern.titlePart1'), t('motivationWhyConcern.titlePart2', { concern: selectedConcern?.toLowerCase() || t('motivationWhyConcern.defaultConcern') })]}
             accentIndices={[1]}
             style={styles.title}
           />
@@ -73,7 +75,7 @@ export const MotivationWhyConcern: React.FC<MotivationWhyConcernProps> = ({
           </View>
 
           <InfoNote 
-            text="Understanding your motivation helps us prioritize the right ingredients and create a routine that matches your goals and timeline."
+            text={t('motivationWhyConcern.infoNote')}
             style={styles.infoNote}
           />
         </View>
