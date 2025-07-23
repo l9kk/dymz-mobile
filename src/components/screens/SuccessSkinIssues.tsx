@@ -7,6 +7,7 @@ import {
   PrimaryButton 
 } from '../design-system/atoms';
 import { colors, spacing } from '../design-system/tokens';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -18,6 +19,7 @@ interface SuccessSkinIssuesProps {
 export const SuccessSkinIssues: React.FC<SuccessSkinIssuesProps> = ({
   onContinue,
 }) => {
+  const { t } = useTranslation();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
@@ -81,18 +83,17 @@ export const SuccessSkinIssues: React.FC<SuccessSkinIssuesProps> = ({
           </Animated.View>
           
           <SectionHeading>
-            Your skin issues
+            {t('onboarding.successSkinIssues.title')}
           </SectionHeading>
           
           <Text style={styles.subtitle}>
-            We're analyzing your concerns now! 👀{'\n'}
-            Get ready for personalized insights about your skin.
+            {t('onboarding.successSkinIssues.subtitle')}
           </Text>
         </View>
 
         <View style={styles.buttonContainer}>
           <PrimaryButton 
-            title="Continue"
+            title={t('buttons.continue')}
             onPress={onContinue}
           />
         </View>

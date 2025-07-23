@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import {
   BackButton,
   SectionHeading,
@@ -27,11 +28,12 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   onBack,
   onSignOut
 }) => {
+  const { t } = useTranslation();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editableProfile, setEditableProfile] = useState<any>({});
 
-  const tabOptions = ['Profile', 'Stats', 'Settings'];
+  const tabOptions = [t('userProfile.tabs.profile'), t('userProfile.tabs.stats'), t('userProfile.tabs.settings')];
 
   // API hooks
   const { data: profile, isLoading: profileLoading, error: profileError } = useUserProfile();
@@ -52,19 +54,19 @@ export const UserProfile: React.FC<UserProfileProps> = ({
     try {
       await updateProfile.mutateAsync(editableProfile);
       setIsEditing(false);
-      Alert.alert('Success', 'Profile updated successfully!');
+      Alert.alert(t('userProfile.alerts.success'), t('userProfile.alerts.profileUpdated'));
     } catch (error) {
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+      Alert.alert(t('userProfile.alerts.error'), t('userProfile.alerts.updateFailed'));
     }
   };
 
   const handleSignOut = () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      t('userProfile.signOut.title'),
+      t('userProfile.signOut.message'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign Out', style: 'destructive', onPress: onSignOut }
+        { text: t('userProfile.signOut.cancel'), style: 'cancel' },
+        { text: t('userProfile.signOut.confirm'), style: 'destructive', onPress: onSignOut }
       ]
     );
   };
@@ -74,49 +76,49 @@ export const UserProfile: React.FC<UserProfileProps> = ({
 
       {/* Profile Information */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Profile Information</Text>
+        <Text style={styles.sectionTitle}>{t('userProfile.profileInfo.title')}</Text>
         
         <View style={styles.profileField}>
-          <Text style={styles.fieldLabel}>User ID</Text>
-          <Text style={styles.fieldValue}>{profile?.user_id || 'Not set'}</Text>
+          <Text style={styles.fieldLabel}>{t('userProfile.profileInfo.userId')}</Text>
+          <Text style={styles.fieldValue}>{profile?.user_id || t('userProfile.profileInfo.notSet')}</Text>
         </View>
 
         <View style={styles.profileField}>
-          <Text style={styles.fieldLabel}>Display Name</Text>
-          <Text style={styles.fieldValue}>{profile?.display_name || 'Not specified'}</Text>
+          <Text style={styles.fieldLabel}>{t('userProfile.profileInfo.displayName')}</Text>
+          <Text style={styles.fieldValue}>{profile?.display_name || t('userProfile.profileInfo.notSpecified')}</Text>
         </View>
 
         <View style={styles.profileField}>
-          <Text style={styles.fieldLabel}>Timezone</Text>
-          <Text style={styles.fieldValue}>{profile?.timezone || 'Not specified'}</Text>
+          <Text style={styles.fieldLabel}>{t('userProfile.profileInfo.timezone')}</Text>
+          <Text style={styles.fieldValue}>{profile?.timezone || t('userProfile.profileInfo.notSpecified')}</Text>
         </View>
 
         <View style={styles.profileField}>
-          <Text style={styles.fieldLabel}>Profile Completion</Text>
+          <Text style={styles.fieldLabel}>{t('userProfile.profileInfo.completion')}</Text>
           <Text style={styles.fieldValue}>
             {Math.round((profile?.game_metrics?.profile_completion_score || 0) * 100)}%
           </Text>
         </View>
 
         <View style={styles.profileField}>
-          <Text style={styles.fieldLabel}>Age Range</Text>
-          <Text style={styles.fieldValue}>{'Not specified'}</Text>
+          <Text style={styles.fieldLabel}>{t('userProfile.profileInfo.ageRange')}</Text>
+          <Text style={styles.fieldValue}>{t('userProfile.profileInfo.notSpecified')}</Text>
         </View>
 
         <View style={styles.profileField}>
-          <Text style={styles.fieldLabel}>Gender</Text>
-          <Text style={styles.fieldValue}>{'Not specified'}</Text>
+          <Text style={styles.fieldLabel}>{t('userProfile.profileInfo.gender')}</Text>
+          <Text style={styles.fieldValue}>{t('userProfile.profileInfo.notSpecified')}</Text>
         </View>
 
         <View style={styles.profileField}>
-          <Text style={styles.fieldLabel}>Skincare Experience</Text>
-          <Text style={styles.fieldValue}>{profile?.preferences?.skin_type || 'Not specified'}</Text>
+          <Text style={styles.fieldLabel}>{t('userProfile.profileInfo.experience')}</Text>
+          <Text style={styles.fieldValue}>{profile?.preferences?.skin_type || t('userProfile.profileInfo.notSpecified')}</Text>
         </View>
 
         <View style={styles.profileField}>
-          <Text style={styles.fieldLabel}>Member Since</Text>
+          <Text style={styles.fieldLabel}>{t('userProfile.profileInfo.memberSince')}</Text>
           <Text style={styles.fieldValue}>
-            {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'Unknown'}
+            {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : t('userProfile.profileInfo.unknown')}
           </Text>
         </View>
       </View>
@@ -124,20 +126,20 @@ export const UserProfile: React.FC<UserProfileProps> = ({
       {/* Streak Progress */}
       {streakData && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Streak Progress</Text>
+          <Text style={styles.sectionTitle}>{t('userProfile.streak.title')}</Text>
           <View style={styles.streakContainer}>
             <View style={styles.streakStats}>
               <View style={styles.streakStat}>
                 <Text style={styles.streakValue}>{streakData.current_streak}</Text>
-                <Text style={styles.streakLabel}>Current Streak</Text>
+                <Text style={styles.streakLabel}>{t('userProfile.streak.current')}</Text>
               </View>
               <View style={styles.streakStat}>
                 <Text style={styles.streakValue}>{streakData.longest_streak}</Text>
-                <Text style={styles.streakLabel}>Best Streak</Text>
+                <Text style={styles.streakLabel}>{t('userProfile.streak.best')}</Text>
               </View>
               <View style={styles.streakStat}>
                 <Text style={styles.streakValue}>{streakData.next_milestone}</Text>
-                <Text style={styles.streakLabel}>Next Goal</Text>
+                <Text style={styles.streakLabel}>{t('userProfile.streak.nextGoal')}</Text>
               </View>
             </View>
           </View>
@@ -154,48 +156,48 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         <>
           {/* Quick Stats */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Your Journey</Text>
+            <Text style={styles.sectionTitle}>{t('userProfile.journey.title')}</Text>
             <View style={styles.statsGrid}>
               <StatPill
                 value={stats.total_analyses || 0}
-                label="Skin Scans"
+                label={t('userProfile.journey.skinScans')}
               />
               <StatPill
                 value={streakData?.current_streak || 0}
-                label="Day Streak"
+                label={t('userProfile.journey.dayStreak')}
               />
               <StatPill
                 value={Math.round((stats.profile_completion_score || 0) * 100)}
-                label="% Routine Adherence"
+                label={t('userProfile.journey.routineAdherence')}
               />
             </View>
           </View>
 
           {/* Progress Over Time */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recent Activity</Text>
+            <Text style={styles.sectionTitle}>{t('userProfile.activity.title')}</Text>
             <View style={styles.activityItem}>
-              <Text style={styles.activityLabel}>Last Skin Scan</Text>
+              <Text style={styles.activityLabel}>{t('userProfile.activity.lastScan')}</Text>
               <Text style={styles.activityValue}>
-                {'Never'}
+                {t('userProfile.activity.never')}
               </Text>
             </View>
             <View style={styles.activityItem}>
-              <Text style={styles.activityLabel}>Total Check-ins</Text>
+              <Text style={styles.activityLabel}>{t('userProfile.activity.totalCheckIns')}</Text>
               <Text style={styles.activityValue}>
                 {stats.total_check_ins || 0}
               </Text>
             </View>
             <View style={styles.activityItem}>
-              <Text style={styles.activityLabel}>Current Streak</Text>
+              <Text style={styles.activityLabel}>{t('userProfile.activity.currentStreak')}</Text>
               <Text style={styles.activityValue}>
-                {stats.current_streak || 0} days
+                {stats.current_streak || 0} {t('userProfile.activity.days')}
               </Text>
             </View>
           </View>
         </>
       ) : (
-        <Text style={styles.noDataText}>No stats available yet</Text>
+        <Text style={styles.noDataText}>{t('userProfile.noData')}</Text>
       )}
     </View>
   );
@@ -203,32 +205,32 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   const renderSettingsTab = () => (
     <View style={styles.tabContent}>
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Notifications</Text>
+        <Text style={styles.sectionTitle}>{t('userProfile.settings.notifications.title')}</Text>
         <View style={styles.settingItem}>
-          <Text style={styles.settingLabel}>Routine Reminders</Text>
-          <Text style={styles.settingValue}>Tap to configure</Text>
+          <Text style={styles.settingLabel}>{t('userProfile.settings.notifications.routineReminders')}</Text>
+          <Text style={styles.settingValue}>{t('userProfile.settings.tapToConfigure')}</Text>
         </View>
         <View style={styles.settingItem}>
-          <Text style={styles.settingLabel}>Progress Updates</Text>
-          <Text style={styles.settingValue}>Tap to configure</Text>
+          <Text style={styles.settingLabel}>{t('userProfile.settings.notifications.progressUpdates')}</Text>
+          <Text style={styles.settingValue}>{t('userProfile.settings.tapToConfigure')}</Text>
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Privacy</Text>
+        <Text style={styles.sectionTitle}>{t('userProfile.settings.privacy.title')}</Text>
         <View style={styles.settingItem}>
-          <Text style={styles.settingLabel}>Data Sharing</Text>
-          <Text style={styles.settingValue}>Tap to configure</Text>
+          <Text style={styles.settingLabel}>{t('userProfile.settings.privacy.dataSharing')}</Text>
+          <Text style={styles.settingValue}>{t('userProfile.settings.tapToConfigure')}</Text>
         </View>
         <View style={styles.settingItem}>
-          <Text style={styles.settingLabel}>Anonymous Analytics</Text>
-          <Text style={styles.settingValue}>Tap to configure</Text>
+          <Text style={styles.settingLabel}>{t('userProfile.settings.privacy.anonymousAnalytics')}</Text>
+          <Text style={styles.settingValue}>{t('userProfile.settings.tapToConfigure')}</Text>
         </View>
       </View>
 
       <View style={styles.section}>
         <PrimaryButton
-          title="Sign Out"
+          title={t('buttons.signOut')}
           onPress={handleSignOut}
           style={styles.signOutButton}
         />
@@ -240,7 +242,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
     return (
       <View style={[styles.container, styles.centerContent]}>
         <LoadingSpinner size={48} />
-        <Text style={styles.loadingText}>Loading your profile...</Text>
+        <Text style={styles.loadingText}>{t('userProfile.loading')}</Text>
       </View>
     );
   }
@@ -248,9 +250,9 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   if (profileError) {
     return (
       <View style={[styles.container, styles.centerContent]}>
-        <Text style={styles.errorText}>Unable to load profile</Text>
+        <Text style={styles.errorText}>{t('userProfile.error')}</Text>
         <PrimaryButton
-          title="Try Again"
+          title={t('buttons.tryAgain')}
           onPress={() => {
             // In a real app, this would trigger a refetch or navigate back
             console.log('Retry button pressed - would refetch profile data');
@@ -264,7 +266,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <BackButton onPress={onBack} />
-        <SectionHeading>Profile</SectionHeading>
+        <SectionHeading>{t('userProfile.title')}</SectionHeading>
       </View>
 
       <SegmentedTabBar

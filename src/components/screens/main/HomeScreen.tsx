@@ -28,6 +28,7 @@ import {
   formatTimeUntilMidnight 
 } from '../../../utils/analysisTimer';
 import { boostMetrics, boostMetricsWithPersistence } from '../../../utils/metricBoosting';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface HomeScreenProps {
   onNavigateToAnalysis?: () => void;
@@ -35,45 +36,55 @@ interface HomeScreenProps {
   onNavigateToProfile?: () => void;
 }
 
-const BackendErrorDisplay: React.FC<{ error: any; onRetry: () => void }> = ({ error, onRetry }) => (
-  <View style={styles.errorContainer}>
-    <Text style={styles.errorTitle}>⚠️ Backend Connection Issue</Text>
-    <Text style={styles.errorMessage}>
-      {error?.message || 'Unable to connect to the backend server'}
-    </Text>
-    <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
-      <Text style={styles.retryButtonText}>Retry</Text>
-    </TouchableOpacity>
-  </View>
-);
+const BackendErrorDisplay: React.FC<{ error: any; onRetry: () => void }> = ({ error, onRetry }) => {
+  const { t } = useTranslation();
+  return (
+    <View style={styles.errorContainer}>
+      <Text style={styles.errorTitle}>{t('home.errors.backendConnection')}</Text>
+      <Text style={styles.errorMessage}>
+        {error?.message || t('home.errors.unableToConnect')}
+      </Text>
+      <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
+        <Text style={styles.retryButtonText}>{t('home.errors.retry')}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
-const DataMissingDisplay: React.FC<{ dataType: string }> = ({ dataType }) => (
-  <View style={styles.missingDataContainer}>
-    <Text style={styles.missingDataText}>
-      🔌 No {dataType} data - Backend not responding
-    </Text>
-  </View>
-);
+const DataMissingDisplay: React.FC<{ dataType: string }> = ({ dataType }) => {
+  const { t } = useTranslation();
+  return (
+    <View style={styles.missingDataContainer}>
+      <Text style={styles.missingDataText}>
+        {t('home.errors.noDataAvailable', { dataType })}
+      </Text>
+    </View>
+  );
+};
 
-const NotAuthenticatedDisplay: React.FC<{ onSignIn: () => void }> = ({ onSignIn }) => (
-  <View style={styles.notAuthContainer}>
-    <Text style={styles.notAuthTitle}>🔐 Authentication Required</Text>
-    <Text style={styles.notAuthMessage}>
-      Please sign in to view your personalized dashboard
-    </Text>
-    <PrimaryButton 
-      title="Sign In" 
-      onPress={onSignIn}
-      style={styles.signInButton}
-    />
-  </View>
-);
+const NotAuthenticatedDisplay: React.FC<{ onSignIn: () => void }> = ({ onSignIn }) => {
+  const { t } = useTranslation();
+  return (
+    <View style={styles.notAuthContainer}>
+      <Text style={styles.notAuthTitle}>{t('home.auth.required')}</Text>
+      <Text style={styles.notAuthMessage}>
+        {t('home.auth.signInMessage')}
+      </Text>
+      <PrimaryButton 
+        title={t('home.auth.signIn')}
+        onPress={onSignIn}
+        style={styles.signInButton}
+      />
+    </View>
+  );
+};
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigateToAnalysis,
   onNavigateToRoutine,
   onNavigateToProfile
 }) => {
+  const { t } = useTranslation();
   const [refreshing, setRefreshing] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [checkInModalVisible, setCheckInModalVisible] = React.useState(false);
@@ -215,7 +226,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     return (
       <View style={[styles.container, styles.centerContent]}>
         <LoadingSpinner size={48} />
-        <Text style={styles.loadingText}>Checking authentication...</Text>
+        <Text style={styles.loadingText}>{t('home.loading.authentication')}</Text>
       </View>
     );
   }
@@ -235,7 +246,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     return (
       <View style={[styles.container, styles.centerContent]}>
         <LoadingSpinner size={48} />
-        <Text style={styles.loadingText}>Loading your dashboard...</Text>
+        <Text style={styles.loadingText}>{t('home.loading.dashboard')}</Text>
       </View>
     );
   }
@@ -291,7 +302,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <View style={[styles.statPillWrapper, styles.firstStatPill]}>
                 <StatPill
                   value={streakData.current_streak || 0}
-                  label="Day Streak"
+                  label={t('home.stats.dayStreak')}
                   variant="primary"
                   icon="flame"
                 />
@@ -299,14 +310,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <View style={[styles.statPillWrapper, styles.lastStatPill]}>
                 <StatPill
                   value={`${Math.round((stats.improvement_score || 0) * 100)}%`}
-                  label="Improvement"
+                  label={t('home.stats.improvement')}
                   variant="accent"
                   icon="trending-up"
                 />
                   </View>
               </>
             ) : (
-              <DataMissingDisplay dataType="stats" />
+              <DataMissingDisplay dataType={t('home.dataTypes.stats')} />
             )}
             </View>
           </View>
@@ -319,9 +330,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               disabled={checkIn.isPending}
             >
               <View style={styles.checkInContent}>
-                <Text style={styles.checkInTitle}>Complete Daily Check-in</Text>
+                <Text style={styles.checkInTitle}>{t('home.checkIn.title')}</Text>
                 <Text style={styles.checkInSubtitle}>
-                  Track your progress and earn rewards
+                  {t('home.checkIn.subtitle')}
                 </Text>
               </View>
               <Text style={styles.checkInButton}>→</Text>
@@ -331,7 +342,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Weekly Progress */}
           <View style={styles.section}>
             <SectionHeading style={styles.sectionTitle}>
-              Your Progress
+              {t('home.sections.yourProgress')}
             </SectionHeading>
             {overview ? (
               <WeeklyProgressCard
@@ -344,7 +355,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 onViewDetails={onNavigateToAnalysis}
               />
             ) : (
-              <DataMissingDisplay dataType="progress" />
+              <DataMissingDisplay dataType={t('home.dataTypes.progress')} />
             )}
           </View>
 
@@ -352,26 +363,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {streakData ? (
             <View style={styles.section}>
               <SectionHeading style={styles.sectionTitle}>
-                Your Streak Journey
+                {t('home.sections.yourStreakJourney')}
               </SectionHeading>
               <View style={styles.streakCard}>
                 <View style={styles.streakHeader}>
                   <Text style={styles.streakTitle}>
                     {streakData.current_streak > 0 
-                      ? `${streakData.current_streak} Day Streak!`
-                      : "Ready to Start Your Journey?"
+                      ? t('home.streak.dayStreak', { count: streakData.current_streak })
+                      : t('home.journey.ready')
                     }
                   </Text>
                 </View>
                 <Text style={styles.streakMotivation}>
                   {streakData.current_streak > 0 
-                    ? `Amazing! You're ${streakData.next_milestone - streakData.current_streak} days away from your ${streakData.next_milestone}-day milestone!`
-                    : "Start your skincare journey today and build healthy habits!"
+                    ? t('home.streak.motivation', { 
+                        daysAway: streakData.next_milestone - streakData.current_streak,
+                        milestone: streakData.next_milestone
+                      })
+                    : t('home.journey.start')
                   }
                 </Text>
                 {streakData.longest_streak > 0 && (
                   <Text style={styles.streakRecord}>
-                    Personal Best: {streakData.longest_streak} days
+                    {t('home.streak.personalBest', { days: streakData.longest_streak })}
                   </Text>
                 )}
               </View>
@@ -379,24 +393,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           ) : (
             <View style={styles.section}>
               <SectionHeading style={styles.sectionTitle}>
-                Your Streak Journey
+                {t('home.sections.yourStreakJourney')}
               </SectionHeading>
-              <DataMissingDisplay dataType="streak data" />
+              <DataMissingDisplay dataType={t('home.dataTypes.streak data')} />
             </View>
           )}
 
           {/* Quick Actions */}
           <View style={styles.section}>
             <SectionHeading style={styles.sectionTitle}>
-              Quick Actions
+              {t('home.sections.quickActions')}
             </SectionHeading>
             <View style={styles.actionsContainer}>
               <View style={styles.actionsRow}>
                 <View style={[styles.actionCardWrapper, styles.firstActionCard]}>
               <IconFeatureCard
                 iconName="camera"
-                title="Take Analysis"
-                description="Track your skin progress"
+                title={t('home.quickActions.takeAnalysis')}
+                description={t('home.quickActions.analysisDescription')}
                 onPress={onNavigateToAnalysis}
                 style={styles.actionCard}
               />
@@ -404,8 +418,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <View style={[styles.actionCardWrapper, styles.lastActionCard]}>
               <IconFeatureCard
                 iconName="routine"
-                title="Check Routine"
-                description="View today's steps"
+                title={t('home.quickActions.checkRoutine')}
+                description={t('home.quickActions.routineDescription')}
                 onPress={onNavigateToRoutine}
                 style={styles.actionCard}
               />
@@ -415,8 +429,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <View style={[styles.actionCardWrapper, styles.firstActionCard]}>
               <IconFeatureCard
                 iconName="flame"
-                title="Streak Progress"
-                description={streakData ? `${streakData.current_streak} day streak` : 'Backend offline'}
+                title={t('home.quickActions.streakProgress')}
+                description={streakData ? t('home.streak.dayStreakShort', { count: streakData.current_streak }) : t('home.streak.backendOffline')}
                 onPress={onNavigateToProfile}
                 style={styles.actionCard}
               />
@@ -424,8 +438,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <View style={[styles.actionCardWrapper, styles.lastActionCard]}>
               <IconFeatureCard
                 iconName="analytics-outline"
-                title="Analytics"
-                description="View insights"
+                title={t('home.quickActions.analytics')}
+                description={t('home.quickActions.analyticsDescription')}
                 onPress={onNavigateToAnalysis}
                 style={styles.actionCard}
               />
@@ -454,7 +468,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     <View style={styles.checkInModalIconContainer}>
                       <Icon name="camera" size={32} color="#4ECDC4" />
                     </View>
-                    <Text style={styles.checkInModalTitle}>Complete Your Daily Check-in</Text>
+                    <Text style={styles.checkInModalTitle}>{t('home.checkIn.modalTitle')}</Text>
                   </View>
                   
                   <View style={styles.checkInModalBody}>
@@ -465,12 +479,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     <View style={styles.checkInModalSteps}>
                       <View style={styles.checkInModalStep}>
                         <Icon name="camera" size={20} color="#5C5243" />
-                        <Text style={styles.checkInModalStepText}>Take a photo for skin analysis</Text>
+                        <Text style={styles.checkInModalStepText}>{t('home.checkIn.steps.takePhoto')}</Text>
                       </View>
                       
                       <View style={styles.checkInModalStep}>
                         <Icon name="routine" size={20} color="#5C5243" />
-                        <Text style={styles.checkInModalStepText}>Complete your skincare routine</Text>
+                        <Text style={styles.checkInModalStepText}>{t('home.checkIn.steps.completeRoutine')}</Text>
                       </View>
                     </View>
                     
@@ -482,7 +496,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           onNavigateToAnalysis?.();
                         }}
                       >
-                        <Text style={styles.checkInModalPrimaryButtonText}>Take Photo</Text>
+                        <Text style={styles.checkInModalPrimaryButtonText}>{t('home.checkIn.buttonText')}</Text>
                       </TouchableOpacity>
                       
                       <TouchableOpacity 
@@ -492,7 +506,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           onNavigateToRoutine?.();
                         }}
                       >
-                        <Text style={styles.checkInModalSecondaryButtonText}>View Routine</Text>
+                        <Text style={styles.checkInModalSecondaryButtonText}>{t('home.checkIn.viewRoutine')}</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -511,7 +525,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Full Analysis Results</Text>
+              <Text style={styles.modalTitle}>{t('home.modals.analysisResults')}</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
                 <Text style={styles.closeButtonText}>✕</Text>
               </TouchableOpacity>
@@ -526,7 +540,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               )}
               
               <View style={styles.modalInfoSection}>
-                <Text style={styles.modalInfoTitle}>Analysis Date</Text>
+                <Text style={styles.modalInfoTitle}>{t('home.modals.analysisDate')}</Text>
                 <Text style={styles.modalInfoText}>
                   {latestAnalysis && new Date(latestAnalysis.created_at).toLocaleDateString('en-US', {
                     weekday: 'long',
@@ -538,7 +552,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </View>
 
               <View style={styles.modalInfoSection}>
-                <Text style={styles.modalInfoTitle}>Metrics Analyzed</Text>
+                <Text style={styles.modalInfoTitle}>{t('home.modals.metricsAnalyzed')}</Text>
                 <Text style={styles.modalInfoText}>
                   {metrics.length} skin health indicators
                 </Text>

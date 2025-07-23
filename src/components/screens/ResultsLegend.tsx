@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { 
   SectionHeading, 
   RingScoreLegend, 
@@ -16,6 +17,7 @@ interface ResultsLegendProps {
 export const ResultsLegend: React.FC<ResultsLegendProps> = ({
   onContinue
 }) => {
+  const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainContent}>
@@ -26,11 +28,11 @@ export const ResultsLegend: React.FC<ResultsLegendProps> = ({
         >
           <View style={styles.content}>
             <SectionHeading style={styles.heading}>
-              Understanding Your Scores
+              {t('resultsLegend.title')}
             </SectionHeading>
             
             <StatParagraph style={styles.description}>
-              Each circular score represents different aspects of your skin health. Here's how to read them:
+              {t('resultsLegend.description')}
             </StatParagraph>
 
             <View style={styles.legendContainer}>
@@ -38,7 +40,7 @@ export const ResultsLegend: React.FC<ResultsLegendProps> = ({
             </View>
 
             <StatParagraph style={styles.note}>
-              Higher scores indicate better skin health in that area. Don't worry about lower scores—we'll help you improve them with personalized recommendations.
+              {t('resultsLegend.note')}
             </StatParagraph>
           </View>
         </ScrollView>
@@ -46,7 +48,7 @@ export const ResultsLegend: React.FC<ResultsLegendProps> = ({
 
       <View style={styles.buttonContainer}>
         <PrimaryButton
-          title="See your results"
+          title={t('buttons.seeYourResults')}
           onPress={onContinue}
         />
       </View>

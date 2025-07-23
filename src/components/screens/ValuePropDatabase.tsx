@@ -7,6 +7,7 @@ import {
 } from '../design-system';
 import { colors, typography, spacing } from '../design-system/tokens';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface ValuePropDatabaseProps {
   onBack?: () => void;
@@ -17,6 +18,8 @@ export const ValuePropDatabase: React.FC<ValuePropDatabaseProps> = ({
   onBack,
   onContinue
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -24,11 +27,11 @@ export const ValuePropDatabase: React.FC<ValuePropDatabaseProps> = ({
 
         <View style={styles.headerSection}>
           <Text style={styles.headline}>
-            15,000+ products{'\n'}analyzed for you
+            {t('onboarding.database.headline')}
           </Text>
 
           <Text style={styles.subhead}>
-            Our AI understands ingredients so you don't have to
+            {t('onboarding.database.subhead')}
           </Text>
         </View>
 
@@ -38,27 +41,27 @@ export const ValuePropDatabase: React.FC<ValuePropDatabaseProps> = ({
               <View style={[styles.iconContainer, { backgroundColor: colors.accentPalette[0] }]}>
                 <Ionicons name="flask" size={32} color="white" />
               </View>
-              <Text style={styles.featureText}>Science-backed analysis</Text>
+              <Text style={styles.featureText}>{t('onboarding.database.feature1')}</Text>
             </View>
             
             <View style={styles.featureItem}>
               <View style={[styles.iconContainer, { backgroundColor: colors.accentPalette[1] }]}>
                 <Ionicons name="heart" size={32} color="white" />
               </View>
-              <Text style={styles.featureText}>Personalized matching</Text>
+              <Text style={styles.featureText}>{t('onboarding.database.feature2')}</Text>
             </View>
           </View>
 
           <View style={styles.statsSection}>
             <StatParagraph style={styles.statParagraph}>
-              94% of users find their perfect routine within 2 weeks
+              {t('onboarding.database.statistic')}
             </StatParagraph>
           </View>
         </View>
 
         <View style={styles.buttonSection}>
           <PrimaryButton
-            title="Continue"
+            title={t('buttons.continue')}
             onPress={onContinue}
             style={styles.continueButton}
           />
