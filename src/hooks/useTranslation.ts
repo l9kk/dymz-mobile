@@ -21,9 +21,9 @@ export const useTranslation = () => {
     };
 
     /**
-     * Get the current language code
+     * Get the current language code (reactive)
      */
-    const currentLanguage = getCurrentLanguage();
+    const currentLanguage = i18n.language;
 
     /**
      * Get available languages with their metadata

@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import { colors, typography, spacing, borderRadius, elevation } from '../tokens';
 import { Icon, IconNames } from '../atoms';
 import { ImageUrls } from '../../../utils/imageUrls';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface ExampleImageGridProps {
   type: 'good' | 'bad';
@@ -15,8 +16,9 @@ export const ExampleImageGrid: React.FC<ExampleImageGridProps> = ({
   images,
   style
 }) => {
+  const { t } = useTranslation();
   const isGood = type === 'good';
-  const label = isGood ? 'Good Examples' : 'Bad Examples';
+  const label = isGood ? t('camera.examples.good') : t('camera.examples.bad');
   const defaultImages = isGood ? ImageUrls.goodSelfies : ImageUrls.badSelfies;
   const imagesToShow = images || defaultImages;
   const iconName = isGood ? IconNames.check : IconNames.close;

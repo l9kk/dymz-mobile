@@ -19,7 +19,7 @@ export const OnboardingGetResults: React.FC<OnboardingGetResultsProps> = ({
   // Mock data for demonstration
   const mockStats = [
     { score: 85, title: t('skinMetrics.texture') },
-    { score: 72, title: 'Brightness' },
+    { score: 72, title: t('skinMetrics.brightness') },
   ];
 
   return (

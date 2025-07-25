@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../hooks/useTranslation';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { BackButton } from '../design-system/atoms/BackButton';
 import { colors, spacing, typography } from '../design-system/tokens';

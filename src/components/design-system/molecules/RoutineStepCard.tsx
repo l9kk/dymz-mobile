@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { colors, typography, spacing } from '../tokens';
 
 interface RoutineStepCardProps {
@@ -32,6 +33,8 @@ export const RoutineStepCard: React.FC<RoutineStepCardProps> = ({
   productInfo,
   style
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <View style={[
       styles.container, 
@@ -77,7 +80,7 @@ export const RoutineStepCard: React.FC<RoutineStepCardProps> = ({
           styles.productRole,
           isCompleted && styles.completedSecondaryText
         ]}>
-          {productRole || productInfo?.brand || 'Role'}
+          {productRole || productInfo?.brand || t('routine.product')}
         </Text>
         <Text style={[
           styles.instruction,
