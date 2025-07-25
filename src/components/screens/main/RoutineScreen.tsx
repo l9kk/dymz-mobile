@@ -22,6 +22,7 @@ import { useTranslation } from '../../../hooks/useTranslation';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getProductIconByCategory } from '../../../utils/imageUrls';
 import { Ionicons } from '@expo/vector-icons';
+import { translateRoutineStep, translateRoutines } from '../../../utils/backendContentTranslation';
 
 interface RoutineScreenProps {
   onNavigateToProducts?: () => void;
@@ -55,7 +56,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
   onNavigateToHistory,
   onNavigateToEditRoutine
 }) => {
-  const { t } = useTranslation();
+  const { t, currentLanguage } = useTranslation();
   const [refreshing, setRefreshing] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState<'morning' | 'evening'>('morning');
   const [completedSteps, setCompletedSteps] = React.useState<string[]>([]);
@@ -144,7 +145,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
       recordProgress.mutate({
         routine_id: currentRoutine.id,
         completed_steps: completedStepsData,
-        total_time_minutes: Math.round(completedStepsData.reduce((total, step) => total + (step.duration_seconds || 60), 0) / 60),
+        total_time_minutes: Math.round(completedStepsData.reduce((total: number, step: any) => total + (step.duration_seconds || 60), 0) / 60),
         user_notes: `Completed ${selectedTab} routine with ${completedStepsData.length} steps!`
       }, {
         onSuccess: async () => {
@@ -193,8 +194,8 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
     );
   }
 
-  // Safe data access with proper null checks
-  const routinesArray = Array.isArray(routines?.routines) ? routines.routines : [];
+  // Safe data access with proper null checks and translation
+  const routinesArray = Array.isArray(routines?.routines) ? translateRoutines(routines.routines) : [];
   const currentRoutine = routinesArray.find((r: any) => 
     r.routine_type === (selectedTab === 'morning' ? 'morning' : 'evening')
   );
@@ -219,10 +220,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
         <View style={[styles.headerSection, { paddingTop: spacing.l + insets.top }]}>
           <View style={styles.headerRow}>
             <View style={styles.headerContent}>
-              <SectionHeading>My Routine</SectionHeading>
-              <StatParagraph style={styles.subtitle}>
-                Stay consistent with your personalized skincare routine
-              </StatParagraph>
+              <SectionHeading>{t('routine.title')}</SectionHeading>
             </View>
             
             {/* Edit Button - only show if user has routines */}
@@ -242,7 +240,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
         {/* Routine Tabs */}
         <View style={styles.tabsContainer}>
           <SegmentedTabBar
-            options={['☀️ Morning', '🌙 Evening']}
+            options={[t('routine.tabs.morning'), t('routine.tabs.evening')]}
             selectedIndex={selectedTab === 'morning' ? 0 : 1}
             onSelectionChange={(index: number) => {
               const newTab = index === 0 ? 'morning' : 'evening';
@@ -297,18 +295,19 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
             
 
             {routineSteps.map((step: any, index: number) => {
+              // Translate the step content from Russian to English if needed
+              const translatedStep = translateRoutineStep(step);
+              
               const stepIdentifier = `${currentRoutine?.id}-${index}`;
               const isRoutineCompleted = isRoutineCompletedToday(selectedTab);
               const isStepInCompletedArray = completedSteps.includes(stepIdentifier);
               const finalIsCompleted = isRoutineCompleted || isStepInCompletedArray;
               
-              console.log('🔥 DEBUG: Rendering step', {
+              console.log('� Translation applied:', {
                 stepIdentifier,
-                selectedTab,
-                isRoutineCompleted,
-                isStepInCompletedArray,
-                finalIsCompleted,
-                completedStepsArray: completedSteps
+                originalStep: step.step,
+                translatedStep: translatedStep.step,
+                currentLanguage
               });
               
               return (
@@ -319,16 +318,16 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
                   style={isRoutineCompleted ? styles.disabledStep : undefined}
                 >
                   <RoutineStepCard
-                    stepNumber={step.order || index + 1}
-                    title={step.step || `Step ${index + 1}`}
-                    description={step.instructions || 'Follow the product instructions carefully'}
+                    stepNumber={translatedStep.order || index + 1}
+                    title={translatedStep.step || t('routine.stepFallback', { number: index + 1 })}
+                    description={translatedStep.instructions || t('routine.defaultStepInstructions')}
                     isCompleted={finalIsCompleted}
-                    productInfo={step.product_id ? {
-                      name: `Product ${index + 1}`,
-                      brand: 'Recommended'
+                    productInfo={translatedStep.product_id ? {
+                      name: translatedStep.product_name || t('routine.productFallback', { number: index + 1 }),
+                      brand: t('routine.recommendedBrand')
                     } : undefined}
                     style={styles.stepCard}
-                    thumbnailUri={getStepThumbnail(step.step || '')}
+                    thumbnailUri={getStepThumbnail(translatedStep.step || '')}
                   />
                 </TouchableOpacity>
               );
@@ -381,7 +380,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
               {recordProgress.error && (
                 <View style={styles.errorFeedback}>
                   <Text style={styles.errorFeedbackText}>
-                    ⚠️ Unable to record progress. Please try again.
+                    {t('routine.recordProgressError')}
                   </Text>
                 </View>
               )}
@@ -392,7 +391,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({
             <Text style={styles.emptyEmoji}>🧴</Text>
             <Text style={styles.emptyTitle}>{t('routine.noRoutineYet', { type: selectedTab })}</Text>
             <Text style={styles.emptySubtitle}>
-              Let's create your personalized routine
+              {t('routine.emptyStateSubtitle')}
             </Text>
             <View style={styles.emptyActions}>
               <PrimaryButton

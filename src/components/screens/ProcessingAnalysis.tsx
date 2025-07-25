@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
+import LottieView from 'lottie-react-native';
+import { useTranslation } from '../../hooks/useTranslation';
 import { colors, typography, spacing } from '../design-system/tokens';
 
 interface ProcessingAnalysisProps {
@@ -75,8 +76,11 @@ export const ProcessingAnalysis: React.FC<ProcessingAnalysisProps> = ({
 
     // Complete after duration
     const completeTimer = setTimeout(() => {
+      console.log('🎬 ProcessingAnalysis animation completed, calling onComplete');
       if (onComplete) {
         onComplete();
+      } else {
+        console.warn('⚠️ ProcessingAnalysis: onComplete callback is undefined!');
       }
     }, duration);
 
@@ -104,29 +108,61 @@ export const ProcessingAnalysis: React.FC<ProcessingAnalysisProps> = ({
       <View style={styles.content}>
         {/* Main Animation Area */}
         <View style={styles.animationContainer}>
-          {/* Pulsing Background Circle */}
+          {/* Background Glow Effect */}
           <Animated.View 
             style={[
-              styles.pulseCircle,
+              styles.glowEffect,
               {
                 transform: [{ scale: pulseAnim }],
               }
             ]} 
           />
           
-          {/* Rotating Scanner Effect */}
+          {/* Scanning Rings */}
           <Animated.View 
             style={[
-              styles.scannerRing,
+              styles.outerRing,
               {
                 transform: [{ rotate: spin }],
               }
             ]} 
           />
           
-          {/* Center AI Icon */}
-          <View style={styles.centerIcon}>
-            <Text style={styles.aiEmoji}>🤖</Text>
+          <Animated.View 
+            style={[
+              styles.innerRing,
+              {
+                transform: [{ rotate: spin }],
+                opacity: progressAnim,
+              }
+            ]} 
+          />
+          
+          {/* Center Analysis Icon */}
+          <View style={styles.centerContainer}>
+            <View style={styles.centerIcon}>
+              {/* Face/Skin Analysis Icon */}
+              <View style={styles.faceOutline}>
+                <View style={styles.faceFeatures}>
+                  <View style={styles.scanLine} />
+                  <View style={[styles.scanLine, { top: 20 }]} />
+                  <View style={[styles.scanLine, { top: 40 }]} />
+                </View>
+              </View>
+            </View>
+            
+            {/* Scanning Indicator */}
+            <Animated.View 
+              style={[
+                styles.scanIndicator,
+                {
+                  opacity: pulseAnim.interpolate({
+                    inputRange: [1, 1.2],
+                    outputRange: [0.3, 1],
+                  }),
+                }
+              ]}
+            />
           </View>
         </View>
 
@@ -178,48 +214,98 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
   },
   animationContainer: {
-    width: 200,
-    height: 200,
+    width: 240,
+    height: 240,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
   },
-  pulseCircle: {
+  glowEffect: {
     position: 'absolute',
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
     backgroundColor: colors.accentPalette[2],
-    opacity: 0.2,
+    opacity: 0.1,
   },
-  scannerRing: {
+  outerRing: {
     position: 'absolute',
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    borderWidth: 3,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 2,
     borderColor: colors.accentPalette[2],
     borderTopColor: 'transparent',
+    borderRightColor: 'transparent',
+    opacity: 0.6,
+  },
+  innerRing: {
+    position: 'absolute',
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 3,
+    borderColor: colors.accentPalette[2],
+    borderBottomColor: 'transparent',
     borderLeftColor: 'transparent',
   },
+  centerContainer: {
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   centerIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: colors.backgroundSecondary,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 8,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
+    borderWidth: 2,
+    borderColor: colors.accentPalette[2],
+    borderStyle: 'solid',
   },
-  aiEmoji: {
-    fontSize: 40,
+  faceOutline: {
+    width: 60,
+    height: 75,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: colors.accentPalette[2],
+    position: 'relative',
+    backgroundColor: 'transparent',
+  },
+  faceFeatures: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  scanLine: {
+    position: 'absolute',
+    width: 40,
+    height: 2,
+    backgroundColor: colors.accentPalette[2],
+    borderRadius: 1,
+    top: 10,
+  },
+  scanIndicator: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: colors.success,
+    borderWidth: 2,
+    borderColor: colors.backgroundPrimary,
   },
   messageContainer: {
     alignItems: 'center',
@@ -246,28 +332,45 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     width: '80%',
-    height: 6,
+    height: 8,
     backgroundColor: colors.backgroundSecondary,
-    borderRadius: 3,
+    borderRadius: 4,
     overflow: 'hidden',
     marginBottom: spacing.s,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   progressFill: {
     height: '100%',
     backgroundColor: colors.accentPalette[2],
-    borderRadius: 3,
+    borderRadius: 4,
+    shadowColor: colors.accentPalette[2],
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
   },
   progressText: {
     fontSize: typography.fontSizes.caption,
     fontFamily: typography.fontFamilies.body,
     color: colors.textSecondary,
+    fontWeight: typography.fontWeights.medium,
   },
   factsContainer: {
     backgroundColor: colors.backgroundSecondary,
-    padding: spacing.m,
-    borderRadius: 12,
+    padding: spacing.l,
+    borderRadius: 16,
     alignItems: 'center',
     maxWidth: '90%',
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   factTitle: {
     fontSize: typography.fontSizes.body,

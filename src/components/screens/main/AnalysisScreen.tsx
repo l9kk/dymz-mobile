@@ -47,7 +47,7 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
   onNavigateToCamera,
   onNavigateToProgress
 }) => {
-  const { t } = useTranslation();
+  const { t, currentLanguage } = useTranslation();
   const [refreshing, setRefreshing] = React.useState(false);
   const [timeUntilNext, setTimeUntilNext] = React.useState<string>('');
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -489,7 +489,7 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
                 >
                   <View style={styles.previousAnalysisHeader}>
                     <Text style={styles.previousAnalysisDate}>
-                      {new Date(latestAnalysis.created_at).toLocaleDateString('en-US', {
+                      {new Date(latestAnalysis.created_at).toLocaleDateString(currentLanguage === 'ru' ? 'ru-RU' : 'en-US', {
                         weekday: 'long',
                         month: 'short',
                         day: 'numeric'
@@ -538,7 +538,7 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
                 >
                   <View style={styles.previousAnalysisHeader}>
                     <Text style={styles.previousAnalysisDate}>
-                      {new Date(latestAnalysis.created_at).toLocaleDateString('en-US', {
+                      {new Date(latestAnalysis.created_at).toLocaleDateString(currentLanguage === 'ru' ? 'ru-RU' : 'en-US', {
                         weekday: 'long',
                         month: 'short',
                         day: 'numeric'
@@ -702,7 +702,7 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({
             <View style={styles.modalInfoSection}>
               <Text style={styles.modalInfoTitle}>{t('analysis.modal.analysisDate')}</Text>
               <Text style={styles.modalInfoText}>
-                {latestAnalysis && new Date(latestAnalysis.created_at).toLocaleDateString('en-US', {
+                {latestAnalysis && new Date(latestAnalysis.created_at).toLocaleDateString(currentLanguage === 'ru' ? 'ru-RU' : 'en-US', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
