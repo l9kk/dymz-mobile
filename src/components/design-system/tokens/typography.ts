@@ -1,9 +1,9 @@
 export const typography = {
     fontFamilies: {
-        display: 'Playfair Display',
-        body: 'SF Pro',
-        primary: 'SF Pro',
-        mono: 'SF Mono'
+        display: 'System',
+        body: 'System',
+        primary: 'System',
+        mono: 'Courier'
     },
     fontSizes: {
         displayXL: 32,
@@ -34,25 +34,25 @@ export const typography = {
     // Complete style objects for common use cases
     displayL: {
         fontSize: 28,
-        fontFamily: 'Playfair Display',
+        fontFamily: 'System',
         fontWeight: '400' as const,
         lineHeight: 32.2, // tight * fontSize
     },
     body: {
         fontSize: 16,
-        fontFamily: 'SF Pro',
+        fontFamily: 'System',
         fontWeight: '400' as const,
         lineHeight: 21.6, // normal * fontSize
     },
     caption: {
         fontSize: 14,
-        fontFamily: 'SF Pro',
+        fontFamily: 'System',
         fontWeight: '400' as const,
         lineHeight: 18.9, // normal * fontSize
     },
     h3: {
         fontSize: 20,
-        fontFamily: 'SF Pro',
+        fontFamily: 'System',
         fontWeight: '600' as const,
         lineHeight: 27, // normal * fontSize
     }

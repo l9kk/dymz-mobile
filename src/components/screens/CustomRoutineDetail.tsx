@@ -12,8 +12,10 @@ import { colors, spacing, typography } from '../design-system/tokens';
 import { getProductImageByIndex } from '../../utils/imageUrls';
 import { useRoutines, useRoutineRecommendations, useCreateRoutine } from '../../hooks/api/useRoutines';
 import { useLatestAnalysis } from '../../hooks/api/useAnalysis';
+import { translateRoutines, translateBackendText, translateStepName, translateInstructions, translateProductName } from '../../utils/backendContentTranslation';
 import { RoutineRecommendationResponse, RoutineCreateRequest } from '../../services/routinesApi';
 import { useTranslation } from '../../hooks/useTranslation';
+import { debugLanguage } from '../../utils/debugLanguage';
 
 interface RoutineStep {
   stepNumber: number;
@@ -31,88 +33,92 @@ interface CustomRoutineDetailProps {
   eveningRoutine?: RoutineStep[];
 }
 
-// Sample routine data
-const defaultMorningRoutine: RoutineStep[] = [
-  {
-    stepNumber: 1,
-    productName: 'Gentle Foam Cleanser',
-    productRole: 'Cleanser',
-    instruction: 'Apply to wet face, massage gently for 30 seconds, rinse with lukewarm water.',
-    thumbnailUri: getProductImageByIndex(0),
-    matchPercentage: 95
-  },
-  {
-    stepNumber: 2,
-    productName: 'Vitamin C Serum',
-    productRole: 'Antioxidant Serum',
-    instruction: 'Apply 2-3 drops to clean face, pat gently until absorbed.',
-    thumbnailUri: getProductImageByIndex(1),
-    matchPercentage: 92
-  },
-  {
-    stepNumber: 3,
-    productName: 'Daily Moisturizer',
-    productRole: 'Moisturizer',
-    instruction: 'Apply evenly to face and neck, massage until fully absorbed.',
-    thumbnailUri: getProductImageByIndex(2),
-    matchPercentage: 88
-  },
-  {
-    stepNumber: 4,
-    productName: 'Mineral SPF 30',
-    productRole: 'Sunscreen',
-    instruction: 'Apply generously 15 minutes before sun exposure. Reapply every 2 hours.',
-    thumbnailUri: getProductImageByIndex(3),
-    matchPercentage: 90
-  }
-];
-
-const defaultEveningRoutine: RoutineStep[] = [
-  {
-    stepNumber: 1,
-    productName: 'Oil Cleanser',
-    productRole: 'Cleanser',
-    instruction: 'Massage onto dry skin to dissolve makeup and sunscreen, rinse with water.',
-    thumbnailUri: getProductImageByIndex(4),
-    matchPercentage: 93
-  },
-  {
-    stepNumber: 2,
-    productName: 'Retinol Treatment',
-    productRole: 'Treatment',
-    instruction: 'Apply a pea-sized amount 2-3 times per week, avoid eye area.',
-    thumbnailUri: getProductImageByIndex(5),
-    matchPercentage: 96
-  },
-  {
-    stepNumber: 3,
-    productName: 'Night Repair Cream',
-    productRole: 'Night Moisturizer',
-    instruction: 'Apply generously to face and neck as the last step in your routine.',
-    thumbnailUri: getProductImageByIndex(6),
-    matchPercentage: 89
-  },
-  {
-    stepNumber: 4,
-    productName: 'Eye Recovery Complex',
-    productRole: 'Eye Cream',
-    instruction: 'Gently pat around eye area using ring finger, avoid direct contact with eyes.',
-    thumbnailUri: getProductImageByIndex(7),
-    matchPercentage: 87
-  }
-];
-
 export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
   onBack,
   onRoutinesSaved,
   morningRoutine,
   eveningRoutine
 }) => {
-  const { t } = useTranslation();
+  const { t, currentLanguage } = useTranslation();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [routinesSaved, setRoutinesSaved] = useState(false);
+  const [debugOutput, setDebugOutput] = useState<string>('');
   const tabOptions = [t('routine.morning'), t('routine.evening')];
+  
+  // Debug: Log current language
+  console.log('🔍 CustomRoutineDetail - Current language:', currentLanguage);
+  
+  // Create translated default routines
+  const defaultMorningRoutine: RoutineStep[] = [
+    {
+      stepNumber: 1,
+      productName: t('routine.products.names.gentleFoamCleanser'),
+      productRole: t('routine.products.categories.cleanser'),
+      instruction: t('routine.products.instructions.gentleFoamCleanser'),
+      thumbnailUri: getProductImageByIndex(0),
+      matchPercentage: 95
+    },
+    {
+      stepNumber: 2,
+      productName: t('routine.products.names.vitaminCSerum'),
+      productRole: t('routine.products.categories.antioxidantSerum'),
+      instruction: t('routine.products.instructions.vitaminCSerum'),
+      thumbnailUri: getProductImageByIndex(1),
+      matchPercentage: 92
+    },
+    {
+      stepNumber: 3,
+      productName: t('routine.products.names.dailyMoisturizer'),
+      productRole: t('routine.products.categories.moisturizer'),
+      instruction: t('routine.products.instructions.dailyMoisturizer'),
+      thumbnailUri: getProductImageByIndex(2),
+      matchPercentage: 88
+    },
+    {
+      stepNumber: 4,
+      productName: t('routine.products.names.mineralSPF30'),
+      productRole: t('routine.products.categories.sunscreen'),
+      instruction: t('routine.products.instructions.mineralSPF30'),
+      thumbnailUri: getProductImageByIndex(3),
+      matchPercentage: 90
+    }
+  ];
+
+  const defaultEveningRoutine: RoutineStep[] = [
+    {
+      stepNumber: 1,
+      productName: t('routine.products.names.oilCleanser'),
+      productRole: t('routine.products.categories.cleanser'),
+      instruction: t('routine.products.instructions.oilCleanser'),
+      thumbnailUri: getProductImageByIndex(4),
+      matchPercentage: 93
+    },
+    {
+      stepNumber: 2,
+      productName: t('routine.products.names.retinolTreatment'),
+      productRole: t('routine.products.categories.treatment'),
+      instruction: t('routine.products.instructions.retinolTreatment'),
+      thumbnailUri: getProductImageByIndex(5),
+      matchPercentage: 96
+    },
+    {
+      stepNumber: 3,
+      productName: t('routine.products.names.nightRepairCream'),
+      productRole: t('routine.products.categories.nightMoisturizer'),
+      instruction: t('routine.products.instructions.nightRepairCream'),
+      thumbnailUri: getProductImageByIndex(6),
+      matchPercentage: 89
+    },
+    {
+      stepNumber: 4,
+      productName: t('routine.products.names.eyeRecoveryComplex'),
+      productRole: t('routine.products.categories.eyeCream'),
+      instruction: t('routine.products.instructions.eyeRecoveryComplex'),
+      thumbnailUri: getProductImageByIndex(7),
+      matchPercentage: 87
+    }
+  ];
   
   // Fetch user's routines and recommendations
   const { data: userRoutines, isLoading: routinesLoading, refetch: refetchRoutines } = useRoutines();
@@ -130,20 +136,72 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
   
   const createRoutineMutation = useCreateRoutine();
 
-  // Convert API routine data to component format
+  // Convert API routine data to component format with translation
   const convertRoutineSteps = (routineSteps: any[] = []): RoutineStep[] => {
-    return routineSteps.map((step, index) => ({
-      stepNumber: step.step_number || index + 1,
-      productName: step.product?.name || step.product_name || t('routine.unknownProduct'),
-      productRole: step.product?.category || step.category || t('routine.product'),
-      instruction: step.instructions || step.instruction || t('routine.applyAsDirected'),
-      thumbnailUri: step.product?.image_url || getProductImageByIndex(index),
-      matchPercentage: step.match_percentage || Math.floor(Math.random() * 20) + 80 // Fallback with realistic range
-    }));
+    return routineSteps.map((step, index) => {
+      // Extract raw data from API
+      const rawProductName = step.product?.name || step.product_name || t('routine.unknownProduct');
+      const rawProductRole = step.product?.category || step.category || t('routine.product');
+      const rawInstruction = step.instructions || step.instruction || t('routine.applyAsDirected');
+      
+      // Apply translations to the content
+      const translatedProductName = translateProductName(rawProductName);
+      const translatedProductRole = translateStepName(rawProductRole);
+      const translatedInstruction = translateInstructions(rawInstruction);
+      
+      return {
+        stepNumber: step.step_number || index + 1,
+        productName: translatedProductName,
+        productRole: translatedProductRole,
+        instruction: translatedInstruction,
+        thumbnailUri: step.product?.image_url || getProductImageByIndex(index),
+        matchPercentage: step.match_percentage || Math.floor(Math.random() * 20) + 80 // Fallback with realistic range
+      };
+    });
   };
 
-  // Get routines from API or fallback to props/defaults
+  // Get routines from API or fallback to props/defaults with translation
   const getRoutineData = () => {
+    // If we have API recommendations, use them (with translation)
+    if (recommendations?.recommendations) {
+      const morningRoutine = recommendations.recommendations.find((r: any) => r.routine_type === 'morning');
+      const eveningRoutine = recommendations.recommendations.find((r: any) => r.routine_type === 'evening');
+      
+      return {
+        morning: morningRoutine ? convertRoutineSteps(morningRoutine.steps) : defaultMorningRoutine,
+        evening: eveningRoutine ? convertRoutineSteps(eveningRoutine.steps) : defaultEveningRoutine
+      };
+    }
+    
+    // If we have user's existing routines, use them (with translation)
+    if (userRoutines?.routines && userRoutines.routines.length > 0) {
+      const morningRoutine = userRoutines.routines.find((r: any) => r.routine_type === 'morning');
+      const eveningRoutine = userRoutines.routines.find((r: any) => r.routine_type === 'evening');
+      
+      return {
+        morning: morningRoutine ? convertRoutineSteps(morningRoutine.steps) : defaultMorningRoutine,
+        evening: eveningRoutine ? convertRoutineSteps(eveningRoutine.steps) : defaultEveningRoutine
+      };
+    }
+    
+    // If we have routines passed as props, use them (with translation applied to product names and instructions)
+    if (morningRoutine || eveningRoutine) {
+      return {
+        morning: morningRoutine ? morningRoutine.map(step => ({
+          ...step,
+          productName: translateProductName(step.productName),
+          productRole: translateStepName(step.productRole), 
+          instruction: translateInstructions(step.instruction)
+        })) : defaultMorningRoutine,
+        evening: eveningRoutine ? eveningRoutine.map(step => ({
+          ...step,
+          productName: translateProductName(step.productName),
+          productRole: translateStepName(step.productRole),
+          instruction: translateInstructions(step.instruction)
+        })) : defaultEveningRoutine
+      };
+    }
+    
     // Always provide default routines to ensure content is shown
     // This fixes the empty morning routine issue
     return {
@@ -239,6 +297,57 @@ export const CustomRoutineDetail: React.FC<CustomRoutineDetailProps> = ({
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <BackButton onPress={onBack} style={styles.backButton} />
+      
+      {/* Debug: Show current language */}
+      {__DEV__ && (
+        <View style={styles.debugContainer}>
+          <Text style={styles.debugText}>
+            🔍 Language: {currentLanguage} {currentLanguage === 'ru' ? '🇷🇺' : '🇺🇸'}
+          </Text>
+          <PrimaryButton
+            title="🔍 Show Language Info (Method 4)"
+            onPress={async () => {
+              // Run the enhanced debug method and capture output
+              const info = await debugLanguage.showLanguageInfo();
+              const output = `=== LANGUAGE DEBUG INFO ===
+📱 Stored preference: ${info.stored}
+🌐 Device locale: ${info.deviceLocale}
+🔤 Device language: ${info.deviceLanguage}
+🏁 Auto-detection: ${info.willAutoDetect ? 'Will run on restart' : 'Bypassed (using stored)'}
+🇷🇺 Russian: Device locale starts with "ru"
+🇺🇸 English: All other locales (default)
+==========================`;
+              setDebugOutput(output);
+            }}
+            style={styles.debugButton}
+          />
+          <PrimaryButton
+            title="🧪 Test Auto-Detection"
+            onPress={async () => {
+              await debugLanguage.testAutoDetection();
+              setDebugOutput(`✅ Cleared stored language preference
+🔄 RESTART THE APP NOW to test auto-detection
+📱 App will detect your device language on next startup`);
+            }}
+            style={styles.testButton}
+          />
+          <PrimaryButton
+            title="🗑️ Reset to First Time"
+            onPress={async () => {
+              await debugLanguage.resetToFirstTime();
+              setDebugOutput(`🗑️ Cleared ALL app data - like first install
+🔄 RESTART THE APP NOW
+📱 App will auto-detect language and run first-time setup`);
+            }}
+            style={styles.resetButton}
+          />
+          {debugOutput ? (
+            <View style={styles.debugOutputContainer}>
+              <Text style={styles.debugOutputText}>{debugOutput}</Text>
+            </View>
+          ) : null}
+        </View>
+      )}
       
       <View style={styles.header}>
         <SectionHeading>
@@ -372,5 +481,48 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSizes.body,
     color: colors.textPrimary,
     fontFamily: typography.fontFamilies.body,
+  },
+  debugContainer: {
+    backgroundColor: colors.backgroundSecondary,
+    padding: spacing.s,
+    marginBottom: spacing.m,
+    borderRadius: 4,
+    alignItems: 'center',
+  },
+  debugText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    fontFamily: typography.fontFamilies.body,
+  },
+  debugButton: {
+    marginTop: spacing.s,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.s,
+  },
+  testButton: {
+    marginTop: spacing.s,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.s,
+    backgroundColor: '#FF6B35',
+  },
+  resetButton: {
+    marginTop: spacing.s,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.s,
+    backgroundColor: '#DC3545',
+  },
+  debugOutputContainer: {
+    marginTop: spacing.s,
+    padding: spacing.s,
+    backgroundColor: colors.backgroundPrimary,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.textSecondary,
+  },
+  debugOutputText: {
+    fontSize: 11,
+    color: colors.textPrimary,
+    fontFamily: 'monospace',
+    lineHeight: 16,
   },
 });
