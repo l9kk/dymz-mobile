@@ -185,7 +185,11 @@ export const useAnalysisWorkflow = () => {
             onProgress?: (progress: number) => void;
             onStatusUpdate?: (status: string, progress?: number) => void;
         }) => {
-            console.log('🚀 Starting complete analysis workflow');
+            console.log('🚀 Starting complete analysis workflow for imageUri:', imageUri);
+            console.log('📋 Workflow callbacks provided:', {
+                hasOnProgress: !!onProgress,
+                hasOnStatusUpdate: !!onStatusUpdate
+            });
 
             try {
                 // Step 1: Compress image (show as part of upload process)
@@ -197,6 +201,7 @@ export const useAnalysisWorkflow = () => {
                 console.log('🔵 Step 2: Starting image upload for URI:', imageUri);
                 onStatusUpdate?.('uploading', 10);
 
+                console.log('📤 About to call analysisApi.uploadImage...');
                 const uploadResult = await analysisApi.uploadImage(imageUri, (progress) => {
                     console.log(`📤 Upload progress callback: ${progress.toFixed(1)}%`);
                     // Map upload progress to 10-80% of total progress
@@ -216,6 +221,7 @@ export const useAnalysisWorkflow = () => {
                 onStatusUpdate?.('processing', 80);
                 onProgress?.(80);
 
+                console.log('🔄 About to call analysisApi.pollAnalysisUntilComplete...');
                 const completedAnalysis = await analysisApi.pollAnalysisUntilComplete(
                     uploadResult.analysis_id,
                     60, // 5 minutes max
@@ -232,6 +238,7 @@ export const useAnalysisWorkflow = () => {
                 });
 
                 onStatusUpdate?.('completed', 100);
+                console.log('🎯 About to return completed analysis from mutationFn');
                 return completedAnalysis;
             } catch (error: any) {
                 console.error('❌ Analysis workflow failed with comprehensive error details:', {
@@ -271,6 +278,12 @@ export const useAnalysisWorkflow = () => {
 
         onSuccess: (data) => {
             console.log('🎉 Analysis workflow mutation succeeded, updating query cache');
+            console.log('📊 Mutation success data:', {
+                id: data?.id,
+                status: data?.status,
+                hasSkinMetrics: !!data?.skin_metrics,
+                dataKeys: Object.keys(data || {})
+            });
 
             // Invalidate and update relevant queries
             queryClient.invalidateQueries({ queryKey: analysisKeys.lists() });
@@ -279,15 +292,18 @@ export const useAnalysisWorkflow = () => {
             // Update the specific analysis in cache
             queryClient.setQueryData(analysisKeys.detail(data.id), data);
 
-            console.log('✅ Query cache updated successfully');
+            console.log('✅ Query cache updated successfully - mutation onSuccess complete');
         },
 
         onError: (error: any) => {
             console.error('❌ Analysis workflow mutation error with details:', {
                 error: error.message,
                 status: error.status,
-                isNetworkError: error.isNetworkError
+                isNetworkError: error.isNetworkError,
+                errorType: error.name,
+                stack: error.stack
             });
+            console.error('🚨 Mutation onError complete - error should be handled by calling code');
         },
     });
 };

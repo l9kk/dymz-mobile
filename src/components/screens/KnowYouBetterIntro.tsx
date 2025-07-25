@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../hooks/useTranslation';
 import { CircleAvatarCluster } from '../design-system/molecules/CircleAvatarCluster';
 import { PrimaryButton } from '../design-system/atoms/PrimaryButton';
 import { colors, typography, spacing } from '../design-system/tokens';

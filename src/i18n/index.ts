@@ -53,6 +53,13 @@ const initI18n = async () => {
             debug: __DEV__,
             // Cache settings
             saveMissing: __DEV__, // Only save missing keys in development
+            // Force reload to prevent caching issues
+            load: 'languageOnly',
+            cleanCode: true,
+            // Ensure proper re-rendering when language changes
+            react: {
+                useSuspense: false,
+            },
         });
 
         console.log('✅ i18n initialized successfully with language:', savedLanguage);
@@ -66,6 +73,13 @@ const initI18n = async () => {
             fallbackLng: 'en',
             interpolation: {
                 escapeValue: false,
+            },
+            // Force reload to prevent caching issues
+            load: 'languageOnly',
+            cleanCode: true,
+            // Ensure proper re-rendering when language changes
+            react: {
+                useSuspense: false,
             },
         });
     }

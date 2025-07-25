@@ -4,6 +4,7 @@ import * as Linking from 'expo-linking';
 
 // Initialize i18n before any components render
 import './src/i18n';
+import './src/utils/debugLanguage';
 
 import { AppProviders } from './src/providers/AppProviders';
 import { useAuth } from './src/stores/authStore';
@@ -30,8 +31,6 @@ import {
   MotivationIntro,
   SurveyStatementYN,
   NotificationsPermissionExplain,
-  TrendingProductsIntro,
-  SocialProofResults,
   SuccessMotivations,
   SkinIssuesIntro,
   SelectTopConcern,
@@ -84,8 +83,6 @@ type AppState =
   | 'survey-statement-1'
   | 'survey-statement-2'
   | 'notifications-permission'
-  | 'trending-products-intro'
-  | 'social-proof-results'
   | 'success-motivations'
   | 'skin-issues-intro'
   | 'select-top-concern'
@@ -123,10 +120,6 @@ interface UserData {
     strugglesWithSkin?: boolean;
     timeConstraints?: boolean;
     wantsNotifications?: boolean;
-  };
-  trendingProducts?: {
-    buysTrendingProducts?: boolean;
-    influencedBySocial?: boolean;
   };
   deepMotivation?: {
     neverAchieveDreamSkin?: boolean;
@@ -298,7 +291,7 @@ const AppContent: React.FC = () => {
           'capture-guidelines', 'camera-preview', 'processing-analysis', 'know-you-better-intro',
           'onboarding-gender', 'onboarding-age', 'value-prop-expert', 'onboarding-skincare-experience',
           'value-prop-database', 'success-understanding', 'motivation-intro', 'survey-statement-1',
-          'survey-statement-2', 'notifications-permission', 'trending-products-intro', 'social-proof-results', 'success-motivations',
+          'survey-statement-2', 'notifications-permission', 'success-motivations',
           'skin-issues-intro', 'select-top-concern', 'concern-duration', 'motivation-why-concern',
           'success-skin-issues', 'rating-prompt', 'plan-roadmap', 'analysis-loading', 'results-legend',
           'first-analysis-view', 'build-routine-intro', 'sun-exposure-level', 'product-usage-yes-no',
@@ -608,17 +601,10 @@ const AppContent: React.FC = () => {
 
   const handleNotificationsComplete = () => {
     console.log('User data after Block 6:', userData);
-    transitionToScreen('trending-products-intro');
-  };
-
-  // Block 7 navigation handlers
-  const handleTrendingProductsIntro = () => {
-    transitionToScreen('social-proof-results');
-  };
-
-  const handleSocialProofResultsContinue = () => {
     transitionToScreen('success-motivations');
   };
+
+  // Block 7 navigation handlers - Removed trending-products-intro and social-proof-results
 
   const handleSuccessMotivationsContinue = () => {
     console.log('Success motivations completed, transitioning to skin analysis!');
@@ -767,34 +753,90 @@ const AppContent: React.FC = () => {
 
   const handleProcessingComplete = () => {
     // Start real analysis when processing animation is done
+    console.log('🎬 ProcessingComplete called', {
+      isAuthenticated,
+      hasPhotoUri: !!userData.photoUri,
+      photoUri: userData.photoUri,
+      isAnalyzing
+    });
+    
+    // CRITICAL: Prevent starting multiple analyses simultaneously
+    if (isAnalyzing) {
+      console.warn('⚠️ Analysis already in progress, ignoring duplicate ProcessingComplete call');
+      return;
+    }
+    
     if (isAuthenticated && userData.photoUri) {
       console.log('🔄 Starting real analysis after processing animation');
       
-      startAnalysis(
-        {
+      // Add a timeout to prevent infinite loading
+      const analysisTimeout = setTimeout(() => {
+        console.error('⏰ Analysis timed out after 2 minutes, returning to main app');
+        transitionToScreen('main-app');
+      }, 120000); // 2 minutes timeout
+      
+      try {
+        console.log('📞 Calling startAnalysis with:', {
           imageUri: userData.photoUri,
-          onStatusUpdate: (status: string, progress?: number) => {
-            console.log(`Analysis status: ${status}, progress: ${progress}%`);
-          }
-        },
-        {
-          onSuccess: (analysisResult: any) => {
-            console.log('✅ Analysis completed successfully:', {
-              analysisId: analysisResult.id,
-              hasMetrics: !!analysisResult.skin_metrics
-            });
-            
-            setUserData(prev => ({ ...prev, analysisData: analysisResult }));
-            transitionToScreen('main-app-analysis-results');
+          imageExists: userData.photoUri ? 'YES' : 'NO'
+        });
+        
+        startAnalysis(
+          {
+            imageUri: userData.photoUri,
+            onStatusUpdate: (status: string, progress?: number) => {
+              console.log(`📊 Analysis status: ${status}, progress: ${progress}%`);
+            }
           },
-          onError: (error: any) => {
-            console.error('❌ Analysis failed:', error);
-            // Return to main app with error (could show error state later)
-            transitionToScreen('main-app');
+          {
+            onSuccess: (analysisResult: any) => {
+              clearTimeout(analysisTimeout);
+              console.log('✅ Analysis completed successfully:', {
+                analysisId: analysisResult?.id,
+                hasMetrics: !!analysisResult?.skin_metrics,
+                resultKeys: Object.keys(analysisResult || {})
+              });
+              
+              setUserData(prev => ({ ...prev, analysisData: analysisResult }));
+              transitionToScreen('main-app-analysis-results');
+            },
+            onError: (error: any) => {
+              clearTimeout(analysisTimeout);
+              console.error('❌ Analysis failed:', {
+                error,
+                message: error?.message,
+                stack: error?.stack
+              });
+              
+              // Show more specific error handling
+              if (error.message?.includes('Backend AI processing failed')) {
+                console.error('🚨 Backend AI failure - returning to main app');
+                // Could show a specific error message to user here
+              } else if (error.message?.includes('Network')) {
+                console.error('🌐 Network error - returning to main app');
+                // Could show network error message
+              } else {
+                console.error('🔥 Unknown error - returning to main app');
+              }
+              
+              // Return to main app with error (could show error state later)
+              transitionToScreen('main-app');
+            }
           }
-        }
-      );
+        );
+        
+        console.log('📞 startAnalysis called successfully, awaiting response...');
+        
+      } catch (syncError) {
+        clearTimeout(analysisTimeout);
+        console.error('💥 Synchronous error calling startAnalysis:', syncError);
+        transitionToScreen('main-app');
+      }
     } else {
+      console.warn('⚠️ No photo or not authenticated - returning to main app', {
+        isAuthenticated,
+        hasPhotoUri: !!userData.photoUri
+      });
       // No photo or not authenticated - return to main app
       transitionToScreen('main-app');
     }
@@ -1022,14 +1064,8 @@ const AppContent: React.FC = () => {
       case 'notifications-permission':
         transitionToScreen('survey-statement-2', 'back');
         break;
-      case 'trending-products-intro':
-        transitionToScreen('notifications-permission', 'back');
-        break;
-      case 'social-proof-results':
-        transitionToScreen('trending-products-intro', 'back');
-        break;
       case 'success-motivations':
-        transitionToScreen('social-proof-results', 'back');
+        transitionToScreen('notifications-permission', 'back');
         break;
       case 'skin-issues-intro':
         transitionToScreen('success-motivations', 'back');
@@ -1167,10 +1203,6 @@ const AppContent: React.FC = () => {
         />;
       case 'notifications-permission':
         return <NotificationsPermissionExplain onContinue={handleNotificationsComplete} onBack={handleBack} currentStep={3} totalSteps={3} />;
-      case 'trending-products-intro':
-        return <TrendingProductsIntro onContinue={handleTrendingProductsIntro} />;
-      case 'social-proof-results':
-        return <SocialProofResults onContinue={handleSocialProofResultsContinue} />;
       case 'success-motivations':
         return <SuccessMotivations onContinue={handleSuccessMotivationsContinue} />;
       case 'skin-issues-intro':

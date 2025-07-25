@@ -2,14 +2,14 @@
     "navigation": {
         "tabs": {
             "home": "Home",
-            "analysis": "Analysis", 
+            "analysis": "Analysis",
             "routine": "Routine",
             "profile": "Profile"
         },
         "errorBoundary": {
             "insightsUnavailable": "Insights screen temporarily unavailable",
             "homeUnavailable": "Home screen temporarily unavailable",
-            "analysisUnavailable": "Analysis screen temporarily unavailable", 
+            "analysisUnavailable": "Analysis screen temporarily unavailable",
             "routineUnavailable": "Routine screen temporarily unavailable",
             "profileUnavailable": "Profile screen temporarily unavailable"
         }
@@ -73,6 +73,7 @@
     "skinMetrics": {
         "hydration": "Hydration",
         "texture": "Texture",
+        "brightness": "Brightness",
         "acne": "Acne",
         "oiliness": "Oiliness",
         "pigmentation": "Pigmentation",
@@ -125,7 +126,7 @@
             },
             "features": {
                 "charts": "Charts",
-                "metrics": "Metrics", 
+                "metrics": "Metrics",
                 "goals": "Goals"
             }
         },
@@ -154,7 +155,7 @@
             "title": "What's your skincare experience?",
             "subtitle": "This helps us tailor recommendations to your comfort level.",
             "beginner": "Beginner",
-            "intermediate": "Intermediate", 
+            "intermediate": "Intermediate",
             "advanced": "Advanced",
             "options": {
                 "regular": "I have a regular routine",
@@ -339,7 +340,11 @@
         "failedToTakePicture": "Failed to take picture. Please try again.",
         "permissionTitle": "We need your permission to show the camera",
         "takeSelfieTitle": "Take a selfie so that your skin can be analyzed",
-        "initializingCamera": "Initializing camera..."
+        "initializingCamera": "Initializing camera...",
+        "examples": {
+            "good": "Good Examples",
+            "bad": "Bad Examples"
+        }
     },
     "analysis": {
         "processing": "Analyzing your skin...",
@@ -465,7 +470,7 @@
         },
         "dataTypes": {
             "stats": "stats",
-            "progress": "progress", 
+            "progress": "progress",
             "streak data": "streak data"
         },
         "auth": {
@@ -570,7 +575,50 @@
         "progressHint": "💡 Complete all {{total}} steps to submit your routine",
         "todaysSteps": "Today's Steps",
         "unableToLoad": "⚠️ Unable to load routines",
-        "checkConnection": "Please check your connection and try again"
+        "checkConnection": "Please check your connection and try again",
+        "title": "My Routine",
+        "subtitle": "Stay consistent with your personalized skincare routine",
+        "defaultStepInstructions": "Follow the product instructions carefully",
+        "tabs": {
+            "morning": "☀️ Morning",
+            "evening": "🌙 Evening"
+        },
+        "emptyStateSubtitle": "Let's create your personalized routine",
+        "recordProgressError": "⚠️ Unable to record progress. Please try again.",
+        "stepFallback": "Step {{number}}",
+        "productFallback": "Product {{number}}",
+        "recommendedBrand": "Recommended",
+        "products": {
+            "names": {
+                "gentleFoamCleanser": "Gentle Foam Cleanser",
+                "vitaminCSerum": "Vitamin C Serum",
+                "dailyMoisturizer": "Daily Moisturizer",
+                "mineralSPF30": "Mineral SPF 30",
+                "oilCleanser": "Oil Cleanser",
+                "retinolTreatment": "Retinol Treatment",
+                "nightRepairCream": "Night Repair Cream",
+                "eyeRecoveryComplex": "Eye Recovery Complex"
+            },
+            "categories": {
+                "cleanser": "Cleanser",
+                "antioxidantSerum": "Antioxidant Serum",
+                "moisturizer": "Moisturizer",
+                "sunscreen": "Sunscreen",
+                "treatment": "Treatment",
+                "nightMoisturizer": "Night Moisturizer",
+                "eyeCream": "Eye Cream"
+            },
+            "instructions": {
+                "gentleFoamCleanser": "Apply to wet face, massage gently for 30 seconds, rinse with lukewarm water.",
+                "vitaminCSerum": "Apply 2-3 drops to clean face, pat gently until absorbed.",
+                "dailyMoisturizer": "Apply evenly to face and neck, massage until fully absorbed.",
+                "mineralSPF30": "Apply generously 15 minutes before sun exposure. Reapply every 2 hours.",
+                "oilCleanser": "Massage onto dry skin to dissolve makeup and sunscreen, rinse with water.",
+                "retinolTreatment": "Apply a pea-sized amount 2-3 times per week, avoid eye area.",
+                "nightRepairCream": "Apply generously to face and neck as the last step in your routine.",
+                "eyeRecoveryComplex": "Gently pat around eye area using ring finger, avoid direct contact with eyes."
+            }
+        }
     },
     "profile": {
         "title": "Profile",
@@ -589,7 +637,7 @@
         "milestones": "Milestone Progress",
         "streakStats": {
             "current": "Current",
-            "best": "Best", 
+            "best": "Best",
             "nextGoal": "Next Goal"
         },
         "streakProgress": {
@@ -695,7 +743,7 @@
         "enterEmail": "Enter your email",
         "emailPlaceholder": "your@email.com",
         "verifyCode": "Verify Code",
-        "codePlaceholder": "Enter 6-digit code",
+        "codePlaceholder": "123456",
         "signIn": "Sign In",
         "createAccount": "Create Account",
         "password": "Password",
@@ -773,7 +821,18 @@
         "yesIFollowTrends": "Yes, I Follow Trends",
         "tryAgain": "Try Again",
         "buildYourRoutine": "Build Your Routine →",
-        "seeYourAnalysis": "See your analysis →"
+        "seeYourAnalysis": "See your analysis →",
+        "next": "Next",
+        "continue": "Continue",
+        "submit": "Submit",
+        "back": "Back",
+        "skip": "Skip",
+        "done": "Done",
+        "save": "Save",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "ok": "OK",
+        "close": "Close"
     },
     "forms": {
         "yes": "Yes",
@@ -963,11 +1022,17 @@
         "testimonials": {
             "sarah": {
                 "text": "This app completely transformed my skincare routine! The AI recommendations were spot-on.",
-                "highlighted": ["transformed my skincare routine", "spot-on"]
+                "highlighted": [
+                    "transformed my skincare routine",
+                    "spot-on"
+                ]
             },
             "mike": {
                 "text": "Finally found products that actually work for my sensitive skin. Game changer!",
-                "highlighted": ["actually work", "Game changer"]
+                "highlighted": [
+                    "actually work",
+                    "Game changer"
+                ]
             }
         },
         "rateButton": "let's rate! ⭐",

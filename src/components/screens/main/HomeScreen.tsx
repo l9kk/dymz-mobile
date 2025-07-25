@@ -84,7 +84,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigateToRoutine,
   onNavigateToProfile
 }) => {
-  const { t } = useTranslation();
+  const { t, currentLanguage } = useTranslation();
   const [refreshing, setRefreshing] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [checkInModalVisible, setCheckInModalVisible] = React.useState(false);
@@ -279,7 +279,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Welcome Section */}
           <View style={styles.welcomeSection}>
             <Text style={styles.welcomeText}>
-              Welcome back!
+              {t('home.welcome')}
             </Text>
           </View>
 
@@ -542,7 +542,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <View style={styles.modalInfoSection}>
                 <Text style={styles.modalInfoTitle}>{t('home.modals.analysisDate')}</Text>
                 <Text style={styles.modalInfoText}>
-                  {latestAnalysis && new Date(latestAnalysis.created_at).toLocaleDateString('en-US', {
+                  {latestAnalysis && new Date(latestAnalysis.created_at).toLocaleDateString(currentLanguage === 'ru' ? 'ru-RU' : 'en-US', {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
